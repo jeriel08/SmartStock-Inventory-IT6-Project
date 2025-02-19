@@ -9,7 +9,7 @@ SmartStock Inventory System is a web-based inventory management solution designe
 - **User Authentication**
 
   - Secure login system with unique usernames.
-  - Users can update their own account details.
+  - The super administrator creates users but can be managed by the users themselves.
 
 - **Product Management**
 
@@ -46,11 +46,10 @@ SmartStock Inventory System is a web-based inventory management solution designe
 ## Technologies Used
 
 - **Frontend**: HTML, CSS, Bootstrap, JavaScript
-- **Backend**: PHP, Laravel (if applicable)
+- **Backend**: PHP
 - **Database**: MySQL
 - **Libraries & Tools**:
-  - Matplotlib (for visual reports)
-  - CustomTkinter (if applicable for UI components)
+  - Chart.js (for visual reports)
 
 ## Installation & Setup
 
@@ -84,14 +83,6 @@ Contributions are welcome! To contribute:
 2. Create a feature branch.
 3. Commit changes and push to your branch.
 4. Open a Pull Request.
-
-## License
-
-This project is licensed under the MIT License.
-
-## Contact
-
-For any inquiries or support, feel free to reach out via [your email] or open an issue on GitHub.
 
 ---
 
