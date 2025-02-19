@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="../statics/app-logo.ico" />
+    <link rel="stylesheet" href="../statics/style.css" />
+    <link rel="stylesheet" href="../statics/css/bootstrap.min.css" />
+
+    <!-- Google Font Icon Links -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round"
+      rel="stylesheet"
+    />
+
+    <script src="../statics/js/bootstrap.min.js"></script>
+
+    <title>Suppliers | SmartStock Inventory</title>
+  </head>
+  <body class="main">
+    <nav class="navbar bg-body-tertiary fixed-top shadow">
+      <div class="d-flex align-items-center">
+        <button
+          class="navbar-toggler mx-3 border-0 shadow-none"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar"
+          aria-label="Toggle navigation"
+        >
+          <span class="material-icons-outlined navbar-icon"> menu </span>
+        </button>
+        <a class="navbar-brand fw-semibold" href="suppliers.html">SUPPLIERS</a>
+
+        <div
+          class="offcanvas offcanvas-start"
+          tabindex="-1"
+          id="offcanvasNavbar"
+          aria-labelledby="offcanvasNavbarLabel"
+        >
+          <div class="offcanvas-header d-flex align-items-center mt-4">
+            <span class="material-icons-outlined me-3 nav-icon">
+              inventory_2
+            </span>
+
+            <h5 class="offcanvas-title fs-3 fw-bold" id="offcanvasNavbarLabel">
+              SmartStock Inventory
+            </h5>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li class="nav-item">
+                <a
+                  class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                  href="dashboard.html"
+                >
+                  <span class="material-icons-outlined"> dashboard </span>
+                  Dashboard
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a
+                  class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                  href="products.html"
+                >
+                  <span class="material-icons-outlined"> inventory_2 </span>
+                  Products</a
+                >
+              </li>
+
+              <li class="nav-item">
+                <a
+                  class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                  href="orders.html"
+                >
+                  <span class="material-icons-outlined"> shopping_cart </span>
+                  Orders</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4 active"
+                  href="suppliers.html"
+                >
+                  <span class="material-icons-outlined"> inventory </span>
+                  Suppliers</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                  href="purchases.html"
+                >
+                  <span class="material-icons-outlined"> shopping_bag </span>
+                  Purchases</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                  href="returns.html"
+                >
+                  <span class="material-icons-outlined">
+                    assignment_return
+                  </span>
+                  Returns</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                  href="account.html"
+                >
+                  <span class="material-icons-outlined"> account_circle </span>
+                  Account</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                  href="../index.html"
+                >
+                  <span class="material-icons-outlined"> logout </span>
+                  Logout</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>

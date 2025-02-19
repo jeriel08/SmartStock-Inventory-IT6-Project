@@ -1,0 +1,118 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+:root {
+  --color-1: #f66435;
+  --color-2: #f4efca;
+  --color-3: #f5deb3;
+  --color-4: #ff7f50;
+  --color-5: #d49066;
+}
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+.main {
+  background-color: var(--color-3);
+}
+
+/* Login Page Styling */
+
+.left-column {
+  background-color: var(--color-1);
+  color: var(--color-2);
+}
+
+.right-column {
+  background-color: var(--color-2);
+  color: var(--color-1);
+}
+
+i {
+  color: var(--color-2);
+  font-size: 2em;
+}
+
+.container .login-page-icon {
+  font-size: 7em;
+}
+
+.form-control {
+  background-color: var(--color-3);
+  border: 2px solid var(--color-1);
+  border-radius: 15px;
+  padding: 10px 15px;
+}
+
+.form-control:focus {
+  background-color: var(--color-3);
+  border-color: var(--color-1);
+  box-shadow: 0 0 5px var(--color-1);
+}
+
+.btn-primary {
+  background-color: #ff5733;
+  border-color: #d43f00;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #d43f00;
+  border-color: #a32c00;
+  transform: scale(1.05);
+}
+
+.btn-primary:active {
+  background-color: #b02a00 !important;
+  border-color: #721c00 !important;
+  transform: scale(0.98);
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 8px rgba(255, 87, 51, 0.5);
+}
+
+/* Navbar Styling */
+nav.navbar {
+  background-color: var(--color-2) !important;
+  color: var(--color-1) !important;
+}
+
+.navbar-brand {
+  font-size: 1.8em !important;
+  color: var(--color-1) !important;
+}
+
+.navbar .navbar-toggler .navbar-icon {
+  color: var(--color-1) !important;
+  font-size: 2em;
+}
+
+/* Offcanvas Styling */
+
+.offcanvas {
+  background-color: var(--color-1) !important;
+  color: var(--color-2) !important;
+}
+
+.offcanvas .offcanvas-body a {
+  color: var(--color-2) !important;
+}
+
+.offcanvas .offcanvas-body .active {
+  background-color: var(--color-2) !important;
+  color: var(--color-1) !important;
+}
+
+.offcanvas .offcanvas-header .nav-icon {
+  font-size: 4rem;
+}
+
+.navbar .nav-link:hover {
+  background-color: var(--color-3) !important;
+  color: var(--color-1) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
