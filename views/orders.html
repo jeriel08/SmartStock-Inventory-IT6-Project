@@ -19,19 +19,32 @@
   </head>
   <body class="main">
     <nav class="navbar bg-body-tertiary fixed-top shadow">
-      <div class="d-flex align-items-center">
-        <button
-          class="navbar-toggler mx-3 border-0 shadow-none"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasNavbar"
-          aria-controls="offcanvasNavbar"
-          aria-label="Toggle navigation"
-        >
-          <span class="material-icons-outlined navbar-icon"> menu </span>
-        </button>
-        <a class="navbar-brand fw-semibold" href="orders.html">ORDERS</a>
+      <div class="container-fluid">
+        <!-- Left side: Button and Header -->
+        <div class="d-flex align-items-center">
+          <button
+            class="navbar-toggler mx-3 border-0 shadow-none"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar"
+            aria-label="Toggle navigation"
+          >
+            <span class="material-icons-outlined navbar-icon"> menu </span>
+          </button>
+          <a class="navbar-brand fw-semibold" href="orders.html">ORDERS</a>
+        </div>
 
+        <!-- Right side: Account Section -->
+        <div class="d-flex align-items-center me-5 ms-auto">
+          <span class="material-icons-outlined me-2 fs-1">account_circle</span>
+          <div>
+            <p class="fw-bold mb-0">Username</p>
+            <small>Role</small>
+          </div>
+        </div>
+
+        <!-- Offcanvas Menu -->
         <div
           class="offcanvas offcanvas-start"
           tabindex="-1"
@@ -42,7 +55,6 @@
             <span class="material-icons-outlined me-3 nav-icon">
               inventory_2
             </span>
-
             <h5 class="offcanvas-title fs-3 fw-bold" id="offcanvasNavbarLabel">
               SmartStock Inventory
             </h5>
@@ -58,25 +70,23 @@
                   Dashboard
                 </a>
               </li>
-
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
                   href="products.html"
                 >
                   <span class="material-icons-outlined"> inventory_2 </span>
-                  Products</a
-                >
+                  Products
+                </a>
               </li>
-
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4 active"
                   href="orders.html"
                 >
                   <span class="material-icons-outlined"> shopping_cart </span>
-                  Orders</a
-                >
+                  Orders
+                </a>
               </li>
               <li class="nav-item">
                 <a
@@ -84,8 +94,8 @@
                   href="suppliers.html"
                 >
                   <span class="material-icons-outlined"> inventory </span>
-                  Suppliers</a
-                >
+                  Suppliers
+                </a>
               </li>
               <li class="nav-item">
                 <a
@@ -93,8 +103,8 @@
                   href="purchases.html"
                 >
                   <span class="material-icons-outlined"> shopping_bag </span>
-                  Purchases</a
-                >
+                  Purchases
+                </a>
               </li>
               <li class="nav-item">
                 <a
@@ -104,8 +114,8 @@
                   <span class="material-icons-outlined">
                     assignment_return
                   </span>
-                  Returns</a
-                >
+                  Returns
+                </a>
               </li>
               <li class="nav-item">
                 <a
@@ -113,8 +123,8 @@
                   href="account.html"
                 >
                   <span class="material-icons-outlined"> account_circle </span>
-                  Account</a
-                >
+                  Account
+                </a>
               </li>
               <li class="nav-item">
                 <a
@@ -122,8 +132,8 @@
                   href="../index.html"
                 >
                   <span class="material-icons-outlined"> logout </span>
-                  Logout</a
-                >
+                  Logout
+                </a>
               </li>
             </ul>
           </div>
