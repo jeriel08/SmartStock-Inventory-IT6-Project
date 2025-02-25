@@ -16,6 +16,10 @@
   background-color: var(--color-3);
 }
 
+p {
+  color: var(--color-1);
+}
+
 /* Login Page Styling */
 
 .left-column {
@@ -116,3 +120,10 @@ nav.navbar {
   color: var(--color-1) !important;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Dashboard Styling */
+
+.custom-date-range-button .material-icons-outlined {
+  color: var(--color-1); /* Example: Change icon color */
+}
+

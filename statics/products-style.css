@@ -1,0 +1,107 @@
+/* products-style.css */
+
+:root {
+  --color-1: #f66435;
+  --color-2: #f4efca;
+  --color-3: #f5deb3;
+  --color-4: #ff7f50;
+  --color-5: #d49066;
+}
+
+/* ==========================================================================
+   Global Overrides
+   ========================================================================== */
+body {
+  padding-top: 35px; /* Matches navbar height to prevent overlap */
+}
+
+.container {
+  padding-top: 2.5em !important; /* Adjusted spacing for fixed navbar */
+}
+
+/* ==========================================================================
+   Navbar Adjustments (if specific to products page)
+   ========================================================================== */
+/* Add any products-page-specific navbar tweaks here if needed */
+
+/* ==========================================================================
+   Search Form Styling
+   ========================================================================== */
+.form-control {
+  background-color: var(--color-3) !important;
+  border: 2px solid var(--color-1) !important;
+  border-radius: 15px !important;
+  padding: 10px 15px !important;
+}
+
+.form-control:focus {
+  background-color: var(--color-3) !important;
+  border-color: var(--color-1) !important;
+  box-shadow: 0 0 5px var(--color-1) !important;
+}
+
+/* Legacy .search-input class (if still used elsewhere) */
+.search-input {
+  background-color: var(--color-3);
+  border: 2px solid var(--color-1);
+  border-radius: 15px;
+  padding: 10px 15px;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+/* Primary Button (Search, Edit, etc.) */
+
+/* Add Product Button */
+.add-product-button {
+  background-color: #f66435 !important; /* Slightly different orange */
+  border-color: #ff7f50 !important;
+  color: #f4efca !important;
+}
+
+.add-product-button:hover {
+  background-color: var(--color-1) !important;
+  border-color: #d49066 !important;
+}
+
+/* Filter Button (Outline Secondary) */
+.btn-outline-secondary {
+  color: var(--color-1) !important;
+  border-color: var(--color-1) !important;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--color-1);
+  color: var(--color-3);
+  border-color: var(--color-1);
+}
+
+/* ==========================================================================
+   Table Styling
+   ========================================================================== */
+.table {
+  background-color: #f4efca !important;
+  color: #f66435 !important;
+  margin-top: 2%;
+  border-color: var(--color-1) !important;
+  border-radius: 3px; /* Matches your HTML rounded-3 intent */
+}
+
+.table th,
+.table td {
+  background-color: #f4efca !important; /* Consistent background */
+  color: #f66435 !important;
+  border-color: var(--color-1) !important;
+}
+
+.table thead th {
+  background-color: #f4efca !important;
+  color: #f66435 !important;
+  border-color: var(--color-1) !important;
+}
+
+.table tbody tr {
+  background-color: #f4efca !important;
+  border-color: var(--color-1) !important;
+}
