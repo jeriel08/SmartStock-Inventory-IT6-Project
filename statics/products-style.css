@@ -19,6 +19,10 @@ body {
   padding-top: 2.5em !important; /* Adjusted spacing for fixed navbar */
 }
 
+.container-fluid {
+  background-color: var(--color-2) !important;
+}
+
 /* ==========================================================================
    Navbar Adjustments (if specific to products page)
    ========================================================================== */
@@ -104,6 +108,17 @@ body {
 .table tbody tr {
   background-color: #f4efca !important;
   border-color: var(--color-1) !important;
+}
+
+.table .edit-button .material-icons-outlined {
+  font-size: 1.2em !important; /* Direct control over the icon */
+}
+
+.table td:last-child {
+  text-align: center !important;
+}
+.table th:last-child {
+  text-align: center !important;
 }
 
 /* ==========================================================================
