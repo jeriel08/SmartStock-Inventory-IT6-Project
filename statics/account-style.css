@@ -1,0 +1,138 @@
+:root {
+  --color-1: #f66435;
+  --color-2: #f4efca;
+  --color-3: #f5deb3;
+  --color-4: #ff7f50;
+  --color-5: #d49066;
+  --text-color: #3e2723;
+  --placeholder-color: #8c7a6b;
+  --color-1-rgb: 246, 100, 53;
+}
+
+body {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+.container .card {
+  background-color: var(--color-2);
+}
+
+.container .card .card-header {
+  background-color: var(--color-1);
+  color: var(--color-3);
+}
+
+.container .card .card-header h2 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.container .card .card-body label {
+  color: var(--color-1);
+}
+
+/* Input styling */
+.form-control {
+  background-color: #faf8ed !important;
+  border: 1px solid var(--color-5) !important;
+  color: var(--text-color) !important;
+  padding: 10px !important;
+  border-radius: 5px !important;
+  transition: border-color 0.3s ease !important;
+}
+
+.form-control::placeholder {
+  color: var(--placeholder-color) !important;
+}
+
+.form-control:focus {
+  border-color: var(--color-1) !important;
+  box-shadow: 0 0 5px rgba(var(--color-1-rgb), 0.5) !important;
+  outline: none !important;
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: var(--color-3) !important;
+  border-color: var(--color-5) !important;
+  color: var(--placeholder-color) !important;
+  cursor: not-allowed !important;
+}
+
+/* Form-select styling */
+.form-select {
+  background-color: #faf8ed !important;
+  border: 1px solid var(--color-5) !important;
+  color: var(--text-color) !important;
+  padding: 10px !important;
+  border-radius: 5px !important;
+  transition: border-color 0.3s ease !important;
+}
+
+/* Style the dropdown options */
+.form-select option {
+  background-color: #faf8ed !important;
+  color: var(--text-color) !important;
+}
+
+/* Mimic placeholder for the default option */
+.form-select option:disabled[selected] {
+  color: var(--placeholder-color) !important;
+}
+
+/* Focus state */
+.form-select:focus {
+  border-color: var(--color-1) !important;
+  box-shadow: 0 0 5px rgba(var(--color-1-rgb), 0.5) !important;
+  outline: none !important;
+}
+
+/* Disabled or readonly state */
+.form-select:disabled,
+.form-select[readonly] {
+  background-color: var(--color-3) !important;
+  border-color: var(--color-5) !important;
+  color: var(--placeholder-color) !important;
+  cursor: not-allowed !important;
+}
+
+/* Button Styling */
+
+.btn {
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-primary {
+  background-color: var(--color-1) !important;
+  border-color: var(--color-5) !important;
+  color: var(--color-2) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-4) !important;
+  border-color: var(--color-1) !important;
+  color: var(--color-2) !important;
+}
+
+.btn-primary:active,
+.btn-primary.active {
+  background-color: var(--color-5) !important;
+  border-color: var(--color-5) !important;
+  color: var(--color-2) !important;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 8px rgba(var(--color-1-rgb), 0.5) !important;
+  outline: none !important;
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-3) !important;
+  border-color: var(--color-5) !important;
+  color: var(--text-color) !important;
+  opacity: 0.65 !important;
+}
