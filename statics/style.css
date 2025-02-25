@@ -1,11 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 :root {
-  --color-1: #f66435;
-  --color-2: #f4efca;
-  --color-3: #f5deb3;
-  --color-4: #ff7f50;
-  --color-5: #d49066;
+  --color-1: #f66435; /* Vibrant orange */
+  --color-2: #f4efca; /* Light beige */
+  --color-3: #f5deb3; /* Wheat */
+  --color-4: #ff7f50; /* Coral */
+  --color-5: #d49066; /* Muted orange */
+  --color-1-rgb: 246, 100, 53;
 }
 
 * {
@@ -79,6 +80,46 @@ i {
   box-shadow: 0 0 8px rgba(255, 87, 51, 0.5);
 }
 
+.password-input {
+  border-right: none !important;
+}
+
+/* Toggle password button */
+.toggle-password {
+  border-radius: 0 14px 14px 0; /* Rounded right side only */
+  border-left: none; /* Seamless with input */
+  border: 2px solid var(--color-1); /* Vibrant orange border */
+  background-color: var(--color-3); /* Wheat background */
+  color: var(--text-color); /* Dark brown icon */
+  padding: 0 10px; /* Compact padding */
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+.toggle-password:hover {
+  background-color: var(--color-2); /* Light beige on hover */
+  color: var(--color-1); /* Vibrant orange icon */
+  border-color: var(--color-1); /* Consistent border */
+}
+
+.toggle-password:focus {
+  box-shadow: 0 0 6px rgba(var(--color-1-rgb), 0.5); /* Orange glow */
+  outline: none; /* Remove default outline */
+  background-color: var(--color-3); /* Maintain background */
+  color: var(--text-color);
+}
+
+.toggle-password:active {
+  background-color: var(--color-5) !important; /* Muted orange when pressed */
+  color: var(--color-2) !important; /* Light beige icon */
+  border-color: var(--color-1) !important;
+}
+
+/* Icon styling */
+.toggle-password .material-icons-outlined {
+  font-size: 24px; /* Consistent with Material Icons default */
+  vertical-align: middle; /* Center icon vertically */
+}
+
 /* Navbar Styling */
 nav.navbar {
   background-color: var(--color-2) !important;
@@ -126,4 +167,3 @@ nav.navbar {
 .custom-date-range-button .material-icons-outlined {
   color: var(--color-1); /* Example: Change icon color */
 }
-
