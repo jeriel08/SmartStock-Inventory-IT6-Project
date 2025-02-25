@@ -57,12 +57,12 @@ body {
 .add-product-button {
   background-color: #f66435 !important; /* Slightly different orange */
   border-color: #ff7f50 !important;
-  color: #f4efca !important;
+  color: var(--color-2) !important;
 }
 
 .add-product-button:hover {
   background-color: var(--color-1) !important;
-  border-color: #d49066 !important;
+  border-color: var(--color-4) !important;
 }
 
 /* Filter Button (Outline Secondary) */
@@ -72,9 +72,9 @@ body {
 }
 
 .btn-outline-secondary:hover {
-  background-color: var(--color-1);
-  color: var(--color-3);
-  border-color: var(--color-1);
+  background-color: var(--color-1) !important;
+  color: var(--color-3) !important;
+  border-color: var(--color-1) !important;
 }
 
 /* ==========================================================================
@@ -104,4 +104,28 @@ body {
 .table tbody tr {
   background-color: #f4efca !important;
   border-color: var(--color-1) !important;
+}
+
+/* ==========================================================================
+   Modal Styling
+   ========================================================================== */
+
+.modal-content {
+  background-color: var(--color-2) !important;
+}
+
+.modal-header {
+  background-color: var(--color-3) !important;
+  color: var(--color-1) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+.modal-body {
+  color: var(--color-1) !important;
+}
+
+.modal-footer {
+  background-color: var(--color-3) !important;
+  color: var(--color-1) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }

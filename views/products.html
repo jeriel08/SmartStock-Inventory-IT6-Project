@@ -154,15 +154,32 @@
               placeholder="Search an item"
               class="form-control me-2"
             />
-            <button type="submit" class="btn btn-primary add-product-button">
-              Search
+            <button
+              type="submit"
+              class="btn btn-primary add-product-button d-flex align-items-center gap-2 rounded-4"
+            >
+              <span class="material-icons-outlined">search</span>
+              <span>Search</span>
             </button>
           </form>
         </div>
 
         <div class="col-md-auto d-flex gap-2">
-          <button class="btn btn-outline-secondary">Filter</button>
-          <a href="#" class="btn btn-primary add-product-button">Add Product</a>
+          <button
+            class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+          >
+            <span class="material-icons-outlined">tune</span>
+            <span>Filter</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+          >
+            <span class="material-icons-outlined">add</span>
+            <span>Add Product</span>
+          </button>
         </div>
 
         <div class="container">
@@ -189,7 +206,9 @@
                   <td>Electronics</td>
                   <td>100</td>
                   <td>
-                    <button class="btn btn-sm btn-primary">Edit</button>
+                    <button class="btn btn-sm btn-primary">
+                      <span class="material-icons-outlined"> edit </span>
+                    </button>
                   </td>
                 </tr>
                 <tr>
@@ -206,6 +225,173 @@
                 <!-- Add more rows as needed -->
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="staticBackdrop"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabindex="-1"
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div
+            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+          >
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1
+                  class="modal-title fs-5 d-flex align-items-center gap-2"
+                  id="staticBackdropLabel"
+                >
+                  <span class="material-icons-outlined fs-2"> add_box </span>
+                  Add Product
+                </h1>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <form action="#" class="py-3">
+                <div class="modal-body">
+                  <!-- Item Name -->
+                  <div class="row mb-3">
+                    <label
+                      for="itemName"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Item Name</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="itemName"
+                        name="itemName"
+                        placeholder="Enter item name"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Supplier -->
+                  <div class="row mb-3">
+                    <label
+                      for="supplier"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Supplier</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="supplier"
+                        name="supplier"
+                        placeholder="Enter supplier"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Category -->
+                  <div class="row mb-3">
+                    <label
+                      for="category"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Category</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="category"
+                        name="category"
+                        placeholder="Enter category"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Quantity -->
+                  <div class="row mb-3">
+                    <label
+                      for="quantity"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Quantity</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="quantity"
+                        name="quantity"
+                        placeholder="Enter quantity"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Cost -->
+                  <div class="row mb-3">
+                    <label
+                      for="cost"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Cost</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="cost"
+                        name="cost"
+                        placeholder="Enter cost"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Price -->
+                  <div class="row mb-3">
+                    <label
+                      for="price"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Price</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="price"
+                        name="price"
+                        placeholder="Enter price"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                  <button
+                    type="button"
+                    class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4"
+                  >
+                    <span class="material-icons-outlined">add</span>
+                    <span>Add Product</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                    data-bs-dismiss="modal"
+                  >
+                    <span class="material-icons-outlined">close</span>
+                    Close
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
