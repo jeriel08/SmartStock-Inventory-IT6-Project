@@ -1,0 +1,136 @@
+:root {
+  --color-1: #f66435;
+  --color-2: #f4efca;
+  --color-3: #f5deb3;
+  --color-4: #ff7f50;
+  --color-5: #d49066;
+}
+
+.supplier-page {
+  .container {
+    max-width: 1300px; /* Adjusted container width */
+    width: 100%;
+  }
+
+  /* Card styling */
+  .supplier-card {
+    overflow: hidden; /* Prevents content from overflowing */
+    border-radius: 15px; /* Rounded corners */
+    background-color: var(--color-2); /* Light background */
+    border: 2px solid var(--color-4); /* Border color */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    padding: 15px;
+  }
+
+  /* Profile picture styling */
+  .supplier-card .pic {
+    width: 100%; /* Make the image responsive */
+    max-width: 280px; /* Set a maximum width */
+    height: auto; /* Maintain aspect ratio */
+    aspect-ratio: 1 / 1; /* Ensure the image stays square */
+    border-radius: 50%; /* Circular image */
+    object-fit: cover; /* Ensures the image covers the area */
+    display: block; /* Centers the image */
+    margin: 0 auto 15px; /* Adds spacing below the image */
+    border: 3px solid var(--color-4); /* Border around the image */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+
+
+  /* Card hover effect */
+  .supplier-card:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Shadow on hover */
+  }
+
+  /* Card title styling */
+  .supplier-card .card-title {
+    color: var(--color-4); /* Title color */
+    font-weight: bold; /* Bold text */
+    text-align: center; /* Center the title */
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+
+  /* Card text styling */
+  .supplier-card .card-text {
+    color: var(--color-4); /* Text color */
+    margin-top: 20px;
+    margin-bottom: 30px;
+    
+  }
+
+  /* Button container styling */
+  .supplier-card .btn-container {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons horizontally */
+    gap: 10px; /* Spacing between buttons */
+    margin-top: 15px; /* Spacing above buttons */
+  }
+
+  /* Primary button styling */
+  .supplier-card .btn-primary {
+    background-color: var(--color-4); /* Button background */
+    border-color: var(--color-4); /* Button border */
+    color: #fff; /* Button text color */
+    border-radius: 5px; /* Rounded edges */
+    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+    width: 80%; /* Button width */
+    text-align: center; /* Center text */
+  }
+
+  /* Danger button styling */
+  .supplier-card .btn-danger {
+    background-color: var(--color-4); /* Button background */
+    border-color: var(--color-4); /* Button border */
+    color: #fff; /* Button text color */
+    border-radius: 5px; /* Rounded edges */
+    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+    width: 80%; /* Button width */
+    text-align: center; /* Center text */
+  }
+
+  /* Primary button hover effect */
+  .supplier-card .btn-primary:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    background-color: var(--color-2); /* Light background on hover */
+    border-color: var(--color-4); /* Border color on hover */
+    color: var(--color-4); /* Text color on hover */
+  }
+
+  /* Danger button hover effect */
+  .supplier-card .btn-danger:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    background-color: var(--color-2); /* Light background on hover */
+    border-color: var(--color-4); /* Border color on hover */
+    color: var(--color-4); /* Text color on hover */
+  }
+
+  .supplier-card .btn-primary:active {
+    background-color: #b02a00;
+    border-color: #721c00;
+    transform: scale(0.98);
+  }
+
+  .supplier-card .btn-danger:active {
+    background-color: #b02a00;
+    border-color: #721c00;
+    transform: scale(0.98);
+  }
+
+  .btn-outline-secondary:active {
+    background-color: #6c757d; /* Darker background on click */
+    border-color: #6c757d; /* Darker border on click */
+    color: #fff; /* White text on click */
+    transform: scale(0.98); /* Slightly shrink on click */
+  }
+  
+  .btn-outline-secondary:hover {
+    background-color: #b02a00;
+    border-color: #721c00;
+    transform: scale(0.98);
+  }
+
+
+}
