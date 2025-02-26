@@ -144,3 +144,41 @@ body {
   color: var(--color-1) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
+
+/* Form-select styling */
+.form-select {
+  background-color: var(--color-3) !important;
+  border: 3px solid var(--color-1) !important;
+  color: var(--text-color) !important;
+  padding: 10px !important;
+  border-radius: 5px !important;
+  transition: border-color 0.3s ease !important;
+  border-radius: 15px !important;
+}
+
+/* Style the dropdown options */
+.form-select option {
+  background-color: #faf8ed !important;
+  color: var(--text-color) !important;
+}
+
+/* Mimic placeholder for the default option */
+.form-select option:disabled[selected] {
+  color: var(--placeholder-color) !important;
+}
+
+/* Focus state */
+.form-select:focus {
+  border-color: var(--color-1) !important;
+  box-shadow: 0 0 5px rgba(var(--color-1-rgb), 0.5) !important;
+  outline: none !important;
+}
+
+/* Disabled or readonly state */
+.form-select:disabled,
+.form-select[readonly] {
+  background-color: var(--color-3) !important;
+  border-color: var(--color-5) !important;
+  color: var(--placeholder-color) !important;
+  cursor: not-allowed !important;
+}
