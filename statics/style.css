@@ -33,6 +33,11 @@ p {
   color: var(--color-1);
 }
 
+.custom-size {
+  width: 200px !important; /* Set your desired width */
+  height: auto !important; /* Keeps aspect ratio */
+}
+
 i {
   color: var(--color-2);
   font-size: 2em;
