@@ -167,12 +167,12 @@
             <h2 class="fw-semibold">Add New Employee</h2>
           </div>
           <?php if (isset($_SESSION['success'])): ?>
-              <div class="alert alert-success">
+              <div class="alert alert-success mt-2">
                   <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
               </div>
           <?php endif; ?>
           <?php if (isset($_SESSION['add_employee_error'])): ?>
-              <div class="alert alert-danger">
+              <div class="alert alert-danger mt-2">
                   <?php echo $_SESSION['add_employee_error']; unset($_SESSION['add_employee_error']); ?>
               </div>
           <?php endif; ?>
@@ -258,7 +258,17 @@
           <h2 class="fw-semibold">Account Settings</h2>
         </div>
         <div class="card-body px-5 py-4">
-          <form action="#">
+          <?php if (isset($_SESSION['update_account_success'])): ?>
+              <div class="alert alert-success mt-2">
+                  <?php echo $_SESSION['update_account_success']; unset($_SESSION['update_account_success']); ?>
+              </div>
+          <?php endif; ?>
+          <?php if (isset($_SESSION['update_account_error'])): ?>
+              <div class="alert alert-danger mt-2">
+                  <?php echo $_SESSION['update_account_error']; unset($_SESSION['update_account_error']); ?>
+              </div>
+          <?php endif; ?>
+          <form action="../handlers/update-account-handler.php" method="POST">
             <div class="mb-3 row">
               <div class="col-6">
                 <label for="employeeFirstName" class="form-label fw-semibold"
@@ -269,7 +279,9 @@
                   class="form-control"
                   id="employeeFirstName"
                   name="employeeFirstName"
+                  value="<?php echo htmlspecialchars($_SESSION['first_name']); ?>"
                   placeholder="First name"
+                  required
                 />
               </div>
               <div class="col-6">
@@ -281,7 +293,9 @@
                   class="form-control"
                   id="employeeLastName"
                   name="employeeLastName"
+                  value="<?php echo htmlspecialchars($_SESSION['last_name']); ?>"
                   placeholder="Last name"
+                  required
                 />
               </div>
             </div>
@@ -291,11 +305,13 @@
                 >Username</label
               >
               <input
-                type="email"
+                type="text"
                 class="form-control"
                 id="employeeUsername"
                 name="employeeUsername"
+                value="<?php echo htmlspecialchars($_SESSION['username']); ?>"
                 placeholder="Username"
+                required
               />
             </div>
 
@@ -308,7 +324,7 @@
                 class="form-control"
                 id="employeePassword"
                 name="employeePassword"
-                placeholder="Password"
+                placeholder="Enter new password (leave blank to keep current)"
               />
             </div>
 
@@ -323,7 +339,7 @@
                 class="form-control"
                 id="employeeConfirmPassword"
                 name="employeeConfirmPassword"
-                placeholder="Confirm password"
+                placeholder="Confirm new password"
               />
             </div>
 
@@ -339,6 +355,7 @@
                 id="employeeOldPassword"
                 name="employeeOldPassword"
                 placeholder="Enter old password"
+                required
               />
               <div id="passwordHelpBlock" class="form-text">
                 Please enter your old password before comitting any changes.

@@ -36,7 +36,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         if ($stmt->execute()) {
             $_SESSION['success'] = "Employee added successfully!";
-            header("Location: ../views/account.php"); // Redirect to account on success
+            header("Location: ../views/account.php"); // Redirect to accounts on success
             exit;
         } else {
             throw new Exception("Insert failed: " . $stmt->error);
