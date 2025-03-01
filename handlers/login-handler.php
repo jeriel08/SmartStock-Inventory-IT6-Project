@@ -11,6 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($user) {
             $_SESSION['user_id'] = $user['EmployeeID'];
             $_SESSION['username'] = $user['Username'];
+            $_SESSION['first_name'] = $user['FirstName']; // Add FirstName
+            $_SESSION['last_name'] = $user['LastName'];   // Add LastName
+            $_SESSION['role'] = $user['Role'];            // Add Role
 
             // Generate a unique token for session security
             $_SESSION['access_token'] = bin2hex(random_bytes(32));
@@ -31,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 function verifyUser($username, $password) {
     global $conn;
-    $stmt = $conn->prepare("SELECT EmployeeID, Username, Password FROM employees WHERE Username = ?");
+    $stmt = $conn->prepare("SELECT EmployeeID, Username, Password, FirstName, LastName, Role FROM employees WHERE Username = ?");
     $stmt->bind_param('s', $username);
     $stmt->execute();
     $result = $stmt->get_result();

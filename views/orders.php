@@ -1,3 +1,11 @@
+<?php
+  session_start();
+  if (!isset($_SESSION['user_id'])) {
+    header('Location: ../index.php');
+    exit();
+  }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -44,8 +52,12 @@
         <div class="d-flex align-items-center me-5 ms-auto">
           <span class="material-icons-outlined me-2 fs-1">account_circle</span>
           <div>
-            <p class="fw-bold mb-0">Username</p>
-            <small>Role</small>
+            <p class="fw-bold mb-0">
+              <?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?>
+            </p>
+            <small class="mt-0">
+              <?php echo htmlspecialchars($_SESSION['role']); ?>
+            </small>
           </div>
         </div>
 
