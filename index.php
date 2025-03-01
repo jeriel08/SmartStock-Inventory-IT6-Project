@@ -45,7 +45,16 @@
               <p class="display-5 fw-bold">Login</p>
             </div>
             <div>
-              <form action="" class="form">
+              
+              <form action="handlers/login-handler.php" method="POST" class="form">
+                <?php if (isset($_SESSION['login_error'])): ?>
+                  <div class="alert alert-danger">
+                    <?php              
+                      echo $_SESSION['login_error'];
+                      unset($_SESSION['login_error']);                        
+                    ?>             
+                  </div>                         
+                <?php endif; ?>
                 <div class="mb-3">
                   <label for="username" class="fw-semibold mb-1"
                     >Username</label
@@ -54,7 +63,9 @@
                     type="text"
                     class="form-control"
                     id="username"
+                    name = "username"
                     placeholder="Enter your username"
+                    required
                   />
                 </div>
                 <div class="mb-3">
@@ -66,7 +77,9 @@
                       type="password"
                       class="form-control password-input"
                       id="password"
+                      name="password"
                       placeholder="Enter your password"
+                      required
                     />
                     <button
                       type="button"

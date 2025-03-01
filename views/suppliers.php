@@ -39,7 +39,7 @@
           >
             <span class="material-icons-outlined navbar-icon"> menu </span>
           </button>
-          <a class="navbar-brand fw-semibold" href="purchases.html">SUPPLIER</a>
+          <a class="navbar-brand fw-semibold" href="suppliers.php">SUPPLIER</a>
         </div>
 
         <!-- Right side: Account Section -->
@@ -72,7 +72,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                  href="dashboard.html"
+                  href="dashboard.php"
                 >
                   <span class="material-icons-outlined"> dashboard </span>
                   Dashboard
@@ -81,7 +81,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                  href="products.html"
+                  href="products.php"
                 >
                   <span class="material-icons-outlined"> inventory_2 </span>
                   Products
@@ -90,7 +90,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                  href="orders.html"
+                  href="orders.php"
                 >
                   <span class="material-icons-outlined"> shopping_cart </span>
                   Orders
@@ -99,7 +99,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4 active"
-                  href="suppliers.html"
+                  href="suppliers.php"
                 >
                   <span class="material-icons-outlined"> inventory </span>
                   Suppliers
@@ -108,7 +108,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                  href="purchases.html"
+                  href="purchases.php"
                 >
                   <span class="material-icons-outlined"> shopping_bag </span>
                   Purchases
@@ -117,7 +117,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                  href="returns.html"
+                  href="returns.php"
                 >
                   <span class="material-icons-outlined">
                     assignment_return
@@ -128,7 +128,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                  href="account.html"
+                  href="account.php"
                 >
                   <span class="material-icons-outlined"> account_circle </span>
                   Account
@@ -137,7 +137,7 @@
               <li class="nav-item">
                 <a
                   class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                  href="../index.html"
+                  href="../handlers/logout-handler.php"
                 >
                   <span class="material-icons-outlined"> logout </span>
                   Logout
