@@ -4,6 +4,7 @@
     header('Location: ../index.php');
     exit();
   }
+  include '../database/database.php';
 ?>
 
 <!DOCTYPE html>
@@ -176,7 +177,7 @@
           </button>
         </div>
         <?php if (isset($_SESSION['success'])): ?>
-            <div class="alert alert-success">
+            <div class="alert alert-success mt-4">
                 <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
             </div>
         <?php endif; ?>
@@ -190,29 +191,47 @@
       <!-- Supplier Cards Section -->
       <div class="supplier-page my-4">
         <div class="row mt-4">
-          <!-- Supplier Card 1 -->
-          <div class="col-md-4 mb-4">
-            <div class="card supplier-card">
-              <div class="card-body">
-                <img src="./picsdemo/jeriel.jpg" alt="Supplier 1" class="pic" />
-                <h5 class="card-title">Supplier Name 1</h5>
-                <p class="card-text">
-                  <strong>Address:</strong> 123 Supplier St, City, Country<br />
-                  <strong>Phone:</strong> +123 456 7890<br />
-                </p>
-                <div class="btn-container">
-                  <button class="btn btn-primary gap-2 rounded-4">
-                    <span class="material-symbols-outlined"></span>
-                    <span>Contact Supplier</span>
-                  </button>
-                  <button class="btn btn-danger gap-2 rounded-4">
-                    Delete Supplier
-                  </button>
+          <?php
+          $stmt = $conn ->prepare('SELECT SupplierID, Name, Address, PhoneNumber, ProfileImage FROM suppliers');
+          $stmt -> execute();
+          $result = $stmt->get_result();
+
+          if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+              $supplierId = htmlspecialchars($row['SupplierID']);
+              $name = htmlspecialchars($row['Name']);
+              $address = htmlspecialchars($row['Address']);
+              $phone = htmlspecialchars($row['PhoneNumber']);
+              $imagePath = $row['ProfileImage'] ? htmlspecialchars($row['ProfileImage']) : '../statics/images/default-supplier.jpg';
+          ?>  
+            <div class="col-md-4 mb-4">
+              <div class="card supplier-card">
+                <div class="card-body">
+                  <img src="<?php echo $imagePath; ?>" alt="<?php echo $name; ?>" class="pic" />
+                  <h5 class="card-title"><?php echo $name; ?></h5>
+                  <p class="card-text">
+                    <strong>Address:</strong> <?php echo $address; ?><br />
+                    <strong>Phone:</strong> <?php echo $phone; ?><br />
+                  </p>
+                  <div class="btn-container">
+                    <button class="btn btn-primary gap-2 rounded-4" onclick="contactSupplier(<?php echo $supplierId; ?>)">
+                      <span class="material-icons-outlined">phone</span>
+                      <span>Contact Supplier</span>
+                    </button>
+                    <button class="btn btn-danger gap-2 rounded-4" onclick="deleteSupplier(<?php echo $supplierId; ?>)">
+                      <span class="material-icons-outlined">delete</span>
+                      <span>Delete Supplier</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
+          <?php
+            }
+          } else {
+            echo '<div class="col-12 text-center">No suppliers found.</div>';
+          }
+          ?>
         </div>
       </div>
     </div>
