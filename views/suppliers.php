@@ -4,6 +4,7 @@
     header('Location: ../index.php');
     exit();
   }
+  include '../database/database.php';
 ?>
 
 <!DOCTYPE html>
@@ -163,7 +164,7 @@
 
     <div class="container mt-4 pt-5">
       <div class="row align-items-center justify-content-end">
-        <!-- Filter and Add Product Buttons -->
+        <!-- Add Product Buttons -->
         <div class="col-md-auto d-flex gap-2">
           <button
             type="button"
@@ -175,86 +176,252 @@
             <span>Add Supplier</span>
           </button>
         </div>
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success mt-4">
+                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger">
+                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
       </div>
 
       <!-- Supplier Cards Section -->
-      <div class="supplier-page mt-4">
-        <div class="row mt-4">
-          <!-- Supplier Card 1 -->
-          <div class="col-md-4">
-            <div class="card supplier-card">
-              <div class="card-body">
-                <img src="./picsdemo/jeriel.jpg" alt="Supplier 1" class="pic" />
-                <h5 class="card-title">Supplier Name 1</h5>
-                <p class="card-text">
-                  <strong>Address:</strong> 123 Supplier St, City, Country<br />
-                  <strong>Phone:</strong> +123 456 7890<br />
-                  <strong>Email:</strong> supplier1@example.com
-                </p>
-                <div class="btn-container">
-                  <button class="btn btn-primary gap-2 rounded-4">
-                    <span class="material-symbols-outlined"></span>
-                    <span>Contact Supplier</span>
-                  </button>
-                  <button class="btn btn-danger gap-2 rounded-4">
-                    Delete Supplier
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="supplier-page my-4">
+            <div class="row mt-4">
+                <?php
+                $stmt = $conn->prepare('SELECT SupplierID, Name, Address, PhoneNumber, ProfileImage FROM suppliers');
+                $stmt->execute();
+                $result = $stmt->get_result();
 
-          <!-- Supplier Card 2 -->
-          <div class="col-md-4">
-            <div class="card supplier-card">
-              <div class="card-body">
-                <img src="./picsdemo/russel.jpg" alt="Supplier 2" class="pic" />
-                <h5 class="card-title">Supplier Name 2</h5>
-                <p class="card-text">
-                  <strong>Address:</strong> 456 Supplier Ave, City, Country<br />
-                  <strong>Phone:</strong> +123 456 7891<br />
-                  <strong>Email:</strong> supplier2@example.com
-                </p>
-                <div class="btn-container">
-                  <button class="btn btn-primary gap-2 rounded-4">
-                    Contact Supplier
-                  </button>
-                  <button class="btn btn-danger gap-2 rounded-4">
-                    Delete Supplier
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $supplierId = htmlspecialchars($row['SupplierID']);
+                        $name = htmlspecialchars($row['Name']);
+                        $address = htmlspecialchars($row['Address']);
+                        $phone = htmlspecialchars($row['PhoneNumber']);
+                        $imagePath = $row['ProfileImage'] ? htmlspecialchars($row['ProfileImage']) : '../statics/images/default_supplier_profile.png';
+                ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card supplier-card">
+                            <div class="card-body">
+                                <img src="<?php echo $imagePath; ?>" alt="<?php echo $name; ?>" class="pic" />
+                                <h5 class="card-title"><?php echo $name; ?></h5>
+                                <p class="card-text">
+                                    <strong>Address:</strong> <?php echo $address; ?><br />
+                                    <strong>Phone:</strong> <?php echo $phone; ?><br />
+                                </p>
+                                <div class="btn-container">
+                                    <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 rounded-4" 
+                                            data-bs-toggle="modal" data-bs-target="#contactModal<?php echo $supplierId; ?>">
+                                        <span class="material-icons-outlined">phone</span>
+                                        <span>Contact Supplier</span>
+                                    </button>
+                                    <button class="btn btn-danger d-flex align-items-center justify-content-center gap-2 py-2 rounded-4" 
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $supplierId; ?>">
+                                        <span class="material-icons-outlined">delete</span>
+                                        <span>Delete Supplier</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-          <!-- Supplier Card 3 -->
-          <div class="col-md-4">
-            <div class="card supplier-card">
-              <div class="card-body">
-                <img src="./picsdemo/paula.jpg" alt="Supplier 3" class="pic" />
-                <h5 class="card-title">Supplier Name 3</h5>
-                <p class="card-text">
-                  <strong>Address:</strong> 789 Supplier Blvd, City, Country<br />
-                  <strong>Phone:</strong> +123 456 7892<br />
-                  <strong>Email:</strong> supplier3@example.com
-                </p>
-                <div class="btn-container">
-                  <button class="btn btn-primary gap-2 rounded-4">
-                    Contact Supplier
-                  </button>
-                  <button class="btn btn-danger gap-2 rounded-4">
-                    Delete Supplier
-                  </button>
-                </div>
-              </div>
+                    <!-- Contact Supplier Modal -->
+                    <div class="modal fade" id="contactModal<?php echo $supplierId; ?>" tabindex="-1" 
+                         aria-labelledby="contactModalLabel<?php echo $supplierId; ?>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="contactModalLabel<?php echo $supplierId; ?>">Contact <?php echo $name; ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Phone Number:</strong> <?php echo $phone; ?></p>
+                                    <p>Contact this supplier by calling the number above.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="tel:<?php echo $phone; ?>" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
+                                    <span class="material-icons-outlined">phone</span>
+                                      Call Now
+                                    </a>
+                                    <button 
+                                    type="button" 
+                                    class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" 
+                                    data-bs-dismiss="modal">
+                                    <span class="material-icons-outlined">close</span>
+                                      Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Supplier Modal -->
+                    <div class="modal fade" id="deleteModal<?php echo $supplierId; ?>" tabindex="-1" 
+                         aria-labelledby="deleteModalLabel<?php echo $supplierId; ?>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel<?php echo $supplierId; ?>">Delete <?php echo $name; ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete "<?php echo $name; ?>"? This action cannot be undone.
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="../handlers/delete-supplier-handler.php" method="POST">
+                                        <input type="hidden" name="supplierId" value="<?php echo $supplierId; ?>">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php
+                    }
+                } else {
+                    echo '<div class="col-12 text-center">No suppliers found.</div>';
+                }
+                $stmt->close();
+                ?>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
     </div>
 
-    <!-- START -->
+    <!-- Modal -->
+    <div
+          class="modal fade"
+          id="staticBackdrop"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabindex="-1"
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div
+            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+          >
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1
+                  class="modal-title fs-5 d-flex align-items-center gap-2"
+                  id="staticBackdropLabel"
+                >
+                  <span class="material-icons-outlined fs-2"> add_box </span>
+                  Add Supplier
+                </h1>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <form action="../handlers/add-supplier-handler.php" method="POST" class="py-3" enctype="multipart/form-data">
+                <div class="modal-body">
+                  <!-- Supplier Name -->
+                  <div class="row mb-3">
+                    <label
+                      for="supplierName"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Supplier Name</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="supplierName"
+                        name="supplierName"
+                        placeholder="Enter supplier name"
+                        required
+                      />
+                    </div>
+                  </div>
 
-    <!-- STOP  -->
+                  <!-- Address -->
+                  <div class="row mb-3">
+                    <label
+                      for="address"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Address</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="address"
+                        name="address"
+                        placeholder="Enter supplier address"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Contact Number -->
+                  <div class="row mb-3">
+                    <label
+                      for="contactNumber"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Contact Number</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="contactNumber"
+                        name="contactNumber"
+                        placeholder="Enter contact number"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Supplier Profile -->
+                  <div class="row mb-3">
+                    <label
+                      for="profileImage"
+                      class="col-md-3 col-form-label text-md-end"
+                      >Profile Image</label
+                    >
+                    <div class="col-md-9">
+                      <input
+                        type="file"
+                        class="form-control"
+                        id="profileImage"
+                        name="profileImage"
+                        accept="image/*"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                  <button
+                    type="submit"
+                    class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4"
+                  >
+                    <span class="material-icons-outlined">add</span>
+                    <span>Add Supplier</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                    data-bs-dismiss="modal"
+                  >
+                    <span class="material-icons-outlined">close</span>
+                    Close
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+    </div>
+
+    
   </body>
 </html>
