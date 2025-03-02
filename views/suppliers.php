@@ -202,7 +202,7 @@
               $name = htmlspecialchars($row['Name']);
               $address = htmlspecialchars($row['Address']);
               $phone = htmlspecialchars($row['PhoneNumber']);
-              $imagePath = $row['ProfileImage'] ? htmlspecialchars($row['ProfileImage']) : '../statics/images/default-supplier.jpg';
+              $imagePath = $row['ProfileImage'] ? htmlspecialchars($row['ProfileImage']) : '../statics/images/default_supplier_profile.png';
           ?>  
             <div class="col-md-4 mb-4">
               <div class="card supplier-card">
@@ -214,11 +214,11 @@
                     <strong>Phone:</strong> <?php echo $phone; ?><br />
                   </p>
                   <div class="btn-container">
-                    <button class="btn btn-primary gap-2 rounded-4" onclick="contactSupplier(<?php echo $supplierId; ?>)">
+                    <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 rounded-4" onclick="contactSupplier(<?php echo $supplierId; ?>)">
                       <span class="material-icons-outlined">phone</span>
                       <span>Contact Supplier</span>
                     </button>
-                    <button class="btn btn-danger gap-2 rounded-4" onclick="deleteSupplier(<?php echo $supplierId; ?>)">
+                    <button class="btn btn-danger d-flex align-items-center justify-content-center gap-2 py-2 rounded-4" onclick="deleteSupplier(<?php echo $supplierId; ?>)">
                       <span class="material-icons-outlined">delete</span>
                       <span>Delete Supplier</span>
                     </button>
