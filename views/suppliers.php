@@ -190,54 +190,111 @@
 
       <!-- Supplier Cards Section -->
       <div class="supplier-page my-4">
-        <div class="row mt-4">
-          <?php
-          $stmt = $conn ->prepare('SELECT SupplierID, Name, Address, PhoneNumber, ProfileImage FROM suppliers');
-          $stmt -> execute();
-          $result = $stmt->get_result();
+            <div class="row mt-4">
+                <?php
+                $stmt = $conn->prepare('SELECT SupplierID, Name, Address, PhoneNumber, ProfileImage FROM suppliers');
+                $stmt->execute();
+                $result = $stmt->get_result();
 
-          if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-              $supplierId = htmlspecialchars($row['SupplierID']);
-              $name = htmlspecialchars($row['Name']);
-              $address = htmlspecialchars($row['Address']);
-              $phone = htmlspecialchars($row['PhoneNumber']);
-              $imagePath = $row['ProfileImage'] ? htmlspecialchars($row['ProfileImage']) : '../statics/images/default_supplier_profile.png';
-          ?>  
-            <div class="col-md-4 mb-4">
-              <div class="card supplier-card">
-                <div class="card-body">
-                  <img src="<?php echo $imagePath; ?>" alt="<?php echo $name; ?>" class="pic" />
-                  <h5 class="card-title"><?php echo $name; ?></h5>
-                  <p class="card-text">
-                    <strong>Address:</strong> <?php echo $address; ?><br />
-                    <strong>Phone:</strong> <?php echo $phone; ?><br />
-                  </p>
-                  <div class="btn-container">
-                    <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 rounded-4" onclick="contactSupplier(<?php echo $supplierId; ?>)">
-                      <span class="material-icons-outlined">phone</span>
-                      <span>Contact Supplier</span>
-                    </button>
-                    <button class="btn btn-danger d-flex align-items-center justify-content-center gap-2 py-2 rounded-4" onclick="deleteSupplier(<?php echo $supplierId; ?>)">
-                      <span class="material-icons-outlined">delete</span>
-                      <span>Delete Supplier</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $supplierId = htmlspecialchars($row['SupplierID']);
+                        $name = htmlspecialchars($row['Name']);
+                        $address = htmlspecialchars($row['Address']);
+                        $phone = htmlspecialchars($row['PhoneNumber']);
+                        $imagePath = $row['ProfileImage'] ? htmlspecialchars($row['ProfileImage']) : '../statics/images/default_supplier_profile.png';
+                ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card supplier-card">
+                            <div class="card-body">
+                                <img src="<?php echo $imagePath; ?>" alt="<?php echo $name; ?>" class="pic" />
+                                <h5 class="card-title"><?php echo $name; ?></h5>
+                                <p class="card-text">
+                                    <strong>Address:</strong> <?php echo $address; ?><br />
+                                    <strong>Phone:</strong> <?php echo $phone; ?><br />
+                                </p>
+                                <div class="btn-container">
+                                    <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 rounded-4" 
+                                            data-bs-toggle="modal" data-bs-target="#contactModal<?php echo $supplierId; ?>">
+                                        <span class="material-icons-outlined">phone</span>
+                                        <span>Contact Supplier</span>
+                                    </button>
+                                    <button class="btn btn-danger d-flex align-items-center justify-content-center gap-2 py-2 rounded-4" 
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $supplierId; ?>">
+                                        <span class="material-icons-outlined">delete</span>
+                                        <span>Delete Supplier</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Supplier Modal -->
+                    <div class="modal fade" id="contactModal<?php echo $supplierId; ?>" tabindex="-1" 
+                         aria-labelledby="contactModalLabel<?php echo $supplierId; ?>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="contactModalLabel<?php echo $supplierId; ?>">Contact <?php echo $name; ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Phone Number:</strong> <?php echo $phone; ?></p>
+                                    <p>Contact this supplier by calling the number above.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="tel:<?php echo $phone; ?>" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
+                                    <span class="material-icons-outlined">phone</span>
+                                      Call Now
+                                    </a>
+                                    <button 
+                                    type="button" 
+                                    class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" 
+                                    data-bs-dismiss="modal">
+                                    <span class="material-icons-outlined">close</span>
+                                      Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Supplier Modal -->
+                    <div class="modal fade" id="deleteModal<?php echo $supplierId; ?>" tabindex="-1" 
+                         aria-labelledby="deleteModalLabel<?php echo $supplierId; ?>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel<?php echo $supplierId; ?>">Delete <?php echo $name; ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete "<?php echo $name; ?>"? This action cannot be undone.
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="../handlers/delete-supplier-handler.php" method="POST">
+                                        <input type="hidden" name="supplierId" value="<?php echo $supplierId; ?>">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php
+                    }
+                } else {
+                    echo '<div class="col-12 text-center">No suppliers found.</div>';
+                }
+                $stmt->close();
+                ?>
             </div>
-          <?php
-            }
-          } else {
-            echo '<div class="col-12 text-center">No suppliers found.</div>';
-          }
-          ?>
         </div>
-      </div>
+    </div>
     </div>
 
-        <!-- Modal -->
-        <div
+    <!-- Modal -->
+    <div
           class="modal fade"
           id="staticBackdrop"
           data-bs-backdrop="static"
@@ -363,6 +420,8 @@
               </form>
             </div>
           </div>
-        </div>
+    </div>
+
+    
   </body>
 </html>
