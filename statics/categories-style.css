@@ -1,0 +1,18 @@
+body {
+  padding-top: 35px; /* Matches navbar height to prevent overlap */
+}
+
+.container.custom-container {
+  background-color: #f4efca !important;
+  color: #f66435 !important;
+  padding: 2.5em !important; /* Adjusted spacing for fixed navbar */
+  margin-top: 6em !important;
+}
+
+.container.custom-container .card {
+  border-color: #f66435 !important;
+}
+
+.container.custom-container .modal-content {
+  color: #f66435 !important;
+}

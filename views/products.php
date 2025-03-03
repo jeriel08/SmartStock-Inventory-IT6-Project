@@ -371,12 +371,13 @@
                           <span class="material-icons-outlined fs-2"> add_box </span>
                           Add Category
                         </h5>
-                        <button
+                        <a
                           class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                          href="products/categories.php"
                         >
                           <span class="material-icons-outlined">category</span>
                           <span>Manage Categories</span>
-                        </button>
+                        </a>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form action="../handlers/add-category-handler.php" method="POST">
