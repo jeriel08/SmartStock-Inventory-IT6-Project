@@ -165,10 +165,21 @@ include '../../database/database.php';
       </div>
     </nav>
     <div class="container mt-4 pt-5 custom-container rounded-4">
-        <button type="button" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4 mb-4" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-            <span class="material-icons-outlined">add</span>
-            Add Category
-        </button>
+        <div class="row justify-content-between align-items-center mb-4">
+            <div class="col-auto">
+                <a href="../products.php" class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 rounded-4">
+                    <span class="material-icons-outlined">arrow_back</span>
+                    Go back
+                </a>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <span class="material-icons-outlined">add</span>
+                    Add Category
+                </button>
+            </div>
+        </div>
+        
 
         <!-- Category List -->
         <?php
@@ -179,12 +190,20 @@ include '../../database/database.php';
             <div class="card mb-3">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="card-title"><?php echo htmlspecialchars($row['Name']); ?></h5>
+                        <h3 class="card-title fw-semibold"><?php echo htmlspecialchars($row['Name']); ?></h3>
                         <p class="card-text"><?php echo htmlspecialchars($row['Description'] ?: 'No description'); ?></p>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-outline-primary">Edit</button>
-                        <button class="btn btn-outline-danger">Delete</button>
+                        <button class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
+                            <span class="material-icons-outlined">
+                            edit
+                            </span>
+                        </button>
+                        <button class="btn btn-outline-danger d-flex align-items-center gap-2 py-2 rounded-4">
+                            <span class="material-icons-outlined">
+                            remove_circle_outline
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -1,3 +1,11 @@
+:root {
+  --color-1: #f66435;
+  --color-2: #f4efca;
+  --color-3: #f5deb3;
+  --color-4: #ff7f50;
+  --color-5: #d49066;
+}
+
 body {
   padding-top: 35px; /* Matches navbar height to prevent overlap */
 }
@@ -10,7 +18,12 @@ body {
 }
 
 .container.custom-container .card {
+  background-color: var(--color-3);
   border-color: #f66435 !important;
+}
+
+.container.custom-container .card .card-body .card-title {
+  color: #f66435 !important;
 }
 
 .container.custom-container .modal-content {
