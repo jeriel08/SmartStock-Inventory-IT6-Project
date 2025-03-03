@@ -182,12 +182,11 @@
         </div>
 
         <div class="col-md-auto d-flex gap-2">
-          <button
-            class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
-          >
-            <span class="material-icons-outlined">tune</span>
-            <span>Filter</span>
-          </button>
+          <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 rounded-4" 
+                        data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <span class="material-icons-outlined">category</span>
+                    <span>Add Category</span>
+                </button>
           <button
             type="button"
             class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4"
@@ -235,7 +234,7 @@
           </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Add Product Modal -->
         <div
           class="modal fade"
           id="staticBackdrop"
@@ -403,5 +402,52 @@
         </div>
       </div>
     </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false" 
+             tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title me-3 d-flex align-items-center gap-2" id="addCategoryModalLabel">
+                          <span class="material-icons-outlined fs-2"> add_box </span>
+                          Add Category
+                        </h5>
+                        <button
+                          class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                        >
+                          <span class="material-icons-outlined">category</span>
+                          <span>Manage Categories</span>
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="../handlers/add-category-handler.php" method="POST">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="categoryName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="categoryName" name="categoryName" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="categoryDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="categoryDescription" name="categoryDescription"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
+                              <span class="material-icons-outlined">add</span>
+                              <span>Add Category</span> 
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                              data-bs-dismiss="modal"
+                            >
+                              <span class="material-icons-outlined">close</span>
+                              Close
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
   </body>
 </html>
