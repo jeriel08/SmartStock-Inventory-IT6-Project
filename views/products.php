@@ -1,5 +1,6 @@
 <?php
   session_start();
+  include '../database/database.php';
   if (!isset($_SESSION['user_id'])) {
     header('Location: ../index.php');
     exit();
@@ -234,173 +235,130 @@
           </div>
         </div>
 
-        <!-- Add Product Modal -->
-        <div
-          class="modal fade"
-          id="staticBackdrop"
-          data-bs-backdrop="static"
-          data-bs-keyboard="false"
-          tabindex="-1"
-          aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
-          <div
-            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
-          >
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1
-                  class="modal-title fs-5 d-flex align-items-center gap-2"
-                  id="staticBackdropLabel"
-                >
-                  <span class="material-icons-outlined fs-2"> add_box </span>
-                  Add Product
-                </h1>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <form action="#" class="py-3">
-                <div class="modal-body">
-                  <!-- Item Name -->
-                  <div class="row mb-3">
-                    <label
-                      for="itemName"
-                      class="col-md-3 col-form-label text-md-end"
-                      >Item Name</label
-                    >
-                    <div class="col-md-9">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="itemName"
-                        name="itemName"
-                        placeholder="Enter item name"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Supplier -->
-                  <div class="row mb-3">
-                    <label
-                      for="supplier"
-                      class="col-md-3 col-form-label text-md-end"
-                      >Supplier</label
-                    >
-                    <div class="col-md-9">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="supplier"
-                        name="supplier"
-                        placeholder="Enter supplier"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Category -->
-                  <div class="row mb-3">
-                    <label
-                      for="category"
-                      class="col-md-3 col-form-label text-md-end"
-                      >Category</label
-                    >
-                    <div class="col-md-9">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="category"
-                        name="category"
-                        placeholder="Enter category"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Quantity -->
-                  <div class="row mb-3">
-                    <label
-                      for="quantity"
-                      class="col-md-3 col-form-label text-md-end"
-                      >Quantity</label
-                    >
-                    <div class="col-md-9">
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="quantity"
-                        name="quantity"
-                        placeholder="Enter quantity"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Cost -->
-                  <div class="row mb-3">
-                    <label
-                      for="cost"
-                      class="col-md-3 col-form-label text-md-end"
-                      >Cost</label
-                    >
-                    <div class="col-md-9">
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="cost"
-                        name="cost"
-                        placeholder="Enter cost"
-                        step="0.01"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Price -->
-                  <div class="row mb-3">
-                    <label
-                      for="price"
-                      class="col-md-3 col-form-label text-md-end"
-                      >Price</label
-                    >
-                    <div class="col-md-9">
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="price"
-                        name="price"
-                        placeholder="Enter price"
-                        step="0.01"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="modal-footer justify-content-center">
-                  <button
-                    type="button"
-                    class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4"
-                  >
-                    <span class="material-icons-outlined">add</span>
-                    <span>Add Product</span>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
-                    data-bs-dismiss="modal"
-                  >
-                    <span class="material-icons-outlined">close</span>
-                    Close
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        
       </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" 
+         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 d-flex align-items-center gap-2" id="staticBackdropLabel">
+                        <span class="material-icons-outlined fs-2">add_box</span>
+                        Add Product
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="../handlers/add-product-handler.php" method="POST">
+                    <div class="modal-body">
+                        <!-- Product Name -->
+                        <div class="row mb-3">
+                            <label for="productName" class="col-md-3 col-form-label text-md-end">Product Name</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="productName" name="productName" 
+                                       placeholder="Enter product name" required />
+                            </div>
+                        </div>
+
+                        <!-- Supplier (as dropdown) -->
+                        <div class="row mb-3">
+                            <label for="supplier" class="col-md-3 col-form-label text-md-end">Supplier</label>
+                            <div class="col-md-9">
+                                <select name="supplierId" id="supplier" class="form-select" required>
+                                    <option value="" selected disabled>Select a supplier</option>
+                                    <?php
+                                    $stmt = $conn->prepare("SELECT SupplierID, Name FROM suppliers");
+                                    if ($stmt === false) {
+                                        error_log("Prepare failed for suppliers: " . $conn->error);
+                                        echo "<option value=''>Error loading suppliers</option>";
+                                    } else {
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo "<option value='{$row['SupplierID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                                            }
+                                        } else {
+                                            echo "<option value=''>No suppliers available</option>";
+                                        }
+                                        $stmt->close();
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="row mb-3">
+                            <label for="category" class="col-md-3 col-form-label text-md-end">Category</label>
+                            <div class="col-md-9">
+                                <select name="categoryId" id="category" class="form-select" required>
+                                    <option value="" selected disabled>Select a category</option>
+                                    <?php
+                                    $stmt = $conn->prepare("SELECT CategoryID, Name FROM categories");
+                                    if ($stmt === false) {
+                                        error_log("Prepare failed for categories: " . $conn->error);
+                                        echo "<option value=''>Error loading categories</option>";
+                                    } else {
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo "<option value='{$row['CategoryID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                                            }
+                                        } else {
+                                            echo "<option value=''>No categories available</option>";
+                                        }
+                                        $stmt->close();
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="row mb-3">
+                            <label for="quantity" class="col-md-3 col-form-label text-md-end">Quantity</label>
+                            <div class="col-md-9">
+                                <input type="number" class="form-control" id="quantity" name="quantity" 
+                                       placeholder="Enter quantity" min="0" required />
+                            </div>
+                        </div>
+
+                        <!-- Cost -->
+                        <div class="row mb-3">
+                            <label for="cost" class="col-md-3 col-form-label text-md-end">Cost</label>
+                            <div class="col-md-9">
+                                <input type="number" class="form-control" id="cost" name="cost" 
+                                       placeholder="Enter cost" step="0.01" min="0" required />
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="row mb-3">
+                            <label for="price" class="col-md-3 col-form-label text-md-end">Price</label>
+                            <div class="col-md-9">
+                                <input type="number" class="form-control" id="price" name="price" 
+                                       placeholder="Enter price" step="0.01" min="0" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 py-2 rounded-4">
+                            <span class="material-icons-outlined">add</span>
+                            <span>Add Product</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" 
+                                data-bs-dismiss="modal">
+                            <span class="material-icons-outlined">close</span>
+                            Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Add Category Modal -->
