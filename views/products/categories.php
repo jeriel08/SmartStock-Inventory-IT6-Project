@@ -198,35 +198,48 @@ include '../../database/database.php';
         <!-- Category List -->
         <?php
         $stmt = $conn->prepare("SELECT CategoryID, Name, Description FROM categories");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()): ?>
-            <div class="card mb-3">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <h3 class="card-title fw-semibold"><?php echo htmlspecialchars($row['Name']); ?></h3>
-                        <p class="card-text"><?php echo htmlspecialchars($row['Description'] ?: 'No description'); ?></p>
+        if ($stmt === false) {
+            echo '<div class="card mb-3"><div class="card-body text-center"><p>Error preparing statement!</p></div></div>';
+        }
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()): ?>
+                    <div class="card mb-3" style="border-color: #f66435;">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <h3 class="card-title fw-semibold" style="color: #f66435;"><?php echo htmlspecialchars($row['Name']); ?></h3>
+                                <p class="card-text" style="color: #f66435;"><?php echo htmlspecialchars($row['Description'] ?: 'No description'); ?></p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editCategoryModal"
+                                        data-category-id="<?php echo $row['CategoryID']; ?>"
+                                        data-category-name="<?php echo htmlspecialchars($row['Name']); ?>"
+                                        data-category-desc="<?php echo htmlspecialchars($row['Description']); ?>">
+                                    <span class="material-icons-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-outline-danger d-flex align-items-center gap-2 py-2 rounded-4" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#deleteCategoryModal"
+                                        data-category-id="<?php echo $row['CategoryID']; ?>"
+                                        data-category-name="<?php echo htmlspecialchars($row['Name']); ?>">
+                                    <span class="material-icons-outlined">remove_circle_outline</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#editCategoryModal"
-                                data-category-id="<?php echo $row['CategoryID']; ?>"
-                                data-category-name="<?php echo htmlspecialchars($row['Name']); ?>"
-                                data-category-desc="<?php echo htmlspecialchars($row['Description']); ?>">
-                            <span class="material-icons-outlined">edit</span>
-                        </button>
-                        <button class="btn btn-outline-danger d-flex align-items-center gap-2 py-2 rounded-4" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#deleteCategoryModal"
-                                data-category-id="<?php echo $row['CategoryID']; ?>"
-                                data-category-name="<?php echo htmlspecialchars($row['Name']); ?>">
-                            <span class="material-icons-outlined">remove_circle_outline</span>
-                        </button>
+                <?php endwhile; ?>
+            <?php } else { ?>
+                <div class="card mb-3" style="border-color: #f66435;">
+                    <div class="card-body text-center">
+                        <span class="material-icons-outlined fs-2" style="color: #f66435;">category</span>
+                        <p class="card-text" style="color: #f66435;">No category yet.</p>
                     </div>
                 </div>
-            </div>
-        <?php endwhile; $stmt->close(); ?>
+            <?php } ?>
+            <?php $stmt->close(); ?>
     </div>
 
     <!-- Add Category Modal -->
