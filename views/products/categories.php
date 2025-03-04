@@ -179,6 +179,20 @@ include '../../database/database.php';
                 </button>
             </div>
         </div>
+        <div class="row justify-content-between align-items-center mb-1">
+          <div class="col-auto">
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-success mt-4">
+                    <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                </div>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger">
+                    <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                </div>
+            <?php endif; ?>
+          </div>
+        </div>
         
 
         <!-- Category List -->
@@ -194,7 +208,7 @@ include '../../database/database.php';
                         <p class="card-text"><?php echo htmlspecialchars($row['Description'] ?: 'No description'); ?></p>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-primary d-flex align-items-center gap-2 py-2 rounded-4" 
+                        <button class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#editCategoryModal"
                                 data-category-id="<?php echo $row['CategoryID']; ?>"
@@ -282,7 +296,7 @@ include '../../database/database.php';
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 py-2 rounded-4">
+                        <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
                             <span class="material-icons-outlined">save</span>
                             <span>Save Changes</span>
                         </button>
