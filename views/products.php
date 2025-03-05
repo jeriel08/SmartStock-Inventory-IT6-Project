@@ -20,6 +20,7 @@ $products = $stmt->get_result();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,14 +32,15 @@ $products = $stmt->get_result();
     <script src="../statics/js/bootstrap.min.js"></script>
     <title>Products | SmartStock Inventory</title>
 </head>
+
 <body class="main">
     <nav class="navbar bg-body-tertiary fixed-top shadow">
         <div class="container-fluid">
             <!-- Left side: Button and Header -->
             <div class="d-flex align-items-center">
-                <button class="navbar-toggler mx-3 border-0 shadow-none" type="button" 
-                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" 
-                        aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <button class="navbar-toggler mx-3 border-0 shadow-none" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                    aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                     <span class="material-icons-outlined navbar-icon">menu</span>
                 </button>
                 <a class="navbar-brand fw-semibold" href="products.php">PRODUCTS</a>
@@ -132,13 +134,13 @@ $products = $stmt->get_result();
                 </form>
             </div>
             <div class="col-md-auto d-flex gap-2">
-                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 rounded-4" 
-                        data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 rounded-4"
+                    data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                     <span class="material-icons-outlined">category</span>
                     <span>Add Category</span>
                 </button>
-                <button type="button" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4" 
-                        data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <button type="button" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4"
+                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     <span class="material-icons-outlined">add</span>
                     <span>Add Product</span>
                 </button>
@@ -170,11 +172,11 @@ $products = $stmt->get_result();
                                     <td class="align-middle"><?php echo htmlspecialchars($row['StockQuantity']); ?></td>
                                     <td class="align-middle"><?php echo htmlspecialchars($row['Status']); ?></td>
                                     <td class="align-middle text-center">
-                                        <button class="btn edit-button btn-primary add-product-button rounded-4" 
-                                                data-bs-toggle="modal" data-bs-target="#editProductModal"
-                                                data-product-id="<?php echo $row['ProductID']; ?>"
-                                                data-price="<?php echo $row['Price']; ?>"
-                                                data-status="<?php echo $row['Status']; ?>">
+                                        <button class="btn edit-button btn-primary add-product-button rounded-4"
+                                            data-bs-toggle="modal" data-bs-target="#editProductModal"
+                                            data-product-id="<?php echo $row['ProductID']; ?>"
+                                            data-price="<?php echo $row['Price']; ?>"
+                                            data-status="<?php echo $row['Status']; ?>">
                                             <span class="material-icons-outlined">edit</span>
                                         </button>
                                     </td>
@@ -193,8 +195,8 @@ $products = $stmt->get_result();
     </div>
 
     <!-- Add Product Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" 
-         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -210,8 +212,8 @@ $products = $stmt->get_result();
                         <div class="row mb-3">
                             <label for="productName" class="col-md-3 col-form-label text-md-end">Product Name</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" id="productName" name="productName" 
-                                       placeholder="Enter product name" required />
+                                <input type="text" class="form-control" id="productName" name="productName"
+                                    placeholder="Enter product name" required />
                             </div>
                         </div>
 
@@ -275,8 +277,8 @@ $products = $stmt->get_result();
                         <div class="row mb-3">
                             <label for="quantity" class="col-md-3 col-form-label text-md-end">Quantity</label>
                             <div class="col-md-9">
-                                <input type="number" class="form-control" id="quantity" name="quantity" 
-                                       placeholder="Enter quantity" min="0" required />
+                                <input type="number" class="form-control" id="quantity" name="quantity"
+                                    placeholder="Enter quantity" min="0" required />
                             </div>
                         </div>
 
@@ -284,8 +286,8 @@ $products = $stmt->get_result();
                         <div class="row mb-3">
                             <label for="cost" class="col-md-3 col-form-label text-md-end">Cost</label>
                             <div class="col-md-9">
-                                <input type="number" class="form-control" id="cost" name="cost" 
-                                       placeholder="Enter cost" step="0.01" min="0" required />
+                                <input type="number" class="form-control" id="cost" name="cost"
+                                    placeholder="Enter cost" step="0.01" min="0" required />
                             </div>
                         </div>
 
@@ -293,8 +295,8 @@ $products = $stmt->get_result();
                         <div class="row mb-3">
                             <label for="price" class="col-md-3 col-form-label text-md-end">Price</label>
                             <div class="col-md-9">
-                                <input type="number" class="form-control" id="price" name="price" 
-                                       placeholder="Enter price" step="0.01" min="0" required />
+                                <input type="number" class="form-control" id="price" name="price"
+                                    placeholder="Enter price" step="0.01" min="0" required />
                             </div>
                         </div>
                     </div>
@@ -303,8 +305,8 @@ $products = $stmt->get_result();
                             <span class="material-icons-outlined">add</span>
                             <span>Add Product</span>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" 
-                                data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                            data-bs-dismiss="modal">
                             <span class="material-icons-outlined">close</span>
                             Close
                         </button>
@@ -315,8 +317,8 @@ $products = $stmt->get_result();
     </div>
 
     <!-- Add Category Modal -->
-    <div class="modal fade" id="addCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false" 
-         tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -346,8 +348,8 @@ $products = $stmt->get_result();
                             <span class="material-icons-outlined">add</span>
                             <span>Add Category</span>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" 
-                                data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                            data-bs-dismiss="modal">
                             <span class="material-icons-outlined">close</span>
                             Close
                         </button>
@@ -357,6 +359,7 @@ $products = $stmt->get_result();
         </div>
     </div>
 
+    <!-- Edit Product Modal -->
     <!-- Edit Product Modal -->
     <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -381,8 +384,8 @@ $products = $stmt->get_result();
                             <label for="editStatus" class="col-md-3 col-form-label text-md-end">Status</label>
                             <div class="col-md-9">
                                 <select class="form-select" id="editStatus" name="status" required>
-                                    <option value="Active">In Stock</option>
-                                    <option value="Inactive">Out of Stock</option>
+                                    <option value="In Stock">In Stock</option>
+                                    <option value="Out of Stock">Out of Stock</option>
                                 </select>
                             </div>
                         </div>
@@ -392,8 +395,8 @@ $products = $stmt->get_result();
                             <span class="material-icons-outlined">save</span>
                             <span>Save Changes</span>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" 
-                                data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                            data-bs-dismiss="modal">
                             <span class="material-icons-outlined">close</span>
                             Close
                         </button>
@@ -405,9 +408,9 @@ $products = $stmt->get_result();
 
     <!-- JavaScript to Populate Edit Modal -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var editModal = document.getElementById('editProductModal');
-            editModal.addEventListener('show.bs.modal', function (event) {
+            editModal.addEventListener('show.bs.modal', function(event) {
                 var button = event.relatedTarget;
                 var productId = button.getAttribute('data-product-id');
                 var price = button.getAttribute('data-price');
@@ -421,5 +424,6 @@ $products = $stmt->get_result();
         });
     </script>
 </body>
+
 </html>
 <?php $conn->close(); ?>

@@ -10,32 +10,32 @@ if (!isset($_SESSION['user_id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productId = $_POST['productId'];
     $price = $_POST['price'];
-    $stockQuantity = $_POST['stockQuantity']; // Added StockQuantity
-    $status = $_POST['status']; // Expects 'In Stock' or 'Out of Stock'
+    $status = $_POST['status'];
     $updatedBy = $_SESSION['user_id'];
 
-    // Log incoming data for debugging
-    error_log("Edit Product: productId=$productId, price=$price, stockQuantity=$stockQuantity, status=$status, updatedBy=$updatedBy");
-
-    $stmt = $conn->prepare("UPDATE products SET Price = ?, StockQuantity = ?, Status = ?, Updated_At = NOW(), Updated_By = ? WHERE ProductID = ?");
-    if ($stmt === false) {
-        error_log("Prepare failed: " . $conn->error);
-        die("Prepare failed: " . $conn->error);
+    // Validate status against allowed enum values
+    $validStatuses = ['In Stock', 'Out of Stock'];
+    if (!in_array($status, $validStatuses)) {
+        $_SESSION['error'] = "Invalid status value";
+        header('Location: ../products.php');
+        exit();
     }
 
-    $stmt->bind_param("dissi", $price, $stockQuantity, $status, $updatedBy, $productId);
+    $stmt = $conn->prepare("
+        UPDATE products 
+        SET Price = ?, Status = ?, Updated_By = ?, Updated_At = NOW()
+        WHERE ProductID = ?
+    ");
+    $stmt->bind_param("dsii", $price, $status, $updatedBy, $productId);
+
     if ($stmt->execute()) {
-        error_log("Update successful for productId=$productId");
-        header('Location: ../views/products.php');
+        $_SESSION['success'] = "Product updated successfully";
     } else {
-        error_log("Update failed: " . $stmt->error);
-        header('Location: ../views/products.php');
+        $_SESSION['error'] = "Failed to update product: " . $conn->error;
     }
-    $stmt->close();
-} else {
-    header('Location: ../views/products.php');
-}
 
-$conn->close();
-exit();
+    $stmt->close();
+    header('Location: ../views/products.php');
+    exit();
+}
 ?>
