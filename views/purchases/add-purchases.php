@@ -179,7 +179,7 @@ if (!isset($conn) || $conn->connect_error) {
                     <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
                 </div>
             <?php endif; ?>
-            <form action="../handlers/add-purchase-handler.php" method="POST">
+            <form action="../../handlers/add-purchase-handler.php" method="POST">
                 <!-- Receiving Header Fields -->
                 <div class="row justify-content-center mb-5">
                     <h4 class="fw-semibold mb-3 text-center">Suppliers</h4>
