@@ -381,8 +381,8 @@ $products = $stmt->get_result();
                             <label for="editStatus" class="col-md-3 col-form-label text-md-end">Status</label>
                             <div class="col-md-9">
                                 <select class="form-select" id="editStatus" name="status" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Out of</option>
+                                    <option value="Active">In Stock</option>
+                                    <option value="Inactive">Out of Stock</option>
                                 </select>
                             </div>
                         </div>

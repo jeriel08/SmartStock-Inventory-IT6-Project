@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306:3308
--- Generation Time: Mar 02, 2025 at 01:31 PM
+-- Generation Time: Mar 05, 2025 at 03:15 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -67,6 +67,14 @@ CREATE TABLE `categories` (
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `Updated_By` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`CategoryID`, `Name`, `Description`, `Created_At`, `Created_By`, `Updated_At`, `Updated_By`) VALUES
+(8, 'Beverages', 'Ilimnon', '2025-03-04 09:27:45', 1, '2025-03-04 14:06:45', 1),
+(9, 'Canned Goods', 'Mga lata', '2025-03-04 14:06:27', 1, '2025-03-04 14:06:27', 1);
 
 -- --------------------------------------------------------
 
@@ -160,12 +168,28 @@ CREATE TABLE `products` (
   `CategoryID` int(11) DEFAULT NULL,
   `Price` decimal(10,2) NOT NULL,
   `StockQuantity` int(11) NOT NULL,
+  `Status` enum('In Stock','Out of Stock') NOT NULL DEFAULT 'In Stock',
   `SupplierID` int(11) NOT NULL,
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `Updated_By` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`ProductID`, `Name`, `Description`, `CategoryID`, `Price`, `StockQuantity`, `Status`, `SupplierID`, `Created_At`, `Created_By`, `Updated_At`, `Updated_By`) VALUES
+(1, 'Glaiza', NULL, 9, 32.00, 2000, 'Out of Stock', 2, '2025-03-04 14:08:19', 1, '2025-03-04 14:52:03', 1),
+(2, 'Glaiza', NULL, 9, 32.00, 67, 'In Stock', 2, '2025-03-04 14:08:27', 1, '2025-03-04 14:53:29', 1),
+(3, 'Glaiza', NULL, 9, 32.00, 12, 'In Stock', 2, '2025-03-04 14:11:33', 1, '2025-03-04 14:21:31', 1),
+(4, 'Glaiza', NULL, 9, 32.00, 100, 'In Stock', 2, '2025-03-04 14:11:39', 1, '2025-03-04 14:53:53', 1),
+(5, 'Glaiza', NULL, 9, 32.00, 12, 'In Stock', 2, '2025-03-04 14:11:48', 1, '2025-03-04 14:21:31', 1),
+(6, 'Jeriel Mega Sardines', NULL, 9, 32.00, 12, 'In Stock', 2, '2025-03-04 14:15:00', 1, '2025-03-04 14:21:31', 1),
+(7, 'Jeriel Mega Sardines', NULL, 9, 322222.00, 32, 'In Stock', 2, '2025-03-04 14:16:31', 1, '2025-03-04 14:49:50', 1),
+(8, 'Test', NULL, 8, 10.00, 10, 'In Stock', 2, '2025-03-04 14:35:12', 1, '2025-03-04 14:35:35', 1),
+(9, 'Red Horse', NULL, 8, 22.00, 22, 'In Stock', 2, '2025-03-04 15:15:29', 1, '2025-03-04 15:15:29', 1);
 
 -- --------------------------------------------------------
 
@@ -177,6 +201,7 @@ CREATE TABLE `receiving` (
   `ReceivingID` int(11) NOT NULL,
   `SupplierID` int(11) DEFAULT NULL,
   `Date` datetime NOT NULL,
+  `Status` varchar(20) DEFAULT 'Pending',
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -276,6 +301,13 @@ CREATE TABLE `suppliers` (
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `Updated_By` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`SupplierID`, `Name`, `Address`, `PhoneNumber`, `ProfileImage`, `Created_At`, `Created_By`, `Updated_At`, `Updated_By`) VALUES
+(2, 'Supplier2', 'supplier2, address', '0912345689', NULL, '2025-03-03 14:29:33', 1, '2025-03-03 14:29:33', 1);
 
 --
 -- Indexes for dumped tables
@@ -431,7 +463,7 @@ ALTER TABLE `adjustment_details`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `customers`
@@ -461,7 +493,7 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `receiving`
@@ -503,7 +535,7 @@ ALTER TABLE `return_details`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `SupplierID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `SupplierID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

@@ -190,15 +190,13 @@
             <span class="material-icons-outlined">tune</span>
             <span>Filter</span>
           </button>
-          <button
-            type="button"
+          <a
+            href="purchases/add-purchases.php"
             class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4"
-            data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop"
           >
             <span class="material-icons-outlined">add</span>
             <span>Add Purchases</span>
-          </button>
+          </a>
         </div>
 
         <div class="container-fluid mt-5 rounded-5">

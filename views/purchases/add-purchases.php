@@ -1,0 +1,335 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../index.php');
+    exit();
+}
+include '../../database/database.php';
+
+if (!isset($conn) || $conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="../../statics/images/app-logo.ico"
+    />
+    <link rel="stylesheet" href="../../statics/products-style.css" />
+    <link rel="stylesheet" href="../../statics/style.css" />
+    <link rel="stylesheet" href="../../statics/css/bootstrap.min.css" />
+
+    <!-- Google Font Icon Links -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round"
+      rel="stylesheet"
+    />
+
+    <script src="../../statics/js/bootstrap.min.js"></script>
+
+    <title>Purchases | SmartStock Inventory</title>
+  </head>
+    <body class="main">
+        <nav class="navbar bg-body-tertiary fixed-top shadow">
+        <div class="container-fluid">
+            <!-- Left side: Button and Header -->
+            <div class="d-flex align-items-center">
+            <button
+                class="navbar-toggler mx-3 border-0 shadow-none"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar"
+                aria-controls="offcanvasNavbar"
+                aria-label="Toggle navigation"
+            >
+                <span class="material-icons-outlined navbar-icon"> menu </span>
+            </button>
+            <a class="navbar-brand fw-semibold" href="../purchases.php"
+                >PURCHASES</a
+            >
+            <span class="material-icons-outlined me-3">chevron_right</span>
+            <a class="navbar-brand fw-semibold" href="add-purchases.php">ADD PURCHASES</a>
+            </div>
+
+            <!-- Right side: Account Section -->
+            <div class="d-flex align-items-center me-5 ms-auto">
+            <span class="material-icons-outlined me-2 fs-1">account_circle</span>
+            <div>
+                <p class="fw-bold mb-0">
+                <?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?>
+                </p>
+                <small class="mt-0">
+                <?php echo htmlspecialchars($_SESSION['role']); ?>
+                </small>
+            </div>
+            </div>
+
+            <!-- Offcanvas Menu -->
+            <div
+            class="offcanvas offcanvas-start"
+            tabindex="-1"
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+            >
+            <div class="offcanvas-header d-flex align-items-center mt-4">
+                <div class="col-10">
+                <img
+                    src="../../statics/images/logo-2.png"
+                    alt="SmartStock Inventory Logo"
+                    class="img-fluid"
+                />
+                </div>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                    <a
+                    class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                    href="../dashboard.php"
+                    >
+                    <span class="material-icons-outlined"> dashboard </span>
+                    Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                    class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                    href="../products.php"
+                    >
+                    <span class="material-icons-outlined"> inventory_2 </span>
+                    Products
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                    class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                    href="../orders.php"
+                    >
+                    <span class="material-icons-outlined"> shopping_cart </span>
+                    Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                    class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                    href="../suppliers.php"
+                    >
+                    <span class="material-icons-outlined"> inventory </span>
+                    Suppliers
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                    class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4 active"
+                    href="../purchases.php"
+                    >
+                    <span class="material-icons-outlined"> shopping_bag </span>
+                    Purchases
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                    class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                    href="../returns.php"
+                    >
+                    <span class="material-icons-outlined">
+                        assignment_return
+                    </span>
+                    Returns
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                    class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                    href="../account.php"
+                    >
+                    <span class="material-icons-outlined"> account_circle </span>
+                    Account
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                    class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
+                    href="../../handlers/logout-handler.php"
+                    >
+                    <span class="material-icons-outlined"> logout </span>
+                    Logout
+                    </a>
+                </li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </nav>
+
+        <div class="container mt-4 pt-5 custom-container rounded-4">
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-success mb-4">
+                    <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                </div>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger mb-4">
+                    <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                </div>
+            <?php endif; ?>
+            <form action="../handlers/add-purchase-handler.php" method="POST">
+                <!-- Receiving Header Fields -->
+                <div class="row mb-3">
+                    <label for="supplier" class="col-md-2 col-form-label text-md-end fw-semibold">Supplier</label>
+                    <div class="col-md-10">
+                        <select name="supplierId" id="supplier" class="form-select" required>
+                            <option value="" selected disabled>Select a supplier</option>
+                            <?php
+                                $stmt = $conn->prepare("SELECT SupplierID, Name FROM suppliers");
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<option value='{$row['SupplierID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                                }
+                                $stmt->close();
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="date" class="col-md-2 col-form-label text-md-end fw-semibold">Date</label>
+                    <div class="col-md-10">
+                        <input type="date" class="form-control" id="date" name="date" required 
+                               value="<?php echo date('Y-m-d'); ?>" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="status" class="col-md-2 col-form-label text-md-end fw-semibold">Status</label>
+                    <div class="col-md-10">
+                        <select name="status" id="status" class="form-select" required>
+                            <option value="Pending" selected>Pending</option>
+                            <option value="Received">Received</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Receiving Details (Dynamic Product Rows) -->
+                <h4 class="fw-semibold mb-3">Products</h4>
+                <div id="product-rows">
+                    <div class="product-row row mb-3">
+                        <div class="col-md-4">
+                            <label for="productId_0" class="form-label fw-semibold">Product</label>
+                            <select name="products[0][productId]" id="productId_0" class="form-select" required>
+                                <option value="" selected disabled>Select a product</option>
+                                <?php
+                                    $stmt = $conn->prepare("SELECT ProductID, Name FROM products");
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo "<option value='{$row['ProductID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                                    }
+                                    $stmt->close();
+                                ?>
+                            </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="quantity_0" class="form-label fw-semibold">Quantity</label>
+                        <input type="number" class="form-control" id="quantity_0" name="products[0][quantity]" 
+                                placeholder="Qty" min="1" required />
+                    </div>
+                        <div class="col-md-3">
+                            <label for="cost_0" class="form-label fw-semibold">Cost</label>
+                            <input type="number" class="form-control" id="cost_0" name="products[0][cost]" 
+                                    placeholder="Cost" step="0.01" min="0" required />
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger remove-row" disabled>
+                                <span class="material-icons-outlined">remove</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="add-product-row" class="btn btn-outline-primary mb-3">
+                    <span class="material-icons-outlined">add</span> Add Another Product
+                </button>
+
+                <!-- Form Actions -->
+                <div class="row mt-4">
+                    <div class="col-md-12 text-center">
+                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 py-2 px-4 mx-auto">
+                            <span class="material-icons-outlined">save</span>
+                            <span>Save Purchase</span>
+                        </button>
+                        <a href="../purchases.php" class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 px-4 mx-auto mt-2">
+                            <span class="material-icons-outlined">close</span>
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            let rowCount = 1;
+
+            document.getElementById('add-product-row').addEventListener('click', function() {
+                const productRows = document.getElementById('product-rows');
+                const newRow = document.createElement('div');
+                newRow.className = 'product-row row mb-3';
+                newRow.innerHTML = `
+                    <div class="col-md-4">
+                        <label for="productId_${rowCount}" class="form-label fw-semibold">Product</label>
+                        <select name="products[${rowCount}][productId]" id="productId_${rowCount}" class="form-select" required>
+                            <option value="" selected disabled>Select a product</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT ProductID, Name FROM products");
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<option value='{$row['ProductID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                            }
+                            $stmt->close();
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="quantity_${rowCount}" class="form-label fw-semibold">Quantity</label>
+                        <input type="number" class="form-control" id="quantity_${rowCount}" name="products[${rowCount}][quantity]" 
+                            placeholder="Qty" min="1" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cost_${rowCount}" class="form-label fw-semibold">Cost</label>
+                        <input type="number" class="form-control" id="cost_${rowCount}" name="products[${rowCount}][cost]" 
+                            placeholder="Cost" step="0.01" min="0" required />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger remove-row">
+                            <span class="material-icons-outlined">remove</span>
+                        </button>
+                    </div>
+                `;
+                productRows.appendChild(newRow);
+                rowCount++;
+                updateRemoveButtons();
+            });
+
+            function updateRemoveButtons() {
+                const rows = document.querySelectorAll('.product-row');
+                const removeButtons = document.querySelectorAll('.remove-row');
+                removeButtons.forEach((btn, index) => {
+                    btn.disabled = rows.length === 1; // Disable if only one row
+                    btn.onclick = function() {
+                        if (rows.length > 1) {
+                            btn.closest('.product-row').remove();
+                        }
+                    };
+                });
+            }
+
+            // Initial setup
+            updateRemoveButtons();
+        </script>
+    </body>
+</html>
