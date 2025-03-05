@@ -66,7 +66,7 @@ try {
 
     // Insert into receiving_details
     $stmt = $conn->prepare(
-        "INSERT INTO receiving_details (ReceivingID, ProductID, Quantity, Cost) 
+        "INSERT INTO receiving_details (ReceivingID, ProductID, Quantity, UnitCost) 
          VALUES (?, ?, ?, ?)"
     );
     if ($stmt === false) {

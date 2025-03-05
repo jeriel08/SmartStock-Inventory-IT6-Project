@@ -83,7 +83,7 @@ $products = $stmt->get_result();
                         <li class="nav-item">
                             <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="orders.php">
                                 <span class="material-icons-outlined">shopping_cart</span>
-                                Orders
+                                Customer Orders
                             </a>
                         </li>
                         <li class="nav-item">
@@ -94,8 +94,8 @@ $products = $stmt->get_result();
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="purchases.php">
-                                <span class="material-icons-outlined">shopping_bag</span>
-                                Purchases
+                                <span class="material-icons-outlined">local_shipping</span>
+                                Supplier Orders
                             </a>
                         </li>
                         <li class="nav-item">
