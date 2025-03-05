@@ -358,50 +358,51 @@ $products = $stmt->get_result();
     </div>
 
     <!-- Edit Product Modal -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title d-flex align-items-center gap-2" id="editProductModalLabel">
-                        <span class="material-icons-outlined fs-2">edit</span>
-                        Edit Product
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="../handlers/edit-product-handler.php" method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="productId" id="editProductId">
-                        <div class="row mb-3">
-                            <label for="editPrice" class="col-md-3 col-form-label text-md-end">Price</label>
-                            <div class="col-md-9">
-                                <input type="number" class="form-control" id="editPrice" name="price" step="0.01" min="0" required />
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <label for="editStatus" class="col-md-3 col-form-label text-md-end">Status</label>
-                            <div class="col-md-9">
-                                <select class="form-select" id="editStatus" name="status" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Out of</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer justify-content-center">
-                        <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
-                            <span class="material-icons-outlined">save</span>
-                            <span>Save Changes</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" 
-                                data-bs-dismiss="modal">
-                            <span class="material-icons-outlined">close</span>
-                            Close
-                        </button>
-                    </div>
-                </form>
+   <!-- Edit Product Modal -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title d-flex align-items-center gap-2" id="editProductModalLabel">
+                    <span class="material-icons-outlined fs-2">edit</span>
+                    Edit Product
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form action="../handlers/edit-product-handler.php" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="productId" id="editProductId">
+                    <div class="row mb-3">
+                        <label for="editPrice" class="col-md-3 col-form-label text-md-end">Price</label>
+                        <div class="col-md-9">
+                            <input type="number" class="form-control" id="editPrice" name="price" step="0.01" min="0" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="editStatus" class="col-md-3 col-form-label text-md-end">Status</label>
+                        <div class="col-md-9">
+                            <select class="form-select" id="editStatus" name="status" required>
+                                <option value="In Stock">In Stock</option>
+                                <option value="Out of Stock">Out of Stock</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
+                        <span class="material-icons-outlined">save</span>
+                        <span>Save Changes</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" 
+                            data-bs-dismiss="modal">
+                        <span class="material-icons-outlined">close</span>
+                        Close
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- JavaScript to Populate Edit Modal -->
     <script>

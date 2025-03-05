@@ -5,7 +5,7 @@ try{
   $host = "localhost";
   $username = "root";
   $password = "";
-  $database = "smartstock_inventory";
+  $database = "smarstock_inventory";
 
   $conn = new mysqli($host, $username, $password, $database);
   
