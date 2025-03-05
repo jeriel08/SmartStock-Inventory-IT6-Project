@@ -4,6 +4,25 @@ if (!isset($_SESSION['user_id'])) {
   header('Location: ../index.php');
   exit();
 }
+
+include '../database/database.php';
+// Fetch existing returns with all details
+$stmt = $conn->prepare("
+    SELECT 
+        r.ReturnID, 
+        c.Name AS CustomerName, 
+        c.Address, 
+        c.PhoneNumber, 
+        r.OrderID, 
+        r.ReturnDate, 
+        r.Reason
+    FROM returns r
+    LEFT JOIN customers c 
+        ON r.CustomerID = c.CustomerID
+");
+$stmt->execute();
+$result = $stmt->get_result();
+
 ?>
 
 <!DOCTYPE html>
@@ -188,35 +207,42 @@ if (!isset($_SESSION['user_id'])) {
             <thead>
               <tr>
                 <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Cost</th>
                 <th>Date</th>
                 <th>Supplier</th>
                 <th>Status</th>
-                <th>Grand Total</th>
-                <th>Payment</th>
                 <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              <!-- Sample Rows - Replace with your actual data -->
-              <tr>
-                <td class="align-middle">Product Name 1</td>
-                <td class="align-middle">01-01-25</td>
-                <td class="align-middle">NCCC SUpermarket</td>
-                <td class="align-middle">
-                  <span class="badge text-bg-success fs-6">Received</span>
-                </td>
-                <td class="align-middle">900</td>
-                <td class="align-middle">
-                  <span class="badge text-bg-success fs-6">Paid</span>
-                </td>
-
-                <td class="align-middle">
-                  <button
-                    class="btn edit-button btn-primary add-product-button rounded-4">
-                    <span class="material-icons-outlined">edit</span>
-                  </button>
-                </td>
-              </tr>
+              <?php if ($result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                  <tr>
+                    <td class="align-middle"><?php echo htmlspecialchars($row['ProductName']); ?></td>
+                    <td class="align-middle"><?php echo $row['Quantity']; ?></td>
+                    <td class="align-middle"><?php echo number_format($row['UnitCost'], 2); ?></td>
+                    <td class="align-middle"><?php echo date("m-d-y", strtotime($row['Date'])); ?></td>
+                    <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName']); ?></td>
+                    <td class="align-middle">
+                      <span class="badge text-bg-<?php echo ($row['Status'] == 'Received') ? 'success' : 'warning'; ?> fs-6">
+                        <?php echo htmlspecialchars($row['Status']); ?>
+                      </span>
+                    </td>
+                    <td class="align-middle text-center">
+                      <button class="btn edit-button btn-primary add-product-button rounded-4">
+                        <span class="material-icons-outlined">edit</span>
+                      </button>
+                    </td>
+                  </tr>
+                <?php endwhile; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-2">
+                    <p class="fs-6">No purchases have been made yet.</p>
+                  </td>
+                </tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>

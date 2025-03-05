@@ -166,7 +166,7 @@ $products = $stmt->get_result();
                                 <tr>
                                     <td class="align-middle"><?php echo htmlspecialchars($row['Name']); ?></td>
                                     <td class="align-middle"><?php echo htmlspecialchars($row['ProductID']); ?></td>
-                                    <td class="align-middle">$<?php echo number_format($row['Price'], 2); ?></td>
+                                    <td class="align-middle"><?php echo number_format($row['Price'], 2); ?></td>
                                     <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName'] ?? 'N/A'); ?></td>
                                     <td class="align-middle"><?php echo htmlspecialchars($row['CategoryName'] ?? 'N/A'); ?></td>
                                     <td class="align-middle"><?php echo htmlspecialchars($row['StockQuantity']); ?></td>
@@ -195,8 +195,7 @@ $products = $stmt->get_result();
     </div>
 
     <!-- Add Product Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
-        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -214,34 +213,6 @@ $products = $stmt->get_result();
                             <div class="col-md-9">
                                 <input type="text" class="form-control" id="productName" name="productName"
                                     placeholder="Enter product name" required />
-                            </div>
-                        </div>
-
-                        <!-- Supplier (as dropdown) -->
-                        <div class="row mb-3">
-                            <label for="supplier" class="col-md-3 col-form-label text-md-end">Supplier</label>
-                            <div class="col-md-9">
-                                <select name="supplierId" id="supplier" class="form-select" required>
-                                    <option value="" selected disabled>Select a supplier</option>
-                                    <?php
-                                    $stmt = $conn->prepare("SELECT SupplierID, Name FROM suppliers");
-                                    if ($stmt === false) {
-                                        error_log("Prepare failed for suppliers: " . $conn->error);
-                                        echo "<option value=''>Error loading suppliers</option>";
-                                    } else {
-                                        $stmt->execute();
-                                        $result = $stmt->get_result();
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo "<option value='{$row['SupplierID']}'>" . htmlspecialchars($row['Name']) . "</option>";
-                                            }
-                                        } else {
-                                            echo "<option value=''>No suppliers available</option>";
-                                        }
-                                        $stmt->close();
-                                    }
-                                    ?>
-                                </select>
                             </div>
                         </div>
 
@@ -272,41 +243,13 @@ $products = $stmt->get_result();
                                 </select>
                             </div>
                         </div>
-
-                        <!-- Quantity -->
-                        <div class="row mb-3">
-                            <label for="quantity" class="col-md-3 col-form-label text-md-end">Quantity</label>
-                            <div class="col-md-9">
-                                <input type="number" class="form-control" id="quantity" name="quantity"
-                                    placeholder="Enter quantity" min="0" required />
-                            </div>
-                        </div>
-
-                        <!-- Cost -->
-                        <div class="row mb-3">
-                            <label for="cost" class="col-md-3 col-form-label text-md-end">Cost</label>
-                            <div class="col-md-9">
-                                <input type="number" class="form-control" id="cost" name="cost"
-                                    placeholder="Enter cost" step="0.01" min="0" required />
-                            </div>
-                        </div>
-
-                        <!-- Price -->
-                        <div class="row mb-3">
-                            <label for="price" class="col-md-3 col-form-label text-md-end">Price</label>
-                            <div class="col-md-9">
-                                <input type="number" class="form-control" id="price" name="price"
-                                    placeholder="Enter price" step="0.01" min="0" required />
-                            </div>
-                        </div>
                     </div>
                     <div class="modal-footer justify-content-center">
                         <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
                             <span class="material-icons-outlined">add</span>
                             <span>Add Product</span>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
-                            data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" data-bs-dismiss="modal">
                             <span class="material-icons-outlined">close</span>
                             Close
                         </button>
@@ -315,6 +258,7 @@ $products = $stmt->get_result();
             </div>
         </div>
     </div>
+
 
     <!-- Add Category Modal -->
     <div class="modal fade" id="addCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false"
@@ -359,7 +303,6 @@ $products = $stmt->get_result();
         </div>
     </div>
 
-    <!-- Edit Product Modal -->
     <!-- Edit Product Modal -->
     <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
