@@ -20,6 +20,7 @@ if (!isset($conn) || $conn->connect_error) {
       type="image/x-icon"
       href="../../statics/images/app-logo.ico"
     />
+    <link rel="stylesheet" href="../../statics/purchases-style.css" />
     <link rel="stylesheet" href="../../statics/products-style.css" />
     <link rel="stylesheet" href="../../statics/style.css" />
     <link rel="stylesheet" href="../../statics/css/bootstrap.min.css" />
@@ -167,7 +168,7 @@ if (!isset($conn) || $conn->connect_error) {
         </div>
         </nav>
 
-        <div class="container mt-4 pt-5 custom-container rounded-4">
+        <div class="container pt-5 custom-container rounded-4 mb-5">
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="alert alert-success mb-4">
                     <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
@@ -180,156 +181,176 @@ if (!isset($conn) || $conn->connect_error) {
             <?php endif; ?>
             <form action="../handlers/add-purchase-handler.php" method="POST">
                 <!-- Receiving Header Fields -->
-                <div class="row mb-3">
-                    <label for="supplier" class="col-md-2 col-form-label text-md-end fw-semibold">Supplier</label>
-                    <div class="col-md-10">
-                        <select name="supplierId" id="supplier" class="form-select" required>
-                            <option value="" selected disabled>Select a supplier</option>
-                            <?php
-                                $stmt = $conn->prepare("SELECT SupplierID, Name FROM suppliers");
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                while ($row = $result->fetch_assoc()) {
-                                    echo "<option value='{$row['SupplierID']}'>" . htmlspecialchars($row['Name']) . "</option>";
-                                }
-                                $stmt->close();
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <label for="date" class="col-md-2 col-form-label text-md-end fw-semibold">Date</label>
-                    <div class="col-md-10">
-                        <input type="date" class="form-control" id="date" name="date" required 
-                               value="<?php echo date('Y-m-d'); ?>" />
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <label for="status" class="col-md-2 col-form-label text-md-end fw-semibold">Status</label>
-                    <div class="col-md-10">
-                        <select name="status" id="status" class="form-select" required>
-                            <option value="Pending" selected>Pending</option>
-                            <option value="Received">Received</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
+                <div class="row justify-content-center mb-5">
+                    <h4 class="fw-semibold mb-3 text-center">Suppliers</h4>
+                    <div class="col-md-8  pe-5">
+                        <div class="row mb-3">
+                            <label for="supplier" class="col-md-3 col-form-label text-md-end fw-semibold">Supplier</label>
+                            <div class="col-md-9">
+                                <select name="supplierId" id="supplier" class="form-select" required>
+                                    <option value="" selected disabled>Select a supplier</option>
+                                    <?php
+                                    $stmt = $conn->prepare("SELECT SupplierID, Name FROM suppliers");
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo "<option value='{$row['SupplierID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                                    }
+                                    $stmt->close();
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="date" class="col-md-3 col-form-label text-md-end fw-semibold">Date</label>
+                            <div class="col-md-9">
+                                <input type="date" class="form-control" id="date" name="date" required 
+                                    value="<?php echo date('Y-m-d'); ?>" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="status" class="col-md-3 col-form-label text-md-end fw-semibold">Status</label>
+                            <div class="col-md-9">
+                                <select name="status" id="status" class="form-select" required>
+                                    <option value="Pending" selected>Pending</option>
+                                    <option value="Received">Received</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Receiving Details (Dynamic Product Rows) -->
-                <h4 class="fw-semibold mb-3">Products</h4>
-                <div id="product-rows">
-                    <div class="product-row row mb-3">
-                        <div class="col-md-4">
-                            <label for="productId_0" class="form-label fw-semibold">Product</label>
-                            <select name="products[0][productId]" id="productId_0" class="form-select" required>
-                                <option value="" selected disabled>Select a product</option>
-                                <?php
-                                    $stmt = $conn->prepare("SELECT ProductID, Name FROM products");
-                                    $stmt->execute();
-                                    $result = $stmt->get_result();
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo "<option value='{$row['ProductID']}'>" . htmlspecialchars($row['Name']) . "</option>";
-                                    }
-                                    $stmt->close();
-                                ?>
-                            </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="quantity_0" class="form-label fw-semibold">Quantity</label>
-                        <input type="number" class="form-control" id="quantity_0" name="products[0][quantity]" 
-                                placeholder="Qty" min="1" required />
-                    </div>
-                        <div class="col-md-3">
-                            <label for="cost_0" class="form-label fw-semibold">Cost</label>
-                            <input type="number" class="form-control" id="cost_0" name="products[0][cost]" 
-                                    placeholder="Cost" step="0.01" min="0" required />
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-10">
+                        <h4 class="fw-semibold mb-3 text-center">Products</h4>
+                        <div id="product-rows">
+                            <div class="product-row row mb-3">
+                                <div class="col-md-4">
+                                    <label for="productId_0" class="form-label fw-semibold">Product</label>
+                                    <select name="products[0][productId]" id="productId_0" class="form-select" required>
+                                        <option value="" selected disabled>Select a product</option>
+                                        <?php
+                                        $stmt = $conn->prepare("SELECT ProductID, Name FROM products");
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<option value='{$row['ProductID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                                        }
+                                        $stmt->close();
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="quantity_0" class="form-label fw-semibold">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity_0" name="products[0][quantity]" 
+                                        placeholder="Qty" min="1" required />
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="cost_0" class="form-label fw-semibold">Cost</label>
+                                    <input type="number" class="form-control" id="cost_0" name="products[0][cost]" 
+                                        placeholder="Cost" step="0.01" min="0" required />
+                                </div>
+                                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                    <button type="button" class="btn btn-danger remove-row d-flex justify-content-center align-items-center" disabled>
+                                        <span class="material-icons-outlined">remove</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="button" class="btn btn-danger remove-row" disabled>
-                                <span class="material-icons-outlined">remove</span>
+                        <div class="text-center">
+                            <button type="button" id="add-product-row" class="btn btn-outline-primary mb-3 d-flex justify-content-center align-items-center gap-2 mx-auto">
+                                <span class="material-icons-outlined">add</span> Add Another Product
                             </button>
                         </div>
                     </div>
                 </div>
-                <button type="button" id="add-product-row" class="btn btn-outline-primary mb-3">
-                    <span class="material-icons-outlined">add</span> Add Another Product
-                </button>
 
                 <!-- Form Actions -->
-                <div class="row mt-4">
-                    <div class="col-md-12 text-center">
-                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 py-2 px-4 mx-auto">
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6 text-center">
+                        <button type="submit" class="btn btn-outline-primary d-flex align-items-center gap-2 py-2 px-4 mx-auto">
                             <span class="material-icons-outlined">save</span>
                             <span>Save Purchase</span>
                         </button>
-                        <a href="../purchases.php" class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 px-4 mx-auto mt-2">
-                            <span class="material-icons-outlined">close</span>
-                            Cancel
-                        </a>
                     </div>
                 </div>
             </form>
         </div>
 
         <script>
-            let rowCount = 1;
+            document.addEventListener('DOMContentLoaded', function() {
+                let rowCount = 1;
 
-            document.getElementById('add-product-row').addEventListener('click', function() {
-                const productRows = document.getElementById('product-rows');
-                const newRow = document.createElement('div');
-                newRow.className = 'product-row row mb-3';
-                newRow.innerHTML = `
-                    <div class="col-md-4">
-                        <label for="productId_${rowCount}" class="form-label fw-semibold">Product</label>
-                        <select name="products[${rowCount}][productId]" id="productId_${rowCount}" class="form-select" required>
-                            <option value="" selected disabled>Select a product</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT ProductID, Name FROM products");
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<option value='{$row['ProductID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                const addButton = document.getElementById('add-product-row');
+                if (!addButton) {
+                    console.error("Add product button not found!");
+                    return;
+                }
+
+                addButton.addEventListener('click', function() {
+                    const productRows = document.getElementById('product-rows');
+                    if (!productRows) {
+                        console.error("Product rows container not found!");
+                        return;
+                    }
+
+                    const newRow = document.createElement('div');
+                    newRow.className = 'product-row row mb-3';
+                    newRow.innerHTML = `
+                        <div class="col-md-4">
+                            <label for="productId_${rowCount}" class="form-label fw-semibold">Product</label>
+                            <select name="products[${rowCount}][productId]" id="productId_${rowCount}" class="form-select" required>
+                                <option value="" selected disabled>Select a product</option>
+                                <?php
+                                $stmt = $conn->prepare("SELECT ProductID, Name FROM products");
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<option value='{$row['ProductID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                                }
+                                $stmt->close();
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="quantity_${rowCount}" class="form-label fw-semibold">Quantity</label>
+                            <input type="number" class="form-control" id="quantity_${rowCount}" name="products[${rowCount}][quantity]" 
+                                placeholder="Qty" min="1" required />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cost_${rowCount}" class="form-label fw-semibold">Cost</label>
+                            <input type="number" class="form-control" id="cost_${rowCount}" name="products[${rowCount}][cost]" 
+                                placeholder="Cost" step="0.01" min="0" required />
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center justify-content-center">
+                            <button type="button" class="btn btn-danger remove-row d-flex justify-content-center align-items-center">
+                                <span class="material-icons-outlined">remove</span>
+                            </button>
+                        </div>
+                    `;
+                    productRows.appendChild(newRow);
+                    rowCount++;
+                    updateRemoveButtons();
+                });
+
+                function updateRemoveButtons() {
+                    const rows = document.querySelectorAll('.product-row');
+                    const removeButtons = document.querySelectorAll('.remove-row');
+                    removeButtons.forEach((btn, index) => {
+                        btn.disabled = rows.length === 1; // Disable if only one row
+                        btn.onclick = function() {
+                            if (rows.length > 1) {
+                                btn.closest('.product-row').remove();
                             }
-                            $stmt->close();
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="quantity_${rowCount}" class="form-label fw-semibold">Quantity</label>
-                        <input type="number" class="form-control" id="quantity_${rowCount}" name="products[${rowCount}][quantity]" 
-                            placeholder="Qty" min="1" required />
-                    </div>
-                    <div class="col-md-3">
-                        <label for="cost_${rowCount}" class="form-label fw-semibold">Cost</label>
-                        <input type="number" class="form-control" id="cost_${rowCount}" name="products[${rowCount}][cost]" 
-                            placeholder="Cost" step="0.01" min="0" required />
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-danger remove-row">
-                            <span class="material-icons-outlined">remove</span>
-                        </button>
-                    </div>
-                `;
-                productRows.appendChild(newRow);
-                rowCount++;
+                        };
+                    });
+                }
+
+                // Initial setup
                 updateRemoveButtons();
             });
-
-            function updateRemoveButtons() {
-                const rows = document.querySelectorAll('.product-row');
-                const removeButtons = document.querySelectorAll('.remove-row');
-                removeButtons.forEach((btn, index) => {
-                    btn.disabled = rows.length === 1; // Disable if only one row
-                    btn.onclick = function() {
-                        if (rows.length > 1) {
-                            btn.closest('.product-row').remove();
-                        }
-                    };
-                });
-            }
-
-            // Initial setup
-            updateRemoveButtons();
         </script>
     </body>
 </html>

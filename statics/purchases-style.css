@@ -1,0 +1,55 @@
+:root {
+  --color-1: #f66435;
+  --color-2: #f4efca;
+  --color-3: #f5deb3;
+  --color-4: #ff7f50;
+  --color-5: #d49066;
+}
+
+:root {
+  --color-1: #f66435;
+  --color-2: #f4efca;
+  --color-3: #f5deb3;
+  --color-4: #ff7f50;
+  --color-5: #d49066;
+}
+
+.custom-container {
+  background-color: var(--color-2) !important;
+  color: var(--color-1) !important;
+  border: 2px solid var(--color-1) !important;
+  margin-top: 6em !important;
+}
+
+/* Ensure nested elements inherit the text color */
+.custom-container h2,
+.custom-container h4,
+.custom-container label,
+.custom-container p,
+.custom-container .btn {
+  color: var(--color-1) !important;
+}
+
+/* Style buttons to match the color scheme */
+.custom-container .btn-outline-primary {
+  border-color: var(--color-1) !important;
+  color: var(--color-1) !important;
+}
+
+.custom-container .btn-outline-primary:hover {
+  background-color: var(--color-1) !important;
+  color: #fff !important;
+}
+
+.custom-container .btn-danger {
+  background-color: var(--color-1) !important;
+  border-color: var(--color-1) !important;
+  color: #fff !important;
+}
+
+.custom-container .btn-danger:hover {
+  background-color: var(
+    --color-4
+  ) !important; /* Slightly lighter orange for hover */
+  border-color: var(--color-4) !important;
+}
