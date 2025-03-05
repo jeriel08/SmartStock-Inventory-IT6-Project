@@ -173,7 +173,9 @@ body {
   box-shadow: 0 0 5px rgba(var(--color-1-rgb), 0.5) !important;
   outline: none !important;
 }
-
+.clickable-icon {
+  cursor: pointer;
+}
 /* Disabled or readonly state */
 .form-select:disabled,
 .form-select[readonly] {
@@ -182,3 +184,4 @@ body {
   color: var(--placeholder-color) !important;
   cursor: not-allowed !important;
 }
+
