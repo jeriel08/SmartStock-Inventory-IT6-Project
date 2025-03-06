@@ -6,25 +6,24 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 include '../database/database.php';
-// Fetch existing returns with all details
+// Fetch existing orders with all details using the Supplier_Order_View
 $stmt = $conn->prepare("
     SELECT 
-        r.ReceivingID,
-        p.Name AS ProductName,
-        rd.Quantity,
-        rd.UnitCost,
-        r.Date,
-        s.Name AS SupplierName,
-        r.Status
-    FROM receiving r
-    LEFT JOIN receiving_details rd ON r.ReceivingID = rd.ReceivingID
-    LEFT JOIN products p ON rd.ProductID = p.ProductID
-    LEFT JOIN suppliers s ON r.SupplierID = s.SupplierID
-    ORDER BY r.Date DESC
+        ReceivingDetailID,
+        product_name, 
+        product_quantity, 
+        unit_cost, 
+        total_cost, 
+        order_date, 
+        supplier_name, 
+        order_status
+    FROM Supplier_Order_View
+    ORDER BY order_date DESC
 ");
 
 $stmt->execute();
 $result = $stmt->get_result();
+
 
 ?>
 
@@ -212,6 +211,7 @@ $result = $stmt->get_result();
                 <th>Product</th>
                 <th>Quantity</th>
                 <th>Unit Cost</th>
+                <th>Total</th>
                 <th>Date</th>
                 <th>Supplier</th>
                 <th>Status</th>
@@ -222,23 +222,24 @@ $result = $stmt->get_result();
               <?php if ($result->num_rows > 0): ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
                   <tr>
-                    <td class="align-middle"><?php echo htmlspecialchars($row['ProductName']); ?></td>
-                    <td class="align-middle"><?php echo $row['Quantity']; ?></td>
-                    <td class="align-middle"><?php echo number_format($row['UnitCost'], 2); ?></td>
-                    <td class="align-middle"><?php echo date("m-d-y", strtotime($row['Date'])); ?></td>
-                    <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName']); ?></td>
+                    <td class="align-middle"><?php echo htmlspecialchars($row['product_name']); ?></td>
+                    <td class="align-middle"><?php echo $row['product_quantity']; ?></td>
+                    <td class="align-middle"><?php echo number_format($row['unit_cost'], 2); ?></td>
+                    <td class="align-middle"><?php echo $row['total_cost']; ?></td>
+                    <td class="align-middle"><?php echo date("m-d-y", strtotime($row['order_date'])); ?></td>
+                    <td class="align-middle"><?php echo htmlspecialchars($row['supplier_name']); ?></td>
                     <td class="align-middle">
-                      <span class="badge text-bg-<?php echo ($row['Status'] == 'Received') ? 'success' : 'warning'; ?> fs-6">
-                        <?php echo htmlspecialchars($row['Status']); ?>
+                      <span class="badge text-bg-<?php echo ($row['order_status'] == 'Received') ? 'success' : 'warning'; ?> fs-6">
+                        <?php echo htmlspecialchars($row['order_status']); ?>
                       </span>
                     </td>
                     <td class="align-middle text-center">
                       <button class="btn edit-button btn-primary rounded-4 editPurchaseBtn"
-                        data-id="<?= $row['ReceivingID']; ?>"
-                        data-product="<?= $row['ProductName']; ?>"
-                        data-quantity="<?= $row['Quantity']; ?>"
-                        data-cost="<?= $row['UnitCost']; ?>"
-                        data-status="<?= $row['Status']; ?>">
+                        data-id="<?= $row['ReceivingDetailID']; ?>"
+                        data-product="<?= $row['product_name']; ?>"
+                        data-quantity="<?= $row['product_quantity']; ?>"
+                        data-cost="<?= $row['unit_cost']; ?>"
+                        data-status="<?= $row['order_status']; ?>">
                         <span class="material-icons-outlined">edit</span>
                       </button>
                     </td>
@@ -268,7 +269,7 @@ $result = $stmt->get_result();
         </div>
         <form action="../handlers/update-purchase-handler.php" method="POST">
           <div class="modal-body">
-            <input type="hidden" id="editReceivingID" name="receivingID">
+            <input type="hidden" id="editReceivingID" name="receivingDetailID">
 
             <!-- Product Name (Read-only) -->
             <div class="mb-3">

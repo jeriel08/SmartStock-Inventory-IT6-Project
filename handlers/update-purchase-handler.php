@@ -3,7 +3,7 @@ session_start();
 include '../database/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $receivingID = $_POST["receivingID"];
+    $receivingDetailID = $_POST["receivingDetailID"]; // Changed from receivingID
     $quantity = $_POST["quantity"];
     $cost = $_POST["cost"];
     $status = $_POST["status"];
@@ -12,12 +12,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // Update supplier order status, quantity, and cost
         $stmt = $conn->prepare("
-            UPDATE receiving r
-            JOIN receiving_details rd ON r.ReceivingID = rd.ReceivingID
-            SET r.Status = ?, rd.Quantity = ?, rd.UnitCost = ?, r.Updated_At = NOW(), r.Updated_By = ?
-            WHERE r.ReceivingID = ?
+            UPDATE receiving_details rd
+            JOIN receiving r ON rd.ReceivingID = r.ReceivingID
+            SET 
+                rd.Quantity = ?, 
+                rd.UnitCost = ?, 
+                r.Status = ?, 
+                r.Updated_At = NOW(), 
+                r.Updated_By = ?
+            WHERE rd.ReceivingDetailID = ?
         ");
-        $stmt->bind_param("siiii", $status, $quantity, $cost, $updatedBy, $receivingID);
+        $stmt->bind_param("iisii", $quantity, $cost, $status, $updatedBy, $receivingDetailID);
         $stmt->execute();
         $stmt->close();
 
@@ -26,18 +31,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $conn->prepare("
                 UPDATE products p
                 JOIN receiving_details rd ON p.ProductID = rd.ProductID
-                JOIN receiving r ON rd.ReceivingID = r.ReceivingID
-                SET p.StockQuantity = p.StockQuantity + rd.Quantity,
+                SET 
+                    p.StockQuantity = p.StockQuantity + rd.Quantity,
                     p.Price = rd.UnitCost,
-                    p.Status = 'In Stock',
-                    p.SupplierID = r.SupplierID
-                WHERE rd.ReceivingID = ?
+                    p.Status = 'In Stock'
+                WHERE rd.ReceivingDetailID = ?
             ");
-            $stmt->bind_param("i", $receivingID);
+            $stmt->bind_param("i", $receivingDetailID);
             $stmt->execute();
             $stmt->close();
         }
-
 
         $_SESSION["success_message"] = "Purchase updated successfully!";
     } catch (Exception $e) {
