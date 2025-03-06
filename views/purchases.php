@@ -294,6 +294,7 @@ $result = $stmt->get_result();
               <select class="form-select" id="editStatus" name="status" required>
                 <option value="Pending">Pending</option>
                 <option value="Received">Received</option>
+                <option value="Cancelled">Cancelled</option>
               </select>
             </div>
           </div>

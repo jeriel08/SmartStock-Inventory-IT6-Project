@@ -21,20 +21,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $stmt->close();
 
-        // If status is "Received", update product stock and price
+        // If status is "Received", update product stock, price, status, and supplier
         if ($status === "Received") {
             $stmt = $conn->prepare("
                 UPDATE products p
                 JOIN receiving_details rd ON p.ProductID = rd.ProductID
+                JOIN receiving r ON rd.ReceivingID = r.ReceivingID
                 SET p.StockQuantity = p.StockQuantity + rd.Quantity,
                     p.Price = rd.UnitCost,
-                    p.Status = 'In Stock'
+                    p.Status = 'In Stock',
+                    p.SupplierID = r.SupplierID
                 WHERE rd.ReceivingID = ?
             ");
             $stmt->bind_param("i", $receivingID);
             $stmt->execute();
             $stmt->close();
         }
+
 
         $_SESSION["success_message"] = "Purchase updated successfully!";
     } catch (Exception $e) {

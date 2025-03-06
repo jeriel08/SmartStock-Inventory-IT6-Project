@@ -89,11 +89,19 @@ try {
     }
     $stmt->close();
 
-    // Update Products stock if Status is 'Received'
+    // Update Products stock, price, supplier, and status if Status is 'Received'
     if ($status === 'Received') {
-        $stmt = $conn->prepare(
-            "UPDATE Products SET StockQuantity = StockQuantity + ? WHERE ProductID = ?"
-        );
+        $stmt = $conn->prepare("
+        UPDATE Products p
+        JOIN receiving_details rd ON p.ProductID = rd.ProductID
+        JOIN Receiving r ON rd.ReceivingID = r.ReceivingID
+        SET p.StockQuantity = p.StockQuantity + ?,
+            p.Price = ?,
+            p.SupplierID = r.SupplierID,
+            p.Status = 'In Stock'
+        WHERE p.ProductID = ?
+    ");
+
         if ($stmt === false) {
             throw new Exception("Prepare failed for Products update: " . $conn->error);
         }
@@ -101,13 +109,17 @@ try {
         foreach ($products as $index => $product) {
             $productId = $product['productId'];
             $quantity = $product['quantity'];
-            $stmt->bind_param('ii', $quantity, $productId);
+            $cost = $product['cost']; // Ensure this value is passed correctly in the request
+
+            $stmt->bind_param('idi', $quantity, $cost, $productId);
             if (!$stmt->execute()) {
                 throw new Exception("Stock update failed for ProductID " . $productId . ": " . $stmt->error);
             }
         }
+
         $stmt->close();
     }
+
 
     // Commit transaction
     $conn->commit();
