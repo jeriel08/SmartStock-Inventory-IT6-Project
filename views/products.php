@@ -6,16 +6,29 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch products with supplier and category details
-$stmt = $conn->prepare("
-    SELECT p.ProductID, p.Name, p.Price, p.StockQuantity, p.Status, 
-           s.Name AS SupplierName, c.Name AS CategoryName 
-    FROM products p
-    LEFT JOIN suppliers s ON p.SupplierID = s.SupplierID
-    LEFT JOIN categories c ON p.CategoryID = c.CategoryID
-");
-$stmt->execute();
-$products = $stmt->get_result();
+$filter = $_GET['filter'] ?? 'In Stock'; // Default filter
+
+// Start the base query
+$query = "SELECT p.Name, p.ProductID, p.Price, s.Name AS SupplierName, 
+                 c.Name AS CategoryName, p.StockQuantity, p.Status 
+          FROM products p
+          LEFT JOIN suppliers s ON p.SupplierID = s.SupplierID
+          LEFT JOIN categories c ON p.CategoryID = c.CategoryID";
+
+// Apply filtering based on user selection
+if ($filter === 'In Stock') {
+    $query .= " WHERE p.Status = 'In Stock'";
+} elseif ($filter === 'Out of Stock') {
+    $query .= " WHERE p.Status = 'Out of Stock'";
+} // No condition needed for 'All' (fetch everything)
+
+$query .= " ORDER BY p.Name ASC"; // Optional sorting
+
+$products = $conn->query($query);
+
+if (!$products) {
+    die("Query Failed: " . $conn->error); // Debugging in case of errors
+}
 ?>
 
 <!DOCTYPE html>
@@ -135,6 +148,11 @@ $products = $stmt->get_result();
             </div>
             <div class="col-md-auto d-flex gap-2">
                 <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 rounded-4"
+                    data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <span class="material-icons-outlined">tune</span>
+                    <span>Filter</span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 rounded-4"
                     data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                     <span class="material-icons-outlined">category</span>
                     <span>Add Category</span>
@@ -182,6 +200,7 @@ $products = $stmt->get_result();
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
+
                             <?php if ($products->num_rows === 0): ?>
                                 <tr>
                                     <td colspan="8" class="text-center">No products found.</td>
@@ -349,6 +368,27 @@ $products = $stmt->get_result();
         </div>
     </div>
 
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title d-flex align-items-center gap-2" id="filterModalLabel">
+                        <span class="material-icons-outlined">tune</span>
+                        Filter Products
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button class="btn btn-outline-success filter-btn" data-filter="In Stock">Show In Stock</button>
+                    <button class="btn btn-outline-danger filter-btn" data-filter="Out of Stock">Show Out of Stock</button>
+                    <button class="btn btn-outline-primary filter-btn" data-filter="All">Show All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- JavaScript to Populate Edit Modal -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -363,6 +403,16 @@ $products = $stmt->get_result();
                 modal.querySelector('#editProductId').value = productId;
                 modal.querySelector('#editPrice').value = price;
                 modal.querySelector('#editStatus').value = status;
+            });
+        });
+
+        // Script for the filter
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const filterValue = this.getAttribute('data-filter');
+                const url = new URL(window.location.href);
+                url.searchParams.set('filter', filterValue);
+                window.location.href = url.toString(); // Redirect with the new filter
             });
         });
     </script>
