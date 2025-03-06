@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../database/database.php';
+include '../../database/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $receivingDetailID = $_POST["receivingDetailID"]; // Changed from receivingID
@@ -47,6 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["error_message"] = "Error: " . $e->getMessage();
     }
 
-    header("Location: ../views/purchases.php");
+    header("Location: ../../views/purchases.php");
     exit();
 }

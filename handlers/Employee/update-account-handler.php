@@ -1,13 +1,13 @@
 <?php
 session_start();
-include '../database/database.php';
+include '../../database/database.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit;
 }
 
-if($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         // Get form data
         $firstName = $_POST['employeeFirstName'] ?? '';
@@ -27,14 +27,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!password_verify($oldPassword, $user['Password'])) {
             $_SESSION['update_account_error'] = "Incorrect old password.";
-            header("Location: ../views/account.php");
+            header("Location: ../../views/account.php");
             exit;
         }
 
         // Check if password fields match (if provided)
         if (!empty($newPassword) && $newPassword !== $confirmPassword) {
             $_SESSION['update_account_error'] = "New password and confirmation do not match.";
-            header("Location: ../views/account.php");
+            header("Location: ../../views/account.php");
             exit;
         }
 
@@ -64,7 +64,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             $types .= 's';
             $params[] = $hashedPassword;
         }
-        
+
         // Always update Updated_At and Updated_By
         $updateFields[] = "Updated_At = NOW()";
         $updateFields[] = "Updated_By = ?";
@@ -85,24 +85,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['last_name'] = $lastName;
                 $_SESSION['username'] = $username;
                 $_SESSION['update_account_success'] = "Account updated successfully!";
-                header("Location: ../views/account.php");
+                header("Location: ../../views/account.php");
                 exit;
             } else {
                 $_SESSION['update_account_error'] = "Failed to update account: " . $stmt->error;
-                header("Location: ../views/account.php");
+                header("Location: ../../views/account.php");
                 exit;
             }
         } else {
             $_SESSION['update_account_success'] = "No changes made.";
-            header("Location: ../views/account.php");
+            header("Location: ../../views/account.php");
             exit;
         }
-
     } catch (Exception $e) {
         $_SESSION['update_account_error'] = "Operation Failed. Please try again.";
-        header("Location: ../views/account.php");
+        header("Location: ../../views/account.php");
         exit;
-    }    
-
-} 
-?>
+    }
+}

@@ -6,17 +6,17 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-include '../database/database.php';
+include '../../database/database.php';
 
 if (!isset($conn) || $conn->connect_error) {
     $_SESSION['error'] = "Database connection failed.";
-    header("Location: ../views/purchases/add-purchases.php");
+    header("Location: ../../views/purchases/add-purchases.php");
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['error'] = "Invalid request method.";
-    header("Location: ../views/purchases/add-purchases.php");
+    header("Location: ../../views/purchases/add-purchases.php");
     exit;
 }
 
@@ -28,7 +28,7 @@ $products = $_POST['products'] ?? [];
 
 if (empty($supplierId) || empty($date) || empty($status) || empty($products) || !is_array($products)) {
     $_SESSION['error'] = "All fields are required, including at least one product.";
-    header("Location: ../views/purchases/add-purchases.php");
+    header("Location: ../../views/purchases/add-purchases.php");
     exit;
 }
 
@@ -36,7 +36,7 @@ if (empty($supplierId) || empty($date) || empty($status) || empty($products) || 
 $validStatuses = ['Pending', 'Received', 'Cancelled'];
 if (!in_array($status, $validStatuses)) {
     $_SESSION['error'] = "Invalid status value.";
-    header("Location: ../views/purchases/add-purchases.php");
+    header("Location: ../../views/purchases/add-purchases.php");
     exit;
 }
 
@@ -130,5 +130,5 @@ try {
 }
 
 $conn->close();
-header("Location: ../views/purchases.php");
+header("Location: ../../views/purchases.php");
 exit;

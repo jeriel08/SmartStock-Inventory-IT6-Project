@@ -6,17 +6,17 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-include '../database/database.php';
+include '../../database/database.php';
 
 if (!isset($conn) || $conn->connect_error) {
     $_SESSION['error'] = "Database connection failed.";
-    header("Location: ../views/products/categories.php");
+    header("Location: ../../views/products/categories.php");
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['error'] = "Invalid request method.";
-    header("Location: ../views/products/categories.php");
+    header("Location: ../../views/products/categories.php");
     exit;
 }
 
@@ -25,7 +25,7 @@ $categoryId = $_POST['categoryID'] ?? '';
 
 if (empty($categoryId)) {
     $_SESSION['error'] = "No category ID provided.";
-    header("Location: ../views/products/categories.php");
+    header("Location: ../../views/products/categories.php");
     exit;
 }
 
@@ -33,7 +33,7 @@ if (empty($categoryId)) {
 $stmt = $conn->prepare("SELECT COUNT(*) FROM products WHERE CategoryID = ?");
 if ($stmt === false) {
     $_SESSION['error'] = "Error checking associated products.";
-    header("Location: ../views/products/categories.php");
+    header("Location: ../../views/products/categories.php");
     exit;
 }
 
@@ -45,7 +45,7 @@ $stmt->close();
 
 if ($count > 0) {
     $_SESSION['error'] = "Cannot delete category with associated products. Please reassign or delete the products first.";
-    header("Location: ../views/products/categories.php");
+    header("Location: ../../views/products/categories.php");
     exit;
 }
 
@@ -57,19 +57,18 @@ try {
     }
 
     $stmt->bind_param('i', $categoryId);
-    
+
     if ($stmt->execute()) {
         $_SESSION['success'] = "Category deleted successfully!";
     } else {
         throw new Exception("Delete failed: " . $stmt->error);
     }
-    
+
     $stmt->close();
 } catch (Exception $e) {
     $_SESSION['error'] = "Error deleting category: " . $e->getMessage();
 }
 
 $conn->close();
-header("Location: ../views/products/categories.php");
+header("Location: ../../views/products/categories.php");
 exit;
-?>

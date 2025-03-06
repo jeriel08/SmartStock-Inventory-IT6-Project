@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../database/database.php';
+include '../../database/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
@@ -32,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-function verifyUser($username, $password) {
+function verifyUser($username, $password)
+{
     global $conn;
     $stmt = $conn->prepare("SELECT EmployeeID, Username, Password, FirstName, LastName, Role FROM employees WHERE Username = ?");
     $stmt->bind_param('s', $username);
@@ -46,4 +47,3 @@ function verifyUser($username, $password) {
     }
     return false;
 }
-?>

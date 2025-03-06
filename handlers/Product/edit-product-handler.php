@@ -1,9 +1,9 @@
 <?php
 session_start();
-include '../database/database.php';
+include '../../database/database.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../index.php');
+    header('Location: ../../index.php');
     exit();
 }
 
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $validStatuses = ['In Stock', 'Out of Stock'];
     if (!in_array($status, $validStatuses)) {
         $_SESSION['error'] = "Invalid status value";
-        header('Location: ../products.php');
+        header('Location: ../../views/products.php');
         exit();
     }
 
@@ -35,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt->close();
-    header('Location: ../views/products.php');
+    header('Location: ../../views/products.php');
     exit();
 }
-?>

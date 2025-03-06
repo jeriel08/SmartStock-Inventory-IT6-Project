@@ -6,17 +6,17 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-include '../database/database.php';
+include '../../database/database.php';
 
 if (!isset($conn) || $conn->connect_error) {
     $_SESSION['error'] = "Database connection failed.";
-    header("Location: ../views/products/categories.php");
+    header("Location: ../../views/products/categories.php");
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['error'] = "Invalid request method.";
-    header("Location: ../views/products/categories.php");
+    header("Location: ../../views/products/categories.php");
     exit;
 }
 
@@ -28,7 +28,7 @@ $description = $_POST['categoryDescription'] ?? '';
 // Validate required fields
 if (empty($categoryId) || empty($name)) {
     $_SESSION['error'] = "Category ID and name are required.";
-    header("Location: ../views/products/categories.php");
+    header("Location: ../../views/products/categories.php");
     exit;
 }
 
@@ -60,6 +60,5 @@ try {
 }
 
 $conn->close();
-header("Location: ../views/products/categories.php");
+header("Location: ../../views/products/categories.php");
 exit;
-?>

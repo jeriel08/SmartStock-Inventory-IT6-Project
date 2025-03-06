@@ -1,13 +1,13 @@
 <?php
 session_start();
-include '../database/database.php';
+include '../../database/database.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../index.php");
     exit;
 }
 
-if($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         // Get form data
         $firstName = $_POST['employeeFirstName'] ?? '';
@@ -15,7 +15,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $username = $_POST['employeeUsername'] ?? '';
         $password = $_POST['employeePassword'] ?? '';
         $role = $_POST['employeeRole'] ?? '';
-        
+
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -31,22 +31,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
-        
+
         $stmt->bind_param('sssssii', $firstName, $lastName, $username, $hashedPassword, $role, $createdBy, $updatedBy);
-        
+
         if ($stmt->execute()) {
             $_SESSION['success'] = "Employee added successfully!";
-            header("Location: ../views/account.php"); // Redirect to accounts on success
+            header("Location: ../../views/account.php"); // Redirect to accounts on success
             exit;
         } else {
             throw new Exception("Insert failed: " . $stmt->error);
         }
-
     } catch (Exception $e) {
         $_SESSION['add_employee_error'] = "Operation Failed. Please try again.";
-        header("Location: ../views/accounts.php");
+        header("Location: ../../views/accounts.php");
         exit;
-    }    
-
-} 
-?>
+    }
+}

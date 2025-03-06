@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../database/database.php';
+include '../../database/database.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -11,13 +11,13 @@ if (!isset($_SESSION['user_id'])) {
 // Verify database connection
 if (!isset($conn) || $conn->connect_error) {
     $_SESSION['error'] = "Database connection failed.";
-    header("Location: ../views/suppliers.php");
+    header("Location: ../../views/suppliers.php");
     exit;
 }
 
 // Only process POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../views/suppliers.php");
+    header("Location: ../../views/suppliers.php");
     exit;
 }
 
@@ -30,7 +30,7 @@ $imageFile = $_FILES['profileImage'] ?? null;
 // Validate required fields
 if (empty($name) || empty($address) || empty($contact)) {
     $_SESSION['error'] = "Name, address, and contact number are required.";
-    header("Location: ../views/suppliers.php");
+    header("Location: ../../views/suppliers.php");
     exit;
 }
 
@@ -44,12 +44,12 @@ if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
     // Validate file
     if (!in_array($imageFile['type'], $allowedTypes)) {
         $_SESSION['error'] = "Only JPEG, PNG, and GIF images are allowed.";
-        header("Location: ../views/suppliers.php");
+        header("Location: ../../views/suppliers.php");
         exit;
     }
     if ($imageFile['size'] > $maxFileSize) {
         $_SESSION['error'] = "Image file size must be less than 5MB.";
-        header("Location: ../views/suppliers.php");
+        header("Location: ../../views/suppliers.php");
         exit;
     }
 
@@ -61,7 +61,7 @@ if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
     // Move the uploaded file
     if (!move_uploaded_file($imageFile['tmp_name'], $profileImagePath)) {
         $_SESSION['error'] = "Failed to upload image.";
-        header("Location: ../views/suppliers.php");
+        header("Location: ../../views/suppliers.php");
         exit;
     }
 }
@@ -82,7 +82,7 @@ try {
 
     if ($stmt->execute()) {
         $_SESSION['success'] = "Supplier added successfully!";
-        header("Location: ../views/suppliers.php");
+        header("Location: ../../views/suppliers.php");
         exit;
     } else {
         throw new Exception("Insert failed: " . $stmt->error);
@@ -95,9 +95,8 @@ try {
         unlink($profileImagePath);
     }
     $_SESSION['error'] = "Error adding supplier: " . $e->getMessage();
-    header("Location: ../views/suppliers.php");
+    header("Location: ../../views/suppliers.php");
     exit;
 }
 
 $conn->close();
-?>

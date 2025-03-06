@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../database/database.php';
+include '../../database/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productName = trim($_POST["productName"]);
@@ -23,6 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["error_message"] = "Error: " . $e->getMessage();
     }
 
-    header("Location: ../views/products.php");
+    header("Location: ../../views/products.php");
     exit();
 }
