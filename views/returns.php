@@ -109,7 +109,7 @@ $returns = $stmt->get_result();
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="../handlers/logout-handler.php">
+              <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="../handlers/Authentication/logout-handler.php">
                 <span class="material-icons-outlined">logout</span> Logout
               </a>
             </li>
@@ -186,7 +186,7 @@ $returns = $stmt->get_result();
           </h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="../handlers/add-return-handler.php" method="POST" class="py-3">
+        <form action="../handlers/Returns/add-return-handler.php" method="POST" class="py-3">
           <div class="modal-body">
             <!-- Customer Name -->
             <div class="row mb-3">

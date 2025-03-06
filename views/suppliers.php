@@ -140,7 +140,7 @@ include '../database/database.php';
             <li class="nav-item">
               <a
                 class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                href="../handlers/logout-handler.php">
+                href="../handlers/Authentication/logout-handler.php">
                 <span class="material-icons-outlined"> logout </span>
                 Logout
               </a>
@@ -262,7 +262,7 @@ include '../database/database.php';
                     Are you sure you want to delete "<?php echo $name; ?>"? This action cannot be undone.
                   </div>
                   <div class="modal-footer">
-                    <form action="../handlers/delete-supplier-handler.php" method="POST">
+                    <form action="../handlers/Supplier/delete-supplier-handler.php" method="POST">
                       <input type="hidden" name="supplierId" value="<?php echo $supplierId; ?>">
                       <button type="submit" class="btn btn-danger">Delete</button>
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -308,7 +308,7 @@ include '../database/database.php';
             data-bs-dismiss="modal"
             aria-label="Close"></button>
         </div>
-        <form action="../handlers/add-supplier-handler.php" method="POST" class="py-3" enctype="multipart/form-data">
+        <form action="../handlers/Supplier/add-supplier-handler.php" method="POST" class="py-3" enctype="multipart/form-data">
           <div class="modal-body">
             <!-- Supplier Name -->
             <div class="row mb-3">

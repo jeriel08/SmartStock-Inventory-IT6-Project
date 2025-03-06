@@ -144,7 +144,7 @@ if (!isset($conn) || $conn->connect_error) {
                         <li class="nav-item">
                             <a
                                 class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                                href="../../handlers/logout-handler.php">
+                                href="../../handlers/Authentication/logout-handler.php">
                                 <span class="material-icons-outlined"> logout </span>
                                 Logout
                             </a>
@@ -168,7 +168,7 @@ if (!isset($conn) || $conn->connect_error) {
                 unset($_SESSION['error']); ?>
             </div>
         <?php endif; ?>
-        <form action="../../handlers/add-purchase-handler.php" method="POST">
+        <form action="../../handlers/SupplierOrder/add-purchase-handler.php" method="POST">
             <!-- Receiving Header Fields -->
             <div class="row justify-content-center mb-5">
                 <h4 class="fw-semibold mb-3 text-center">Suppliers</h4>

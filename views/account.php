@@ -137,7 +137,7 @@ if (!isset($_SESSION['user_id'])) {
             <li class="nav-item">
               <a
                 class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                href="../handlers/logout-handler.php">
+                href="../handlers/Authentication/logout-handler.php">
                 <span class="material-icons-outlined"> logout </span>
                 Logout
               </a>
@@ -168,7 +168,7 @@ if (!isset($_SESSION['user_id'])) {
           </div>
         <?php endif; ?>
         <div class="card-body px-5 py-4">
-          <form action="../handlers/add-employee-handler.php" method="POST">
+          <form action="../handlers/Employee/add-employee-handler.php" method="POST">
             <div class="mb-3 row">
               <div class="col-6">
                 <label for="employeeFirstName" class="form-label fw-semibold">First Name</label>
@@ -247,7 +247,7 @@ if (!isset($_SESSION['user_id'])) {
             unset($_SESSION['update_account_error']); ?>
           </div>
         <?php endif; ?>
-        <form action="../handlers/update-account-handler.php" method="POST">
+        <form action="../handlers/Employee/update-account-handler.php" method="POST">
           <div class="mb-3 row">
             <div class="col-6">
               <label for="employeeFirstName" class="form-label fw-semibold">First Name</label>

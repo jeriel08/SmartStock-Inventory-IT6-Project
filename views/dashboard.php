@@ -136,7 +136,7 @@ if (!isset($_SESSION['user_id'])) {
             <li class="nav-item">
               <a
                 class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                href="../handlers/logout-handler.php">
+                href="../handlers/Authentication/logout-handler.php">
                 <span class="material-icons-outlined"> logout </span>
                 Logout
               </a>

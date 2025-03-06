@@ -111,7 +111,7 @@ $products = $stmt->get_result();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="../handlers/logout-handler.php">
+                            <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="../handlers/Authentication/logout-handler.php">
                                 <span class="material-icons-outlined">logout</span>
                                 Logout
                             </a>
@@ -205,7 +205,7 @@ $products = $stmt->get_result();
                     </h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="../handlers/add-product-handler.php" method="POST">
+                <form action="../handlers/Product/add-product-handler.php" method="POST">
                     <div class="modal-body">
                         <!-- Product Name -->
                         <div class="row mb-3">
@@ -314,7 +314,7 @@ $products = $stmt->get_result();
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="../handlers/edit-product-handler.php" method="POST">
+                <form action="../handlers/Product/edit-product-handler.php" method="POST">
                     <div class="modal-body">
                         <input type="hidden" name="productId" id="editProductId">
                         <div class="row mb-3">

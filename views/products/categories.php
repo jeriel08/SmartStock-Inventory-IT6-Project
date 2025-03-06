@@ -10,29 +10,27 @@ include '../../database/database.php';
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    rel="icon"
+    type="image/x-icon"
+    href="../../statics/images/app-logo.ico" />
+  <link rel="stylesheet" href="../../statics/categories-style.css" />
+  <link rel="stylesheet" href="../../statics/products-style.css" />
+  <link rel="stylesheet" href="../../statics/style.css" />
+  <link rel="stylesheet" href="../../statics/css/bootstrap.min.css" />
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="../../statics/images/app-logo.ico" />
-    <link rel="stylesheet" href="../../statics/categories-style.css" />
-    <link rel="stylesheet" href="../../statics/products-style.css" />
-    <link rel="stylesheet" href="../../statics/style.css" />
-    <link rel="stylesheet" href="../../statics/css/bootstrap.min.css" />
+  <!-- Google Font Icon Links -->
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round"
+    rel="stylesheet" />
 
-    <!-- Google Font Icon Links -->
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round"
-      rel="stylesheet" />
+  <script src="../../statics/js/bootstrap.min.js"></script>
 
-    <script src="../../statics/js/bootstrap.min.js"></script>
-
-    <title>Categories | SmartStock Inventory</title>
-  </head>
+  <title>Categories | SmartStock Inventory</title>
 </head>
 
 <body class="main">
@@ -144,7 +142,7 @@ include '../../database/database.php';
             <li class="nav-item">
               <a
                 class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                href="../../handlers/logout-handler.php">
+                href="../../handlers/Authentication/logout-handler.php">
                 <span class="material-icons-outlined"> logout </span>
                 Logout
               </a>
@@ -247,7 +245,7 @@ include '../../database/database.php';
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="../../handlers/add-category-handler.php" method="POST">
+        <form action="../../handlers/Category/add-category-handler.php" method="POST">
           <div class="modal-body">
             <div class="mb-3">
               <label for="categoryName" class="form-label">Name</label>
@@ -288,7 +286,7 @@ include '../../database/database.php';
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="../../handlers/update-category-handler.php" method="POST">
+        <form action="../../handlers/Category/update-category-handler.php" method="POST">
           <div class="modal-body">
             <input type="hidden" name="categoryID" id="editCategoryID">
             <div class="mb-3">
@@ -327,7 +325,7 @@ include '../../database/database.php';
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="../../handlers/delete-category-handler.php" method="POST">
+        <form action="../../handlers/Category/delete-category-handler.php" method="POST">
           <div class="modal-body">
             <input type="hidden" name="categoryID" id="deleteCategoryID">
             <p>Are you sure you want to delete the category "<span id="deleteCategoryName"></span>"? This action cannot be undone.</p>
