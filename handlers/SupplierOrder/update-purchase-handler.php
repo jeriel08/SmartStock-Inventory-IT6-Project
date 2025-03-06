@@ -31,16 +31,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $conn->prepare("
                 UPDATE products p
                 JOIN receiving_details rd ON p.ProductID = rd.ProductID
+                JOIN receiving r ON rd.ReceivingID = r.ReceivingID
                 SET 
                     p.StockQuantity = p.StockQuantity + rd.Quantity,
                     p.Price = rd.UnitCost,
-                    p.Status = 'In Stock'
+                    p.Status = 'In Stock',
+                    p.SupplierID = r.SupplierID
                 WHERE rd.ReceivingDetailID = ?
             ");
             $stmt->bind_param("i", $receivingDetailID);
             $stmt->execute();
             $stmt->close();
         }
+
 
         $_SESSION["success_message"] = "Purchase updated successfully!";
     } catch (Exception $e) {
