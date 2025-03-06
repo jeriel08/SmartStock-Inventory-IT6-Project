@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate status against allowed enum values
     $validStatuses = ['In Stock', 'Out of Stock'];
     if (!in_array($status, $validStatuses)) {
-        $_SESSION['error'] = "Invalid status value";
+        $_SESSION['product_error'] = "Invalid status value";
         header('Location: ../../views/products.php');
         exit();
     }
@@ -29,9 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("dsii", $price, $status, $updatedBy, $productId);
 
     if ($stmt->execute()) {
-        $_SESSION['success'] = "Product updated successfully";
+        $_SESSION['product_success'] = "Product updated successfully";
     } else {
-        $_SESSION['error'] = "Failed to update product: " . $conn->error;
+        $_SESSION['product_error'] = "Failed to update product: " . $conn->error;
     }
 
     $stmt->close();

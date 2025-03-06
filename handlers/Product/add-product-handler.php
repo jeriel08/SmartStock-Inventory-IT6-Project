@@ -14,13 +14,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ");
         $stmt->bind_param("sii", $productName, $categoryId, $createdBy);
         if ($stmt->execute()) {
-            $_SESSION["success_message"] = "Product added successfully!";
+            $_SESSION["product_success"] = "Product added successfully!";
         } else {
-            $_SESSION["error_message"] = "Error adding product.";
+            $_SESSION["product_error"] = "Error adding product.";
         }
         $stmt->close();
     } catch (Exception $e) {
-        $_SESSION["error_message"] = "Error: " . $e->getMessage();
+        $_SESSION["product_error"] = "Error: " . $e->getMessage();
     }
 
     header("Location: ../../views/products.php");

@@ -136,7 +136,7 @@ if (!$products) {
     </nav>
 
     <div class="container mt-4 pt-5">
-        <div class="row align-items-center justify-content-between">
+        <div class="row align-items-center justify-content-between mb-5">
             <div class="col-md-5 d-flex">
                 <form action="#" class="d-flex w-100">
                     <input type="text" name="search" placeholder="Search an item" class="form-control me-2" />
@@ -164,53 +164,66 @@ if (!$products) {
                 </button>
             </div>
 
-            <div class="container-fluid mt-5 rounded-5">
-                <div class="table-responsive mb-3">
-                    <table class="table table-striped rounded-3">
-                        <thead>
+        </div>
+        <?php if (isset($_SESSION['product_success'])): ?>
+            <div class="alert alert-success mt-4">
+                <?php echo $_SESSION['product_success'];
+                unset($_SESSION['product_success']); ?>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['product_error'])): ?>
+            <div class="alert alert-danger">
+                <?php echo $_SESSION['product_error'];
+                unset($_SESSION['product_error']); ?>
+            </div>
+        <?php endif; ?>
+        <div class="container-fluid rounded-5">
+            <div class="table-responsive mb-3">
+                <table class="table table-striped rounded-3">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Product ID</th>
+                            <th>Price</th>
+                            <th>Supplier</th>
+                            <th>Category</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = $products->fetch_assoc()): ?>
                             <tr>
-                                <th>Product</th>
-                                <th>Product ID</th>
-                                <th>Price</th>
-                                <th>Supplier</th>
-                                <th>Category</th>
-                                <th>Stock</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
+                                <td class="align-middle"><?php echo htmlspecialchars($row['Name']); ?></td>
+                                <td class="align-middle"><?php echo htmlspecialchars($row['ProductID']); ?></td>
+                                <td class="align-middle"><?php echo number_format($row['Price'], 2); ?></td>
+                                <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName'] ?? 'N/A'); ?></td>
+                                <td class="align-middle"><?php echo htmlspecialchars($row['CategoryName'] ?? 'N/A'); ?></td>
+                                <td class="align-middle"><?php echo htmlspecialchars($row['StockQuantity']); ?></td>
+                                <td class="align-middle"><?php echo htmlspecialchars($row['Status']); ?></td>
+                                <td class="align-middle text-center">
+                                    <button class="btn edit-button btn-primary add-product-button rounded-4"
+                                        data-bs-toggle="modal" data-bs-target="#editProductModal"
+                                        data-product-id="<?php echo $row['ProductID']; ?>"
+                                        data-price="<?php echo $row['Price']; ?>"
+                                        data-status="<?php echo $row['Status']; ?>">
+                                        <span class="material-icons-outlined">edit</span>
+                                    </button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($row = $products->fetch_assoc()): ?>
-                                <tr>
-                                    <td class="align-middle"><?php echo htmlspecialchars($row['Name']); ?></td>
-                                    <td class="align-middle"><?php echo htmlspecialchars($row['ProductID']); ?></td>
-                                    <td class="align-middle"><?php echo number_format($row['Price'], 2); ?></td>
-                                    <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName'] ?? 'N/A'); ?></td>
-                                    <td class="align-middle"><?php echo htmlspecialchars($row['CategoryName'] ?? 'N/A'); ?></td>
-                                    <td class="align-middle"><?php echo htmlspecialchars($row['StockQuantity']); ?></td>
-                                    <td class="align-middle"><?php echo htmlspecialchars($row['Status']); ?></td>
-                                    <td class="align-middle text-center">
-                                        <button class="btn edit-button btn-primary add-product-button rounded-4"
-                                            data-bs-toggle="modal" data-bs-target="#editProductModal"
-                                            data-product-id="<?php echo $row['ProductID']; ?>"
-                                            data-price="<?php echo $row['Price']; ?>"
-                                            data-status="<?php echo $row['Status']; ?>">
-                                            <span class="material-icons-outlined">edit</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
+                        <?php endwhile; ?>
 
-                            <?php if ($products->num_rows === 0): ?>
-                                <tr>
-                                    <td colspan="8" class="text-center">No products found.</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                        <?php if ($products->num_rows === 0): ?>
+                            <tr>
+                                <td colspan="8" class="text-center">No products found.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
+
     </div>
 
     <!-- Add Product Modal -->
