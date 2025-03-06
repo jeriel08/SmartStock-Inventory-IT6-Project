@@ -203,7 +203,6 @@ if (!isset($conn) || $conn->connect_error) {
                             <select name="status" id="status" class="form-select" required>
                                 <option value="Pending" selected>Pending</option>
                                 <option value="Received">Received</option>
-                                <option value="Cancelled">Cancelled</option>
                             </select>
                         </div>
                     </div>

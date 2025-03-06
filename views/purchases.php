@@ -4,6 +4,28 @@ if (!isset($_SESSION['user_id'])) {
   header('Location: ../index.php');
   exit();
 }
+
+include '../database/database.php';
+// Fetch existing returns with all details
+$stmt = $conn->prepare("
+    SELECT 
+        r.ReceivingID,
+        p.Name AS ProductName,
+        rd.Quantity,
+        rd.UnitCost,
+        r.Date,
+        s.Name AS SupplierName,
+        r.Status
+    FROM receiving r
+    LEFT JOIN receiving_details rd ON r.ReceivingID = rd.ReceivingID
+    LEFT JOIN products p ON rd.ProductID = p.ProductID
+    LEFT JOIN suppliers s ON r.SupplierID = s.SupplierID
+    ORDER BY r.Date DESC
+");
+
+$stmt->execute();
+$result = $stmt->get_result();
+
 ?>
 
 <!DOCTYPE html>
@@ -188,179 +210,127 @@ if (!isset($_SESSION['user_id'])) {
             <thead>
               <tr>
                 <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Cost</th>
                 <th>Date</th>
                 <th>Supplier</th>
                 <th>Status</th>
-                <th>Grand Total</th>
-                <th>Payment</th>
                 <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              <!-- Sample Rows - Replace with your actual data -->
-              <tr>
-                <td class="align-middle">Product Name 1</td>
-                <td class="align-middle">01-01-25</td>
-                <td class="align-middle">NCCC SUpermarket</td>
-                <td class="align-middle">
-                  <span class="badge text-bg-success fs-6">Received</span>
-                </td>
-                <td class="align-middle">900</td>
-                <td class="align-middle">
-                  <span class="badge text-bg-success fs-6">Paid</span>
-                </td>
-
-                <td class="align-middle">
-                  <button
-                    class="btn edit-button btn-primary add-product-button rounded-4">
-                    <span class="material-icons-outlined">edit</span>
-                  </button>
-                </td>
-              </tr>
+              <?php if ($result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                  <tr>
+                    <td class="align-middle"><?php echo htmlspecialchars($row['ProductName']); ?></td>
+                    <td class="align-middle"><?php echo $row['Quantity']; ?></td>
+                    <td class="align-middle"><?php echo number_format($row['UnitCost'], 2); ?></td>
+                    <td class="align-middle"><?php echo date("m-d-y", strtotime($row['Date'])); ?></td>
+                    <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName']); ?></td>
+                    <td class="align-middle">
+                      <span class="badge text-bg-<?php echo ($row['Status'] == 'Received') ? 'success' : 'warning'; ?> fs-6">
+                        <?php echo htmlspecialchars($row['Status']); ?>
+                      </span>
+                    </td>
+                    <td class="align-middle text-center">
+                      <button class="btn edit-button btn-primary rounded-4 editPurchaseBtn"
+                        data-id="<?= $row['ReceivingID']; ?>"
+                        data-product="<?= $row['ProductName']; ?>"
+                        data-quantity="<?= $row['Quantity']; ?>"
+                        data-cost="<?= $row['UnitCost']; ?>"
+                        data-status="<?= $row['Status']; ?>">
+                        <span class="material-icons-outlined">edit</span>
+                      </button>
+                    </td>
+                  </tr>
+                <?php endwhile; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-2">
+                    <p class="fs-6">No purchases have been made yet.</p>
+                  </td>
+                </tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Modal -->
-      <div
-        class="modal fade"
-        id="staticBackdrop"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabindex="-1"
-        aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
-        <div
-          class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1
-                class="modal-title fs-5 d-flex align-items-center gap-2"
-                id="staticBackdropLabel">
-                <span class="material-icons-outlined fs-2"> add_box </span>
-                Add Purchases
-              </h1>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"></button>
-            </div>
-            <form action="#" class="py-3">
-              <div class="modal-body">
-                <!-- Product Name -->
-                <div class="row mb-3">
-                  <label
-                    for="productName"
-                    class="col-md-3 col-form-label text-md-end">Product Name</label>
-                  <div class="col-md-9">
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="productName"
-                      name="productName"
-                      placeholder="Enter product name" />
-                  </div>
-                </div>
-
-                <!-- Date -->
-                <div class="row mb-3">
-                  <label
-                    for="date"
-                    class="col-md-3 col-form-label text-md-end">Date</label>
-                  <div class="col-md-9">
-                    <input
-                      type="date"
-                      class="form-control"
-                      id="date"
-                      name="date"
-                      placeholder="Enter date" />
-                  </div>
-                </div>
-
-                <!-- Supplier -->
-                <div class="row mb-3">
-                  <label
-                    for="supplier"
-                    class="col-md-3 col-form-label text-md-end">Supplier</label>
-                  <div class="col-md-9">
-                    <select class="form-select" name="supplier" id="supplier">
-                      <option selected disabled>Select Supplier</option>
-                      <option value="nccc">NCCC</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Status -->
-                <div class="row mb-3">
-                  <label
-                    for="status"
-                    class="col-md-3 col-form-label text-md-end">Status</label>
-                  <div class="col-md-9">
-                    <select class="form-select" name="status" id="status">
-                      <option selected disabled>Set Status</option>
-                      <option value="received">Received</option>
-                      <option value="pending">Pending</option>
-                      <option value="denied">Denied</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Total -->
-                <div class="row mb-3">
-                  <label
-                    for="total"
-                    class="col-md-3 col-form-label text-md-end">Grand Total</label>
-                  <div class="col-md-9">
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="total"
-                      name="total"
-                      placeholder="Enter total"
-                      step="0.01"
-                      min="0" />
-                  </div>
-                </div>
-
-                <!-- Price -->
-                <div class="row mb-3">
-                  <label
-                    for="payment"
-                    class="col-md-3 col-form-label text-md-end">Payment</label>
-                  <div class="col-md-9">
-                    <select class="form-select" id="payment" name="payment">
-                      <option selected disabled>Select payment</option>
-                      <option value="paid">Paid</option>
-                      <option value="pending">Pending</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="modal-footer justify-content-center">
-                <button
-                  type="button"
-                  class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
-                  <span class="material-icons-outlined">add</span>
-                  <span>Add Purchase</span>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
-                  data-bs-dismiss="modal">
-                  <span class="material-icons-outlined">close</span>
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
+  <!-- Edit Purchase Modal -->
+  <div class="modal fade" id="editPurchaseModal" tabindex="-1" aria-labelledby="editPurchaseLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editPurchaseLabel">Edit Purchase</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <form action="../handlers/update-purchase-handler.php" method="POST">
+          <div class="modal-body">
+            <input type="hidden" id="editReceivingID" name="receivingID">
+
+            <!-- Product Name (Read-only) -->
+            <div class="mb-3">
+              <label class="form-label">Product</label>
+              <input type="text" class="form-control" id="editProductName" name="productName" readonly>
+            </div>
+
+            <!-- Quantity -->
+            <div class="mb-3">
+              <label class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="editQuantity" name="quantity" min="1" required>
+            </div>
+
+            <!-- Unit Cost -->
+            <div class="mb-3">
+              <label class="form-label">Unit Cost</label>
+              <input type="number" class="form-control" id="editCost" name="cost" step="0.01" min="0" required>
+            </div>
+
+            <!-- Status Dropdown -->
+            <div class="mb-3">
+              <label class="form-label">Status</label>
+              <select class="form-select" id="editStatus" name="status" required>
+                <option value="Pending">Pending</option>
+                <option value="Received">Received</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const editButtons = document.querySelectorAll(".editPurchaseBtn");
+
+      editButtons.forEach(button => {
+        button.addEventListener("click", function() {
+          const receivingID = this.getAttribute("data-id");
+          const productName = this.getAttribute("data-product");
+          const quantity = this.getAttribute("data-quantity");
+          const cost = this.getAttribute("data-cost");
+          const status = this.getAttribute("data-status");
+
+          document.getElementById("editReceivingID").value = receivingID;
+          document.getElementById("editProductName").value = productName;
+          document.getElementById("editQuantity").value = quantity;
+          document.getElementById("editCost").value = cost;
+          document.getElementById("editStatus").value = status;
+
+          const editModal = new bootstrap.Modal(document.getElementById("editPurchaseModal"));
+          editModal.show();
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>
