@@ -35,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt->close();
-    header('Location: ../../views/products.php');
+    // Preserve the filter in the URL
+    $filter = $_GET['filter'] ?? 'In Stock'; // Keep the current filter
+    header("Location: ../../views/products.php?filter=" . urlencode($filter));
     exit();
 }
