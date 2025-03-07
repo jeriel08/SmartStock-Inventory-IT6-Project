@@ -2,7 +2,6 @@
 import customtkinter as ctk
 from tkinter import messagebox, TclError
 import mysql.connector
-from mysql.connector import Error
 import cart
 import place_order
 
@@ -31,13 +30,6 @@ try:
     root.grid_columnconfigure(2, weight=0)
     root.grid_rowconfigure(0, weight=1)
 
-    # Vertical Navbar Frame (wider)
-    navbar_frame = ctk.CTkFrame(master=root, width=300, corner_radius=0)
-    navbar_frame.grid(row=0, column=0, sticky="ns", padx=0, pady=0)
-
-    logo_label = ctk.CTkLabel(master=navbar_frame, text="Logo", font=("Arial", 20, "bold"))
-    logo_label.pack(pady=20)
-
 
     def filter_and_show_main(category_id):
         global cart_visible, order_visible
@@ -55,40 +47,45 @@ try:
             place_order_btn.configure(text="Place Order")
         filter_products(category_id)
 
+    # Vertical Navbar Frame (wider)
+    navbar_frame = ctk.CTkFrame(master=root, width=300, corner_radius=0)
+    navbar_frame.grid(row=0, column=0, sticky="ns", padx=0, pady=0)
+
+    logo_label = ctk.CTkLabel(master=navbar_frame, text="Logo", font=("Arial", 20, "bold"))
+    logo_label.pack(pady=20)
+
+
+    # Function to fetch categories from database
+    def fetch_categories():
+        try:
+            conn = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="",
+                database="smartstock_inventory"
+            )
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT categoryID, name FROM categories")  # Adjust based on your schema
+            categories = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            return categories
+        except mysql.connector.Error as e:
+            print(f"Database Error: {e}")
+            return []
+
 
     all_products_btn = ctk.CTkButton(master=navbar_frame, text="All Products",
                                      command=lambda: filter_and_show_main(None))
     all_products_btn.pack(pady=5, padx=10, fill=ctk.X)
 
-    dairy_eggs_btn = ctk.CTkButton(master=navbar_frame, text="Dairy and Eggs", command=lambda: filter_and_show_main(1))
-    dairy_eggs_btn.pack(pady=5, padx=10, fill=ctk.X)
-
-    baking_supplies_btn = ctk.CTkButton(master=navbar_frame, text="Baking Supplies",
-                                        command=lambda: filter_and_show_main(2))
-    baking_supplies_btn.pack(pady=5, padx=10, fill=ctk.X)
-
-    snacks_btn = ctk.CTkButton(master=navbar_frame, text="Snacks", command=lambda: filter_and_show_main(3))
-    snacks_btn.pack(pady=5, padx=10, fill=ctk.X)
-
-    beverages_btn = ctk.CTkButton(master=navbar_frame, text="Beverages", command=lambda: filter_and_show_main(4))
-    beverages_btn.pack(pady=5, padx=10, fill=ctk.X)
-
-    canned_goods_btn = ctk.CTkButton(master=navbar_frame, text="Canned Goods", command=lambda: filter_and_show_main(5))
-    canned_goods_btn.pack(pady=5, padx=10, fill=ctk.X)
-
-    condiments_btn = ctk.CTkButton(master=navbar_frame, text="Condiments", command=lambda: filter_and_show_main(6))
-    condiments_btn.pack(pady=5, padx=10, fill=ctk.X)
-
-    household_supplies_btn = ctk.CTkButton(master=navbar_frame, text="Household Supplies",
-                                           command=lambda: filter_and_show_main(7))
-    household_supplies_btn.pack(pady=5, padx=10, fill=ctk.X)
-
-    personal_care_btn = ctk.CTkButton(master=navbar_frame, text="Personal Care",
-                                      command=lambda: filter_and_show_main(8))
-    personal_care_btn.pack(pady=5, padx=10, fill=ctk.X)
-
-    pet_foods_btn = ctk.CTkButton(master=navbar_frame, text="Pet Foods", command=lambda: filter_and_show_main(9))
-    pet_foods_btn.pack(pady=5, padx=10, fill=ctk.X)
+    # Fetch categories and create buttons dynamically
+    categories = fetch_categories()
+    for category_id, category_name in categories:
+        category_btn = ctk.CTkButton(master=navbar_frame, text=category_name,
+                                     command=lambda cid=category_id: filter_and_show_main(cid))
+        category_btn.pack(pady=5, padx=10, fill=ctk.X)
 
     # Main content frame (for product items)
     main_frame = ctk.CTkFrame(master=root)
@@ -287,6 +284,7 @@ try:
             product = name_entry.get()
             price = float(price_entry.get())
             quantity = int(qty_entry.get())
+
             if not product:
                 messagebox.showwarning("Missing Data", "Product name cannot be empty")
                 return
@@ -296,15 +294,32 @@ try:
             if quantity <= 0:
                 messagebox.showwarning("Invalid Quantity", "Please enter a quantity greater than 0")
                 return
+
+            # Fetch the CategoryID from the database
+            query = "SELECT CategoryID FROM products WHERE Name = %s"
+            cursor.execute(query, (product,))
+            result = cursor.fetchone()
+
+            if result is None:
+                messagebox.showwarning("Error", "Product not found in database")
+                return
+
+            category_id = result[0]  # Extract CategoryID
             total = price * quantity
             grand_total += total
-            cart_items.append((product, price, quantity, total))
-            print(f"Added to cart: {product}, Total: ${total:.2f}, Grand Total: ${grand_total:.2f}")
+            cart_items.append((product, price, quantity, total, category_id))  # Include category_id
+
+            print(
+                f"Added to cart: {product}, CategoryID: {category_id}, Total: ${total:.2f}, Grand Total: ${grand_total:.2f}")
+
             grand_total_value.configure(text=f"${grand_total:.2f}")
+
             if cart_visible:
                 cart.update_cart_display(cart_frame, cart_items, grand_total)
             elif order_visible:
                 place_order.update_order_display(place_order_frame, cart_items, grand_total, toggle_place_order)
+
+            # Clear input fields
             name_entry.configure(state='normal')
             name_entry.delete(0, ctk.END)
             name_entry.configure(state='disabled')
@@ -315,6 +330,7 @@ try:
             total_entry.configure(state='normal')
             total_entry.delete(0, ctk.END)
             total_entry.configure(state='disabled')
+
         except ValueError:
             messagebox.showwarning("Invalid Input", "Please enter valid numbers for price and quantity")
 

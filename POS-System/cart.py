@@ -45,7 +45,7 @@ def update_cart_display(cart_frame, items, total):
     for widget in cart_content.winfo_children():
         widget.destroy()
 
-    for idx, (product, price, quantity, item_total) in enumerate(cart_items):
+    for idx, (product, price, quantity, item_total, *_) in enumerate(cart_items):
         item_frame = ctk.CTkFrame(master=cart_content)
         item_frame.pack(fill=ctk.X, pady=10, padx=10)
 

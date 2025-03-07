@@ -308,7 +308,7 @@ if (!$products) {
                     </a>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="../handlers/add-category-handler.php" method="POST">
+                <form action="../handlers/Product/add-category-handler.php" method="POST">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">Name</label>
