@@ -2,7 +2,7 @@
 
 ## Overview
 
-SmartStock Inventory System is a web-based inventory management solution designed to streamline stock tracking, supplier management, and product monitoring. Built using PHP, MySQL, HTML, CSS, and JavaScript, it provides an intuitive interface for managing inventory efficiently.
+SmartStock Inventory System is a web-based inventory management solution designed to streamline stock tracking, supplier management, and product monitoring. Built using PHP, MySQL, HTML, CSS, Python, and JavaScript, it provides an intuitive interface for managing inventory efficiently.
 
 ## Features
 
@@ -56,8 +56,8 @@ SmartStock Inventory System is a web-based inventory management solution designe
 1. **Clone the Repository**:
 
    ```sh
-   git clone https://github.com/your-repo-url.git
-   cd SmartStock-Inventory
+   git clone https://github.com/jeriel08/SmartStock-Inventory-IT6-Project.git
+   cd SmartStock-Inventory-IT6-Project
    ```
 
 2. **Set Up the Database**:
@@ -67,6 +67,46 @@ SmartStock Inventory System is a web-based inventory management solution designe
 
 3. **Run the System**:
    - Run the system in a local server like XAMPP.
+
+## POS System Setup
+
+The POS (Point of Sale) system is an integral part of the SmartStock Inventory System, designed to handle catering orders efficiently.
+
+### Installation Steps
+
+1. **Navigate to the POS System Folder**:
+
+   ```sh
+   cd SmartStock-Inventory-System-IT6-Project/POS-System
+   ```
+
+2. **Create a Virtual Environment** (if not already created):
+
+   ```sh
+   python -m venv venv
+   ```
+
+3. **Activate the Virtual Environment**:
+   - **Windows**:
+     ```sh
+     venv\Scripts\activate
+     ```
+   - **Mac/Linux**:
+     ```sh
+     source venv/bin/activate
+     ```
+
+4. **Install Dependencies**:
+
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+5. **Run the POS System**:
+
+   ```sh
+   python SmartStock-POS.py
+   ```
 
 ## Usage
 
