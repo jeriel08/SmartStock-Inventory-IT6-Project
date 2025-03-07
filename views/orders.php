@@ -4,6 +4,15 @@ if (!isset($_SESSION['user_id'])) {
   header('Location: ../index.php');
   exit();
 }
+
+// Include the database connection (avoid redefining $conn)
+include '../database/database.php';
+
+// Fetch orders from the database
+$stmt = $conn->prepare("SELECT OrderID, CustomerID, Date, Status, Total FROM Orders ORDER BY Date DESC");
+$stmt->execute();
+$result = $stmt->get_result();
+
 ?>
 
 <!DOCTYPE html>
@@ -180,35 +189,43 @@ if (!isset($_SESSION['user_id'])) {
           <table class="table table-striped rounded-3">
             <thead>
               <tr>
-                <th>Product</th>
-                <th>Order ID</th>
-                <th>CName</th>
-                <th>Quantity</th>
-                <th>Amount</th>
-                <th>Payment</th>
+                <th>OrderID</th>
+                <th>CustomerID</th>
+                <th>Total</th>
+                <th>Date</th>
                 <th>Status</th>
                 <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              <!-- Sample Rows - Replace with your actual data -->
-              <tr>
-                <td class="align-middle">Product Name 1</td>
-                <td class="align-middle">12345</td>
-                <td class="align-middle">$19.99</td>
-                <td class="align-middle">Supplier A</td>
-                <td class="align-middle">Electronics</td>
-                <td class="align-middle">100</td>
-                <td class="align-middle">
-                  <span class="badge text-bg-success fs-6">Success</span>
-                </td>
-                <td class="align-middle">
-                  <button
-                    class="btn edit-button btn-primary add-product-button rounded-4">
-                    <span class="material-icons-outlined">edit</span>
-                  </button>
-                </td>
-              </tr>
+              <?php
+
+              if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                  echo "<tr>";
+                  echo "<td class='align-middle'>{$row['OrderID']}</td>";
+                  echo "<td class='align-middle'>{$row['CustomerID']}</td>";
+                  echo "<td class='align-middle'>{$row['Date']}</td>";
+                  echo "<td class='align-middle'>$" . number_format($row['Total'], 2) . "</td>";
+
+                  // Status Badge Styling
+                  $status = $row['Status'];
+                  $badgeClass = ($status == 'Completed') ? 'text-bg-success' : (($status == 'Pending') ? 'text-bg-warning' : 'text-bg-danger');
+
+                  echo "<td class='align-middle'><span class='badge $badgeClass fs-6'>{$status}</span></td>";
+
+                  // Edit Button
+                  echo "<td class='align-middle'>
+                    <button class='btn edit-button btn-primary rounded-4'>
+                        <span class='material-icons-outlined'>edit</span>
+                    </button>
+                  </td>";
+                  echo "</tr>";
+                }
+              } else {
+                echo "<tr><td colspan='6' class='text-center text-muted py-3'>There's no order yet.</td></tr>";
+              }
+              ?>
             </tbody>
           </table>
         </div>
