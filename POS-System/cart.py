@@ -119,21 +119,21 @@ def update_cart_display(cart_frame, items, total):
 
 def subtract_quantity(index, cart_frame):
     global cart_items, grand_total
-    product, price, quantity, item_total = cart_items[index]
+    product, price, quantity, item_total, *extra = cart_items[index]
     if quantity > 1:
         new_quantity = quantity - 1
         new_total = price * new_quantity
         grand_total = grand_total - item_total + new_total
-        cart_items[index] = (product, price, new_quantity, new_total)
+        cart_items[index] = (product, price, new_quantity, new_total, *extra)
         update_cart_display(cart_frame, cart_items, grand_total)
 
 def add_quantity(index, cart_frame):
     global cart_items, grand_total
-    product, price, quantity, item_total = cart_items[index]
+    product, price, quantity, item_total, *extra = cart_items[index]
     new_quantity = quantity + 1
     new_total = price * new_quantity
     grand_total = grand_total - item_total + new_total
-    cart_items[index] = (product, price, new_quantity, new_total)
+    cart_items[index] = (product, price, new_quantity, new_total, *extra)
     update_cart_display(cart_frame, cart_items, grand_total)
 
 def remove_item(index, cart_frame):

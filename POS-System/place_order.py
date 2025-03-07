@@ -56,7 +56,7 @@ def initialize_place_order(place_order_frame, items, total, toggle_callback):
     ctk.CTkLabel(master=header_frame, text="Total", font=("Arial", 14, "bold"), width=100).pack(side=ctk.LEFT, padx=5)
 
     # Items
-    for product, price, quantity, item_total in order_items:
+    for product, price, quantity, item_total, *extra in order_items:
         row_frame = ctk.CTkFrame(master=items_frame)
         row_frame.pack(fill=ctk.X, pady=2)
         ctk.CTkLabel(master=row_frame, text=product, font=("Arial", 14), width=200).pack(side=ctk.LEFT, padx=5)
@@ -156,6 +156,8 @@ def initialize_place_order(place_order_frame, items, total, toggle_callback):
         messagebox.showinfo("Order Success", f"Thank you for your purchase!\n"
                                             f"Order placed for {name}\nTotal: ${total_price:.2f}")
         toggle_callback()
+
+
     submit_btn = ctk.CTkButton(master=grand_total_frame, text="Submit Order", command=submit_order)
     submit_btn.pack(side=ctk.RIGHT, padx=5)
 
