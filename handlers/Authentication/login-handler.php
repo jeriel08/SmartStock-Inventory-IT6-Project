@@ -18,16 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Generate a unique token for session security
             $_SESSION['access_token'] = bin2hex(random_bytes(32));
 
-            header("Location: ../views/dashboard.php");
+            header("Location: ../../views/dashboard.php");
             exit;
         } else {
             $_SESSION['login_error'] = "Invalid username or password!";
-            header("Location: ../index.php");
+            header("Location: ../../index.php");
             exit;
         }
     } catch (Exception $e) {
         $_SESSION['login_error'] = "Login failed. Please try again.";
-        header("Location: ../index.php");
+        header("Location: ../../index.php");
         exit;
     }
 }
