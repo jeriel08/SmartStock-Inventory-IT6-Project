@@ -4,6 +4,30 @@ if (!isset($_SESSION['user_id'])) {
   header('Location: ../index.php');
   exit();
 }
+
+include '../database/database.php';
+
+// Call the stored procedure
+$sql = "CALL GetDashboardStats()";
+$result = $conn->multi_query($sql);
+
+$dashboardData = [];
+if ($result) {
+  do {
+    if ($res = $conn->store_result()) {
+      $dashboardData[] = $res->fetch_assoc();
+      $res->free();
+    }
+  } while ($conn->more_results() && $conn->next_result());
+}
+
+$conn->close();
+
+// Assign values
+$totalSales = $dashboardData[0]['total_sales'] ?? 0;
+$totalOrders = $dashboardData[1]['total_orders'] ?? 0;
+$totalProducts = $dashboardData[2]['total_products'] ?? 0;
+$lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -150,14 +174,37 @@ if (!isset($_SESSION['user_id'])) {
     <div class="row">
       <div class="col-md-12 mt-5 d-inline-flex align-items-center">
         <p class="fw-semibold fs-5 mb-0">Activity</p>
-        <div class="d-inline-flex ms-auto mw-5 align-items-center">
-          <a class="btn custom-date-range-button ms-3">
-            <span class="material-icons-outlined fs-2">date_range</span>
-          </a>
-          <p class="fw-semibold fs-5 mb-0 ms-3 mw-5">Date</p>
+      </div>
+    </div>
+
+    <!-- Row for summary cards -->
+    <div class="row mt-4">
+      <div class="col-md-3">
+        <div class="card shadow-sm rounded-4 p-3">
+          <p class="fw-semibold">Total Sales</p>
+          <h3 class="fw-bold"><?php echo number_format($totalSales, 2); ?></h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm rounded-4 p-3">
+          <p class="fw-semibold">Total Orders</p>
+          <h3 class="fw-bold"><?php echo $totalOrders; ?></h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm rounded-4 p-3">
+          <p class="fw-semibold">Total Products in Stock</p>
+          <h3 class="fw-bold"><?php echo $totalProducts; ?></h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm rounded-4 p-3">
+          <p class="fw-semibold">Low Stock Products</p>
+          <h3 class="fw-bold"><?php echo $lowStockProducts; ?></h3>
         </div>
       </div>
     </div>
+
   </div>
 </body>
 
