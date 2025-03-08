@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->close();
 
     if (!$productId) {
-        $_SESSION['error'] = "Invalid receiving detail!";
+        $_SESSION['supplierorder_error'] = "Invalid receiving detail!";
         header("Location: ../../views/purchases.php?status=return_failed");
         exit();
     }
@@ -55,17 +55,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Commit transaction
         $conn->commit();
 
-        $_SESSION['success'] = "Product returned successfully!";
+        $_SESSION['supplierorder_success'] = "Product returned successfully!";
         header("Location: ../../views/purchases.php?status=return_success");
         exit();
     } catch (Exception $e) {
         $conn->rollback();
-        $_SESSION['error'] = "Failed to process return: " . $e->getMessage();
+        $_SESSION['supplierorder_error'] = "Failed to process return: " . $e->getMessage();
         header("Location: ../../views/purchases.php?status=return_failed");
         exit();
     }
 } else {
-    $_SESSION['error'] = "Invalid request!";
+    $_SESSION['supplierorder_error'] = "Invalid request!";
     header("Location: ../../views/purchases.php?status=return_failed");
     exit();
 }

@@ -216,7 +216,7 @@ $result = $stmt->get_result();
 
                   // Edit Button
                   echo "<td class='align-middle'>
-                    <button class='btn edit-button btn-primary rounded-4'>
+                    <button class='btn edit-button add-product-button btn-primary rounded-4'>
                         <span class='material-icons-outlined'>edit</span>
                     </button>
                   </td>";

@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param('sssssii', $firstName, $lastName, $username, $hashedPassword, $role, $createdBy, $updatedBy);
 
         if ($stmt->execute()) {
-            $_SESSION['success'] = "Employee added successfully!";
+            $_SESSION['add_employee_success'] = "Employee added successfully!";
             header("Location: ../../views/account.php"); // Redirect to accounts on success
             exit;
         } else {

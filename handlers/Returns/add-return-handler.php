@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate inputs
     if (empty($customerName) || empty($address) || empty($phoneNumber) || empty($orderId) || empty($returnDate) || empty($reason)) {
-        $_SESSION['error'] = "All fields are required";
+        $_SESSION['return_error'] = "All fields are required";
         header('Location: ../../views/returns.php');
         exit();
     }
@@ -51,8 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ");
     $stmt->bind_param("iissii", $customerId, $orderId, $returnDate, $reason, $createdBy, $createdBy);
 
-    $stmt->execute(); // Save silently, no success message
+    $stmt->execute();
     $stmt->close();
+    $_SESSION['return_success'] = "Return recorded successfully.";
     header('Location: ../../views/returns.php');
     exit();
 }

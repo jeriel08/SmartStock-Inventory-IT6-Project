@@ -147,6 +147,7 @@ if (!isset($_SESSION['user_id'])) {
       </div>
     </div>
   </nav>
+
   <div class="container pt-4 mb-0">
     <!-- Conditionally show the Add New Employee form only for Admins -->
     <?php if (isset($_SESSION['role']) && strtoupper($_SESSION['role']) === 'ADMIN'): ?>
@@ -155,10 +156,10 @@ if (!isset($_SESSION['user_id'])) {
         <div class="card-header align-items-center d-flex">
           <h2 class="fw-semibold">Add New Employee</h2>
         </div>
-        <?php if (isset($_SESSION['success'])): ?>
+        <?php if (isset($_SESSION['add_employee_success'])): ?>
           <div class="alert alert-success mt-2">
-            <?php echo $_SESSION['success'];
-            unset($_SESSION['success']); ?>
+            <?php echo $_SESSION['add_employee_success'];
+            unset($_SESSION['add_employee_success']); ?>
           </div>
         <?php endif; ?>
         <?php if (isset($_SESSION['add_employee_error'])): ?>

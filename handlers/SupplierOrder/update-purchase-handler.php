@@ -45,9 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
 
-        $_SESSION["success_message"] = "Purchase updated successfully!";
+        $_SESSION["supplierorder_success"] = "Purchase updated successfully!";
     } catch (Exception $e) {
-        $_SESSION["error_message"] = "Error: " . $e->getMessage();
+        $_SESSION["supplierorder_error"] = "Error: " . $e->getMessage();
     }
 
     header("Location: ../../views/purchases.php");

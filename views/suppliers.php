@@ -164,16 +164,16 @@ include '../database/database.php';
           <span>Add Supplier</span>
         </button>
       </div>
-      <?php if (isset($_SESSION['success'])): ?>
+      <?php if (isset($_SESSION['supplier_success'])): ?>
         <div class="alert alert-success mt-4">
-          <?php echo $_SESSION['success'];
-          unset($_SESSION['success']); ?>
+          <?php echo $_SESSION['supplier_success'];
+          unset($_SESSION['supplier_success']); ?>
         </div>
       <?php endif; ?>
-      <?php if (isset($_SESSION['error'])): ?>
+      <?php if (isset($_SESSION['success_error'])): ?>
         <div class="alert alert-danger">
-          <?php echo $_SESSION['error'];
-          unset($_SESSION['error']); ?>
+          <?php echo $_SESSION['success_error'];
+          unset($_SESSION['success_error']); ?>
         </div>
       <?php endif; ?>
     </div>

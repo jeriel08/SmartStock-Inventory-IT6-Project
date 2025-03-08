@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../../database/database.php';
 
 // Debug: Check if POST data is received correctly
@@ -10,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productId = intval($_POST["productId"]);
     $reason = $_POST["reason"];
     $quantity = $_POST["quantity"];
-    $adminId = 1;
+    $adminId = $_SESSION['user_id'];
 
     // Insert into Adjustments table
     $sql = "INSERT INTO Adjustments (AdminID, Reason, AdjustmentDate, Created_at, Created_by)
@@ -38,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $stmt->close();
 
-    // Redirect back with success message
-    header("Location: ../../views/products.php?status=discard_success");
+    $_SESSION["product_success"] = "Product discard successful!";
+    header("Location: ../../views/products.php");
     exit();
 }

@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 include '../../database/database.php';
 
 if (!isset($conn) || $conn->connect_error) {
-    $_SESSION['error'] = "Database connection failed.";
+    $_SESSION['success_error'] = "Database connection failed.";
     header("Location: ../../views/suppliers.php");
     exit;
 }
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 if (!isset($_POST['supplierId'])) {
-    $_SESSION['error'] = "No supplier ID provided.";
+    $_SESSION['success_error'] = "No supplier ID provided.";
     header("Location: ../../views/suppliers.php");
     exit;
 }
@@ -45,14 +45,14 @@ try {
         if ($supplier && !empty($supplier['ProfileImage']) && file_exists($supplier['ProfileImage'])) {
             unlink($supplier['ProfileImage']);
         }
-        $_SESSION['success'] = "Supplier deleted successfully!";
+        $_SESSION['supplier_success'] = "Supplier deleted successfully!";
     } else {
         throw new Exception("Delete failed: " . $stmt->error);
     }
 
     $stmt->close();
 } catch (Exception $e) {
-    $_SESSION['error'] = "Error deleting supplier: " . $e->getMessage();
+    $_SESSION['success_error'] = "Error deleting supplier: " . $e->getMessage();
 }
 
 $conn->close();

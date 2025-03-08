@@ -123,10 +123,10 @@ try {
 
     // Commit transaction
     $conn->commit();
-    $_SESSION['success'] = "Purchase added successfully!";
+    $_SESSION['supplieroder_success'] = "Purchase added successfully!";
 } catch (Exception $e) {
     $conn->rollback();
-    $_SESSION['error'] = "Error adding purchase: " . $e->getMessage();
+    $_SESSION['supplierorder_error'] = "Error adding purchase: " . $e->getMessage();
 }
 
 $conn->close();

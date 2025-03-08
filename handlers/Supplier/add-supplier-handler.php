@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Verify database connection
 if (!isset($conn) || $conn->connect_error) {
-    $_SESSION['error'] = "Database connection failed.";
+    $_SESSION['success_error'] = "Database connection failed.";
     header("Location: ../../views/suppliers.php");
     exit;
 }
@@ -29,7 +29,7 @@ $imageFile = $_FILES['profileImage'] ?? null;
 
 // Validate required fields
 if (empty($name) || empty($address) || empty($contact)) {
-    $_SESSION['error'] = "Name, address, and contact number are required.";
+    $_SESSION['success_error'] = "Name, address, and contact number are required.";
     header("Location: ../../views/suppliers.php");
     exit;
 }
@@ -43,12 +43,12 @@ if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
 
     // Validate file
     if (!in_array($imageFile['type'], $allowedTypes)) {
-        $_SESSION['error'] = "Only JPEG, PNG, and GIF images are allowed.";
+        $_SESSION['success_error'] = "Only JPEG, PNG, and GIF images are allowed.";
         header("Location: ../../views/suppliers.php");
         exit;
     }
     if ($imageFile['size'] > $maxFileSize) {
-        $_SESSION['error'] = "Image file size must be less than 5MB.";
+        $_SESSION['success_error'] = "Image file size must be less than 5MB.";
         header("Location: ../../views/suppliers.php");
         exit;
     }
@@ -60,7 +60,7 @@ if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
 
     // Move the uploaded file
     if (!move_uploaded_file($imageFile['tmp_name'], $profileImagePath)) {
-        $_SESSION['error'] = "Failed to upload image.";
+        $_SESSION['success_error'] = "Failed to upload image.";
         header("Location: ../../views/suppliers.php");
         exit;
     }
@@ -81,7 +81,7 @@ try {
     $stmt->bind_param('ssssii', $name, $address, $contact, $profileImagePath, $createdBy, $updatedBy);
 
     if ($stmt->execute()) {
-        $_SESSION['success'] = "Supplier added successfully!";
+        $_SESSION['supplier_success'] = "Supplier added successfully!";
         header("Location: ../../views/suppliers.php");
         exit;
     } else {
@@ -94,7 +94,7 @@ try {
     if ($profileImagePath && file_exists($profileImagePath)) {
         unlink($profileImagePath);
     }
-    $_SESSION['error'] = "Error adding supplier: " . $e->getMessage();
+    $_SESSION['success_error'] = "Error adding supplier: " . $e->getMessage();
     header("Location: ../../views/suppliers.php");
     exit;
 }

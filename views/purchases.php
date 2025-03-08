@@ -202,7 +202,18 @@ $result = $stmt->get_result();
           <span>Add Purchases</span>
         </a>
       </div>
-
+      <?php if (isset($_SESSION['supplierorder_success'])): ?>
+        <div class="alert alert-success mt-4">
+          <?php echo $_SESSION['supplierorder_success'];
+          unset($_SESSION['supplierorder_success']); ?>
+        </div>
+      <?php endif; ?>
+      <?php if (isset($_SESSION['supplierorder_error'])): ?>
+        <div class="alert alert-danger">
+          <?php echo $_SESSION['supplierorder_error'];
+          unset($_SESSION['supplierorder_error']); ?>
+        </div>
+      <?php endif; ?>
       <div class="container-fluid mt-5 rounded-5">
         <div class="table-responsive mb-3">
           <table class="table table-striped rounded-3">
@@ -234,24 +245,27 @@ $result = $stmt->get_result();
                       </span>
                     </td>
                     <td class="align-middle text-center">
-                      <button class="btn edit-button btn-primary add-product-button rounded-4 editPurchaseBtn"
-                        data-id="<?= $row['ReceivingDetailID']; ?>"
-                        data-product="<?= $row['product_name']; ?>"
-                        data-quantity="<?= $row['product_quantity']; ?>"
-                        data-cost="<?= $row['unit_cost']; ?>"
-                        data-status="<?= $row['order_status']; ?>">
-                        <span class="material-icons-outlined">edit</span>
-                      </button>
-                      <!-- Return to Supplier Button -->
-                      <?php if ($row['order_status'] == 'Received'): ?>
-                        <button class="btn btn-danger rounded-4 returnToSupplierBtn"
+                      <div class="d-flex justify-content-center gap-2">
+                        <button class="btn edit-button btn-primary add-product-button rounded-4 d-flex justify-content-center align-items-center editPurchaseBtn"
                           data-id="<?= $row['ReceivingDetailID']; ?>"
                           data-product="<?= $row['product_name']; ?>"
                           data-quantity="<?= $row['product_quantity']; ?>"
-                          data-supplier="<?= $row['supplier_name']; ?>">
-                          <span class="material-icons-outlined">assignment_return</span>
+                          data-cost="<?= $row['unit_cost']; ?>"
+                          data-status="<?= $row['order_status']; ?>">
+                          <span class="material-icons-outlined">edit</span>
                         </button>
-                      <?php endif; ?>
+                        <!-- Return to Supplier Button -->
+                        <?php if ($row['order_status'] == 'Received'): ?>
+                          <button class="btn btn-danger rounded-4 returnToSupplierBtn d-flex justify-content-center align-items-center"
+                            data-id="<?= $row['ReceivingDetailID']; ?>"
+                            data-product="<?= $row['product_name']; ?>"
+                            data-quantity="<?= $row['product_quantity']; ?>"
+                            data-supplier="<?= $row['supplier_name']; ?>">
+                            <span class="material-icons-outlined">assignment_return</span>
+                          </button>
+                        <?php endif; ?>
+                      </div>
+
                     </td>
                   </tr>
                 <?php endwhile; ?>

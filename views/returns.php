@@ -128,7 +128,18 @@ $returns = $stmt->get_result();
           <span>Add Return</span>
         </button>
       </div>
-
+      <?php if (isset($_SESSION['return_success'])): ?>
+        <div class="alert alert-success mt-4">
+          <?php echo $_SESSION['return_success'];
+          unset($_SESSION['return_success']); ?>
+        </div>
+      <?php endif; ?>
+      <?php if (isset($_SESSION['return_error'])): ?>
+        <div class="alert alert-danger">
+          <?php echo $_SESSION['return_error'];
+          unset($_SESSION['return_error']); ?>
+        </div>
+      <?php endif; ?>
       <div class="container-fluid mt-4 rounded-5">
         <div class="table-responsive mb-3">
           <table class="table table-striped rounded-3">
