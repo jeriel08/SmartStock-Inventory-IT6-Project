@@ -203,13 +203,19 @@ if (!$products) {
                                 <td class="align-middle"><?php echo htmlspecialchars($row['StockQuantity']); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['Status']); ?></td>
                                 <td class="align-middle text-center">
-                                    <button class="btn edit-button btn-primary add-product-button rounded-4"
-                                        data-bs-toggle="modal" data-bs-target="#editProductModal"
-                                        data-product-id="<?php echo $row['ProductID']; ?>"
-                                        data-price="<?php echo $row['Price']; ?>"
-                                        data-status="<?php echo $row['Status']; ?>">
-                                        <span class="material-icons-outlined">edit</span>
-                                    </button>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn edit-button btn-primary add-product-button rounded-4"
+                                            data-bs-toggle="modal" data-bs-target="#editProductModal"
+                                            data-product-id="<?php echo $row['ProductID']; ?>"
+                                            data-price="<?php echo $row['Price']; ?>"
+                                            data-status="<?php echo $row['Status']; ?>">
+                                            <span class="material-icons-outlined">edit</span>
+                                        </button>
+                                        <button type="button" class="btn btn-danger d-flex align-items-center gap-2 py-2 rounded-4 discard-button"
+                                            data-bs-toggle="modal" data-bs-target="#discardStockModal">
+                                            <span class="material-icons-outlined">delete</span>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -381,6 +387,39 @@ if (!$products) {
         </div>
     </div>
 
+    <!-- Discard Stock Modal / Opened within the Edit Product Modal -->
+    <div class="modal fade" id="discardStockModal" tabindex="-1" aria-labelledby="discardStockModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="discardStockModalLabel">Discard Stock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="../handlers/Product/discard-stock-handler.php" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="productId" id="discardProductId"> <!-- ✅ This should now receive the correct ProductID -->
+                        <p>Are you sure you want to discard stock for <strong id="discardProductName"></strong>?</p>
+                        <div class="mb-3">
+                            <label for="discardQuantity" class="form-label">Quantity to Discard</label>
+                            <input type="number" class="form-control" id="discardQuantity" name="quantity" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="discardReason" class="form-label">Reason</label>
+                            <select class="form-select" id="discardReason" name="reason" required>
+                                <option value="Expired">Expired</option>
+                                <option value="Damaged">Damaged</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Confirm Discard</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Filter Modal -->
     <div class="modal fade" id="filterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -400,7 +439,6 @@ if (!$products) {
             </div>
         </div>
     </div>
-
 
     <!-- JavaScript to Populate Edit Modal -->
     <script>
@@ -428,6 +466,9 @@ if (!$products) {
                 window.location.href = url.toString(); // Redirect with the new filter
             });
         });
+    </script>
+    <script src="../statics/discard-stock.js" defer>
+        console.log("JavaScript file loaded!");
     </script>
 </body>
 

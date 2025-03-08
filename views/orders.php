@@ -189,11 +189,11 @@ $result = $stmt->get_result();
           <table class="table table-striped rounded-3">
             <thead>
               <tr>
-                <th>OrderID</th>
-                <th>CustomerID</th>
-                <th>Total</th>
-                <th>Date</th>
-                <th>Status</th>
+                <th class="text-center">OrderID</th>
+                <th class="text-center">CustomerID</th>
+                <th class="text-center">Total</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Status</th>
                 <th class="text-center">Action</th>
               </tr>
             </thead>
@@ -203,16 +203,16 @@ $result = $stmt->get_result();
               if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                   echo "<tr>";
-                  echo "<td class='align-middle'>{$row['OrderID']}</td>";
-                  echo "<td class='align-middle'>{$row['CustomerID']}</td>";
-                  echo "<td class='align-middle'>{$row['Date']}</td>";
-                  echo "<td class='align-middle'>$" . number_format($row['Total'], 2) . "</td>";
+                  echo "<td class='align-middle text-center'>{$row['OrderID']}</td>";
+                  echo "<td class='align-middle text-center'>{$row['CustomerID']}</td>";
+                  echo "<td class='align-middle text-center'>₱" . number_format($row['Total'], 2) . "</td>";
+                  echo "<td class='align-middle text-center'>" . date("Y-m-d", strtotime($row['Date'])) . "</td>";
 
                   // Status Badge Styling
                   $status = $row['Status'];
-                  $badgeClass = ($status == 'Completed') ? 'text-bg-success' : (($status == 'Pending') ? 'text-bg-warning' : 'text-bg-danger');
+                  $badgeClass = ($status == 'Paid') ? 'text-bg-success' : (($status == 'Pending') ? 'text-bg-warning' : 'text-bg-danger');
 
-                  echo "<td class='align-middle'><span class='badge $badgeClass fs-6'>{$status}</span></td>";
+                  echo "<td class='align-middle text-center'><span class='badge $badgeClass fs-6'>{$status}</span></td>";
 
                   // Edit Button
                   echo "<td class='align-middle'>
