@@ -206,7 +206,78 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
       </div>
     </div>
 
+    <div class="card shadow-sm p-3 rounded-4 mt-4">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold">Sales Overview</h5>
+        <canvas id="salesChart" style="max-height: 300px;"></canvas>
+      </div>
+    </div>
+
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    fetch("../handlers/Dashboard/get_sales_data.php") // Adjust path if needed
+      .then((response) => response.json())
+      .then((data) => {
+        const labels = data.map((row) => row.order_date);
+        const sales = data.map((row) => row.total_sales);
+
+        const ctx = document.getElementById("salesChart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Total Sales",
+              data: sales,
+              borderColor: "#f66435",
+              backgroundColor: "rgba(0, 0, 255, 0.1)",
+              borderWidth: 2,
+              fill: true,
+            }, ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                  font: {
+                    family: "'Poppins', sans-serif",
+                    size: 12,
+                  },
+                },
+                ticks: {
+                  font: {
+                    family: "'Poppins', sans-serif",
+                    size: 12,
+                  },
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Sales (₱)",
+                  font: {
+                    family: "'Poppins', sans-serif",
+                    size: 12,
+                  },
+                },
+                ticks: {
+                  font: {
+                    family: "'Poppins', sans-serif",
+                    size: 12,
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
+      .catch((error) => console.error("Error fetching sales data:", error));
+  </script>
 </body>
 
 </html>
