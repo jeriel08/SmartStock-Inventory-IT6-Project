@@ -58,27 +58,37 @@ body {
 /* Primary Button (Search, Edit, etc.) */
 
 /* Add Product Button */
-.add-product-button {
-  background-color: #f66435 !important; /* Slightly different orange */
-  border-color: #ff7f50 !important;
-  color: var(--color-2) !important;
-}
-
-.add-product-button:hover {
+.btn.add-product-button {
   background-color: var(--color-1) !important;
   border-color: var(--color-4) !important;
+  color: var(--color-2) !important;
+  font-weight: 600;
+  padding: 10px 20px;
+  transition: all 0.3s ease-in-out !important;
 }
 
-/* Filter Button (Outline Secondary) */
+.btn.add-product-button:hover {
+  background-color: var(--color-1) !important;
+  border-color: var(--color-4) !important;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25) !important; /* Stronger shadow */
+  transform: scale(1.07) !important; /* More noticeable scale effect */
+}
+
+/* Outline Secondary Button */
 .btn-outline-secondary {
   color: var(--color-1) !important;
   border-color: var(--color-1) !important;
+  font-weight: 600;
+  padding: 10px 20px;
+  transition: all 0.3s ease-in-out !important;
 }
 
 .btn-outline-secondary:hover {
   background-color: var(--color-1) !important;
   color: var(--color-3) !important;
   border-color: var(--color-1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  transform: scale(1.05) !important;
 }
 
 /* ==========================================================================
@@ -184,4 +194,3 @@ body {
   color: var(--placeholder-color) !important;
   cursor: not-allowed !important;
 }
-

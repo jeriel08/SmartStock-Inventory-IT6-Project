@@ -155,7 +155,7 @@ if (!isset($conn) || $conn->connect_error) {
         </div>
     </nav>
 
-    <div class="container pt-5 custom-container rounded-4 mb-5">
+    <div class="container pt-5 custom-container rounded-4 mb-5 shadow">
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success mb-4">
                 <?php echo $_SESSION['success'];
