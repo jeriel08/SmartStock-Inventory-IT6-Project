@@ -21,22 +21,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $stmt = $conn->prepare("
-        UPDATE products 
-        SET Price = ?, Status = ?, Updated_By = ?, Updated_At = NOW()
-        WHERE ProductID = ?
-    ");
-    $stmt->bind_param("dsii", $price, $status, $updatedBy, $productId);
+    // Fetch the latest UnitCost
+    $query = "SELECT UnitCost FROM receiving_details WHERE ProductID = ? ORDER BY ReceivingID DESC LIMIT 1";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $unitCost = $row['UnitCost'] ?? 0; // Default to 0 if no entry exists
+    $stmt->close();
 
-    if ($stmt->execute()) {
-        $_SESSION['product_success'] = "Product updated successfully";
+    // Check price validity before updating
+    if ($price < $unitCost) {
+        $_SESSION['product_error'] = "Error: Price cannot be lower than UnitCost.";
     } else {
-        $_SESSION['product_error'] = "Failed to update product: " . $conn->error;
+        // Proceed with update
+        $stmt = $conn->prepare("UPDATE products SET Price = ?, Status = ?, Updated_By = ?, Updated_At = NOW() WHERE ProductID = ?");
+        $stmt->bind_param("dsii", $price, $status, $updatedBy, $productId);
+
+        if ($stmt->execute()) {
+            $_SESSION['product_success'] = "Product updated successfully";
+        } else {
+            $_SESSION['product_error'] = "Failed to update product: " . $conn->error;
+        }
+        $stmt->close();
     }
 
-    $stmt->close();
-    // Preserve the filter in the URL
-    $filter = $_GET['filter'] ?? 'In Stock'; // Keep the current filter
-    header("Location: ../../views/products.php?filter=" . urlencode($filter));
+    header("Location: ../../views/products.php?filter=" . urlencode($_GET['filter'] ?? 'In Stock'));
     exit();
 }

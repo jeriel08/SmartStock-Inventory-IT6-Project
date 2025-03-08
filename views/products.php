@@ -8,26 +8,14 @@ if (!isset($_SESSION['user_id'])) {
 
 $filter = $_GET['filter'] ?? 'In Stock'; // Default filter
 
-// Start the base query
-$query = "SELECT p.Name, p.ProductID, p.Price, s.Name AS SupplierName, 
-                 c.Name AS CategoryName, p.StockQuantity, p.Status 
-          FROM products p
-          LEFT JOIN suppliers s ON p.SupplierID = s.SupplierID
-          LEFT JOIN categories c ON p.CategoryID = c.CategoryID";
-
-// Apply filtering based on user selection
-if ($filter === 'In Stock') {
-    $query .= " WHERE p.Status = 'In Stock'";
-} elseif ($filter === 'Out of Stock') {
-    $query .= " WHERE p.Status = 'Out of Stock'";
-} // No condition needed for 'All' (fetch everything)
-
-$query .= " ORDER BY p.Name ASC"; // Optional sorting
-
-$products = $conn->query($query);
-
-if (!$products) {
-    die("Query Failed: " . $conn->error); // Debugging in case of errors
+try {
+    $stmt = $conn->prepare("CALL GetProducts(?)");
+    $stmt->bind_param("s", $filter);
+    $stmt->execute();
+    $products = $stmt->get_result();
+    $stmt->close();
+} catch (Exception $e) {
+    die("Error fetching products: " . $e->getMessage());
 }
 ?>
 

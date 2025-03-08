@@ -9,8 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         $stmt = $conn->prepare("
-            INSERT INTO products (Name, CategoryID, StockQuantity, Price, Status, Created_At, Created_By)
-            VALUES (?, ?, 0, 0.00, 'Out of Stock', NOW(), ?)
+            CALL AddProduct(?, ?, ?)
         ");
         $stmt->bind_param("sii", $productName, $categoryId, $createdBy);
         if ($stmt->execute()) {
