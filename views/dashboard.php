@@ -171,7 +171,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
       </div>
     </div>
   </nav>
-  <div class="container pt-5">
+  <div class="container pt-5 mt-3">
     <div class="row">
       <div class="col-md-12 mt-5 d-inline-flex align-items-center">
         <p class="fw-semibold fs-5 mb-0">Activity</p>
@@ -209,13 +209,23 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
     <div class="card shadow-sm p-3 rounded-4 mt-4">
       <div class="card-body">
         <h5 class="card-title fw-semibold">Sales Overview</h5>
-        <canvas id="salesChart" style="max-height: 300px;"></canvas>
+        <canvas id="salesChart" style="max-height: 380px;"></canvas>
       </div>
     </div>
+
+    <div class="card shadow-sm p-4 rounded-4 mt-4 mb-5">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold mb-3">Sales by Category</h5>
+        <canvas id="categorySalesChart" style="max-height: 380px;"></canvas>
+      </div>
+    </div>
+
 
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Line Chart / Sales Overview -->
   <script>
     fetch("../handlers/Dashboard/get_sales_data.php") // Adjust path if needed
       .then((response) => response.json())
@@ -253,6 +263,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
                   font: {
                     family: "'Poppins', sans-serif",
                     size: 12,
+                    weight: "bold"
                   },
                 },
               },
@@ -269,6 +280,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
                   font: {
                     family: "'Poppins', sans-serif",
                     size: 12,
+                    weight: "bold"
                   },
                 },
               },
@@ -278,6 +290,71 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
       })
       .catch((error) => console.error("Error fetching sales data:", error));
   </script>
+
+  <!-- Bar Graph / Sales by Category -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch("../handlers/Dashboard/get_sales_data_by_category.php")
+        .then(response => response.json())
+        .then(data => {
+          const categories = data.map(item => item.category);
+          const sales = data.map(item => item.sales);
+
+          const ctxBar = document.getElementById("categorySalesChart").getContext("2d");
+
+          new Chart(ctxBar, {
+            type: "bar",
+            data: {
+              labels: categories,
+              datasets: [{
+                label: "Categories",
+                data: sales,
+                backgroundColor: ["#007bff", "#28a745", "#ffc107", "#dc3545", "#17a2b8"],
+                borderRadius: 8
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  labels: {
+                    font: {
+                      family: "'Poppins', sans-serif",
+                      size: 14,
+                      weight: "bold"
+                    },
+                    color: "#333"
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  ticks: {
+                    font: {
+                      family: "'Poppins', sans-serif",
+                      size: 12,
+                      weight: "bold"
+                    }
+                  }
+                },
+                y: {
+                  ticks: {
+                    font: {
+                      family: "'Poppins', sans-serif",
+                      size: 12,
+                      weight: "bold"
+                    }
+                  },
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        })
+        .catch(error => console.error("Error fetching sales data:", error));
+    });
+  </script>
+
 </body>
 
 </html>
