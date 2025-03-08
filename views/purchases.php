@@ -234,7 +234,7 @@ $result = $stmt->get_result();
                       </span>
                     </td>
                     <td class="align-middle text-center">
-                      <button class="btn edit-button btn-primary rounded-4 editPurchaseBtn"
+                      <button class="btn edit-button btn-primary add-product-button rounded-4 editPurchaseBtn"
                         data-id="<?= $row['ReceivingDetailID']; ?>"
                         data-product="<?= $row['product_name']; ?>"
                         data-quantity="<?= $row['product_quantity']; ?>"
@@ -242,6 +242,16 @@ $result = $stmt->get_result();
                         data-status="<?= $row['order_status']; ?>">
                         <span class="material-icons-outlined">edit</span>
                       </button>
+                      <!-- Return to Supplier Button -->
+                      <?php if ($row['order_status'] == 'Received'): ?>
+                        <button class="btn btn-danger rounded-4 returnToSupplierBtn"
+                          data-id="<?= $row['ReceivingDetailID']; ?>"
+                          data-product="<?= $row['product_name']; ?>"
+                          data-quantity="<?= $row['product_quantity']; ?>"
+                          data-supplier="<?= $row['supplier_name']; ?>">
+                          <span class="material-icons-outlined">assignment_return</span>
+                        </button>
+                      <?php endif; ?>
                     </td>
                   </tr>
                 <?php endwhile; ?>
@@ -308,6 +318,66 @@ $result = $stmt->get_result();
     </div>
   </div>
 
+  <!-- Return to Supplier Modal -->
+  <div class="modal fade" id="returnToSupplierModal" tabindex="-1" aria-labelledby="returnToSupplierLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title d-flex align-items-center gap-2" id="returnToSupplierLabel">
+            <span class="material-icons-outlined fs-2">assignment_return</span>
+            Return to Supplier
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="../handlers/SupplierOrder/return-to-supplier-handler.php" method="POST">
+          <div class="modal-body">
+            <input type="hidden" name="receivingDetailId" id="returnReceivingDetailId">
+            <input type="hidden" name="productId" id="returnProductId">
+
+            <div class="row mb-3">
+              <label class="col-md-4 col-form-label text-md-end">Product</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" id="returnProductName" readonly>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-md-4 col-form-label text-md-end">Quantity</label>
+              <div class="col-md-8">
+                <input type="number" class="form-control" id="returnQuantity" name="quantity" required min="1">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-md-4 col-form-label text-md-end">Supplier</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" id="returnSupplier" readonly>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-md-4 col-form-label text-md-end">Reason</label>
+              <div class="col-md-8">
+                <textarea class="form-control" name="reason" id="returnReason" rows="3" required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="submit" class="btn btn-danger d-flex align-items-center gap-2 py-2 rounded-4">
+              <span class="material-icons-outlined">assignment_return</span>
+              <span>Confirm Return</span>
+            </button>
+            <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+              data-bs-dismiss="modal">
+              <span class="material-icons-outlined">close</span>
+              Close
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const editButtons = document.querySelectorAll(".editPurchaseBtn");
@@ -332,6 +402,7 @@ $result = $stmt->get_result();
       });
     });
   </script>
+  <script src="../statics/return-to-supplier.js"></script>
 </body>
 
 </html>

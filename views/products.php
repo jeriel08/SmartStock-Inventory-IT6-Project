@@ -213,7 +213,7 @@ if (!$products) {
                                         </button>
                                         <button type="button" class="btn btn-danger d-flex align-items-center gap-2 py-2 rounded-4 discard-button"
                                             data-bs-toggle="modal" data-bs-target="#discardStockModal">
-                                            <span class="material-icons-outlined">delete</span>
+                                            <span class="material-icons-outlined">remove_circle_outline</span>
                                         </button>
                                     </div>
                                 </td>
