@@ -42,6 +42,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
     href="../statics/images/app-logo.ico" />
   <link rel="stylesheet" href="../statics/style.css" />
   <link rel="stylesheet" href="../statics/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../statics/dashboard-style.css">
 
   <!-- Google Font Icon Links -->
   <link
@@ -54,7 +55,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
 </head>
 
 <body class="main">
-  <nav class="navbar bg-body-tertiary fixed-top shadow">
+  <nav class="navbar bg-body-tertiary fixed-top shadow-sm">
     <div class="container-fluid">
       <!-- Left side: Button and Header -->
       <div class="d-flex align-items-center">
@@ -182,7 +183,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
       <div class="col-md-3">
         <div class="card shadow-sm rounded-4 p-3">
           <p class="fw-semibold">Total Sales</p>
-          <h3 class="fw-bold"><?php echo number_format($totalSales, 2); ?></h3>
+          <h3 class="fw-bold">₱<?php echo number_format($totalSales, 2); ?></h3>
         </div>
       </div>
       <div class="col-md-3">

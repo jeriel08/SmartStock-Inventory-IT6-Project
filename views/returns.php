@@ -45,7 +45,7 @@ $returns = $stmt->get_result();
 </head>
 
 <body class="main">
-  <nav class="navbar bg-body-tertiary fixed-top shadow">
+  <nav class="navbar bg-body-tertiary fixed-top shadow-sm">
     <div class="container-fluid">
       <!-- Left side: Button and Header -->
       <div class="d-flex align-items-center">
@@ -140,7 +140,7 @@ $returns = $stmt->get_result();
           unset($_SESSION['return_error']); ?>
         </div>
       <?php endif; ?>
-      <div class="container-fluid mt-4 rounded-5">
+      <div class="container-fluid mt-4 rounded-5 shadow">
         <div class="table-responsive mb-3">
           <table class="table table-striped rounded-3">
             <thead>

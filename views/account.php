@@ -31,7 +31,7 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 
 <body class="main">
-  <nav class="navbar bg-body-tertiary fixed-top shadow">
+  <nav class="navbar bg-body-tertiary fixed-top shadow-sm">
     <div class="container-fluid">
       <!-- Left side: Button and Header -->
       <div class="d-flex align-items-center">
