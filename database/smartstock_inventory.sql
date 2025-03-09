@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306:3308
--- Generation Time: Mar 08, 2025 at 12:07 PM
+-- Generation Time: Mar 09, 2025 at 01:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -90,6 +90,11 @@ CREATE DEFINER=`` PROCEDURE `GetSalesByCategory` ()   BEGIN
     ORDER BY TotalSales DESC;
 END$$
 
+CREATE DEFINER=`` PROCEDURE `insert_audit_log` (IN `table_name` VARCHAR(50), IN `record_id` INT, IN `action_type` ENUM('Add','Change'), IN `column_name` VARCHAR(50), IN `old_value` TEXT, IN `new_value` TEXT, IN `admin_id` INT)   BEGIN
+    INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID)
+    VALUES (table_name, record_id, action_type, column_name, old_value, new_value, admin_id);
+END$$
+
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -114,7 +119,7 @@ CREATE TABLE `adjustments` (
 --
 
 INSERT INTO `adjustments` (`AdjustmentID`, `AdminID`, `Reason`, `AdjustmentDate`, `Created_At`, `Created_By`, `Updated_At`, `Updated_By`) VALUES
-(1, 1, 'Expired', '2025-03-08 08:05:34', '2025-03-08 08:05:34', 1, '2025-03-08 08:05:34', 0),
+(1, 1, 'Damaged Stock', '2025-03-09 16:19:56', '2025-03-08 08:05:34', 1, '2025-03-09 16:19:56', 2),
 (2, 1, 'Expired', '2025-03-08 08:09:37', '2025-03-08 08:09:37', 1, '2025-03-08 08:09:37', 0),
 (3, 1, 'Expired', '2025-03-08 08:11:39', '2025-03-08 08:11:39', 1, '2025-03-08 08:11:39', 0),
 (4, 1, 'Expired', '2025-03-08 08:13:09', '2025-03-08 08:13:09', 1, '2025-03-08 08:13:09', 0),
@@ -123,7 +128,41 @@ INSERT INTO `adjustments` (`AdjustmentID`, `AdminID`, `Reason`, `AdjustmentDate`
 (7, 1, 'Expired', '2025-03-08 09:20:37', '2025-03-08 09:20:37', 1, '2025-03-08 09:20:37', 0),
 (8, 1, 'Expired', '2025-03-08 09:21:51', '2025-03-08 09:21:51', 1, '2025-03-08 09:21:51', 0),
 (9, 1, 'Expired', '2025-03-08 09:22:42', '2025-03-08 09:22:42', 1, '2025-03-08 09:22:42', 0),
-(10, 1, 'Expired', '2025-03-08 16:59:39', '2025-03-08 16:59:39', 1, '2025-03-08 16:59:39', 0);
+(10, 1, 'Expired', '2025-03-08 16:59:39', '2025-03-08 16:59:39', 1, '2025-03-08 16:59:39', 0),
+(16, 1, 'Expired', '2025-03-09 15:18:59', '2025-03-09 15:18:59', 1, '2025-03-09 15:18:59', 0),
+(17, 1, 'Expired', '2025-03-09 15:24:12', '2025-03-09 15:24:12', 1, '2025-03-09 15:24:12', 0),
+(18, 1, 'Expired', '2025-03-09 15:43:40', '2025-03-09 15:43:40', 1, '2025-03-09 15:43:40', 0),
+(19, 1, 'Expired', '2025-03-09 15:46:20', '2025-03-09 15:46:20', 1, '2025-03-09 15:46:20', 0),
+(20, 1, 'Expired', '2025-03-09 15:53:26', '2025-03-09 15:53:26', 1, '2025-03-09 15:53:26', 0),
+(21, 1, 'Expired', '2025-03-09 15:54:15', '2025-03-09 15:54:15', 1, '2025-03-09 15:54:15', 0),
+(22, 1, 'Expired', '2025-03-09 16:18:56', '2025-03-09 16:18:56', 1, '2025-03-09 16:18:56', 0);
+
+--
+-- Triggers `adjustments`
+--
+DELIMITER $$
+CREATE TRIGGER `adjustments_audit_insert` AFTER INSERT ON `adjustments` FOR EACH ROW BEGIN
+    INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
+    VALUES ('Adjustments', NEW.AdjustmentID, 'Added', 'AdjustmentDate', NEW.AdjustmentDate, NEW.Created_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `adjustments_audit_update` AFTER UPDATE ON `adjustments` FOR EACH ROW BEGIN
+    -- Log only if Reason changes
+    IF OLD.Reason <> NEW.Reason THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Adjustments', NEW.AdjustmentID, 'Updated', 'Reason', OLD.Reason, NEW.Reason, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if AdjustmentDate changes
+    IF OLD.AdjustmentDate <> NEW.AdjustmentDate THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Adjustments', NEW.AdjustmentID, 'Updated', 'AdjustmentDate', OLD.AdjustmentDate, NEW.AdjustmentDate, NEW.Updated_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -153,7 +192,48 @@ INSERT INTO `adjustment_details` (`AdjustmentDetailID`, `ProductID`, `Adjustment
 (7, 15, 7, 'Expired', 10),
 (8, 12, 8, 'Expired', 5),
 (9, 10, 9, 'Expired', 5),
-(10, 16, 10, 'Expired', 5);
+(10, 16, 10, 'Expired', 5),
+(11, 16, 16, 'Expired', 4),
+(12, 19, 17, 'Expired', 4),
+(13, 14, 18, 'Expired', 3),
+(14, 16, 19, 'Expired', 1),
+(15, 16, 20, 'Expired', 1),
+(16, 16, 21, 'Expired', 1),
+(17, 16, 22, 'Expired', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `audit_logs`
+--
+
+CREATE TABLE `audit_logs` (
+  `LogID` int(11) NOT NULL,
+  `TableName` varchar(50) NOT NULL,
+  `RecordID` int(11) NOT NULL,
+  `ActionType` enum('Added','Updated') NOT NULL,
+  `ColumnName` varchar(50) NOT NULL,
+  `OldValue` text DEFAULT NULL,
+  `NewValue` text NOT NULL,
+  `AdminID` int(11) NOT NULL,
+  `Timestamp` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `audit_logs`
+--
+
+INSERT INTO `audit_logs` (`LogID`, `TableName`, `RecordID`, `ActionType`, `ColumnName`, `OldValue`, `NewValue`, `AdminID`, `Timestamp`) VALUES
+(5, 'Orders', 9, 'Added', 'OrderDate', NULL, '2025-03-09 16:14:54', 1, '2025-03-09 08:14:54'),
+(6, 'Adjustments', 22, 'Added', 'AdjustmentDate', NULL, '2025-03-09 16:18:56', 1, '2025-03-09 08:18:56'),
+(7, 'Adjustments', 1, 'Updated', 'Reason', 'Expired', 'Damaged Stock', 2, '2025-03-09 08:19:56'),
+(8, 'Adjustments', 1, 'Updated', 'AdjustmentDate', '2025-03-08 08:05:34', '2025-03-09 16:19:56', 2, '2025-03-09 08:19:56'),
+(9, 'Receiving', 13, 'Added', 'Date', NULL, '2025-03-09 00:00:00', 1, '2025-03-09 08:24:09'),
+(10, 'Receiving', 13, 'Updated', 'Status', 'Pending', 'Received', 1, '2025-03-09 08:24:43'),
+(11, 'Returns', 3, 'Added', 'ReturnDate', NULL, '2025-03-09 00:00:00', 1, '2025-03-09 08:27:36'),
+(12, 'Returns', 1, 'Updated', 'Reason', 'Expired', 'Wrong item received', 2, '2025-03-09 08:28:39'),
+(13, 'ReturnToSupplier', 3, 'Added', 'ReturnDate', NULL, '2025-03-09 16:30:38', 1, '2025-03-09 08:30:38'),
+(14, 'Orders', 10, 'Added', 'OrderDate', NULL, '2025-03-09 16:52:04', 1, '2025-03-09 08:52:04');
 
 -- --------------------------------------------------------
 
@@ -250,18 +330,35 @@ CREATE TABLE `employees` (
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) DEFAULT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) DEFAULT NULL
+  `Updated_By` int(11) DEFAULT NULL,
+  `Status` enum('Active','Inactive') NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employees`
 --
 
-INSERT INTO `employees` (`EmployeeID`, `FirstName`, `LastName`, `Username`, `Password`, `Role`, `Created_At`, `Created_By`, `Updated_At`, `Updated_By`) VALUES
-(1, 'Junits', 'Coretico', 'junitsstore_admin', '$2y$10$WfGbACvKiCJM40LAMkFAf.AYENhhGddZSszrlFeIYGJjF8MdbMc3S', 'admin', '2025-03-01 15:01:46', NULL, '2025-03-01 16:51:17', 1),
-(2, 'Jeriel', 'Sanao', 'jerielsanao1', '$2y$10$gNysNXP63PW21vIkuqMjJufdCDApTJDs2BsIpJ6uOo8lb3sPxSASG', 'Employee', '2025-03-01 15:46:32', 1, '2025-03-01 15:46:32', 1),
-(3, 'Russel', 'Labiaga', 'russelito1', '$2y$10$lIpDauqYu1cmpxxkehhxiOuxtmj269dcygSV4TW2omlbEiAPG6i5O', 'Employee', '2025-03-01 16:03:13', 1, '2025-03-01 16:03:13', 1),
-(4, 'Jeriel', 'Sanao', 'jerielsanao27', '$2y$10$Cn0TZh6.wg9Gnwas.gCQcO6CUz4VpfyNox/dT8V2t/VRCsl9w7.0.', 'Employee', '2025-03-01 16:39:57', 1, '2025-03-01 16:56:23', 4);
+INSERT INTO `employees` (`EmployeeID`, `FirstName`, `LastName`, `Username`, `Password`, `Role`, `Created_At`, `Created_By`, `Updated_At`, `Updated_By`, `Status`) VALUES
+(1, 'Junits', 'Coretico', 'junitsstore_admin', '$2y$10$WfGbACvKiCJM40LAMkFAf.AYENhhGddZSszrlFeIYGJjF8MdbMc3S', 'admin', '2025-03-01 15:01:46', NULL, '2025-03-01 16:51:17', 1, 'Active'),
+(2, 'Jeriel', 'Sanao', 'jerielsanao1', '$2y$10$gNysNXP63PW21vIkuqMjJufdCDApTJDs2BsIpJ6uOo8lb3sPxSASG', 'Employee', '2025-03-01 15:46:32', 1, '2025-03-09 14:21:51', 1, 'Active'),
+(3, 'Russel', 'Labiaga', 'russelito1', '$2y$10$lIpDauqYu1cmpxxkehhxiOuxtmj269dcygSV4TW2omlbEiAPG6i5O', 'Employee', '2025-03-01 16:03:13', 1, '2025-03-01 16:03:13', 1, 'Active'),
+(4, 'Jeriel', 'Sanao', 'jerielsanao27', '$2y$10$Cn0TZh6.wg9Gnwas.gCQcO6CUz4VpfyNox/dT8V2t/VRCsl9w7.0.', 'Employee', '2025-03-01 16:39:57', 1, '2025-03-09 13:47:15', 4, 'Active'),
+(5, 'Jeriel', 'Sanao', 'jerielsanao2', '$2y$10$pNvA1CpVd4q.N7hJZkUyhOTa8xO7K.ZGTKq/to218Kd47/X2X1guS', 'Employee', '2025-03-09 13:55:19', 1, '2025-03-09 14:19:07', 1, 'Active'),
+(6, 'John', 'Doe', 'sampleemp1', '$2y$10$o8MTCeb0G66jCv483t/nCuLiA0uxun039/6DgLQeP1EWeWMTetl/6', 'Employee', '2025-03-09 13:56:38', 1, '2025-03-09 13:56:38', 1, 'Active');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `orderdetailsview`
+-- (See below for the actual view)
+--
+CREATE TABLE `orderdetailsview` (
+`OrderID` int(11)
+,`ProductName` varchar(50)
+,`Quantity` int(11)
+,`Price` decimal(10,2)
+,`Total` decimal(20,2)
+);
 
 -- --------------------------------------------------------
 
@@ -291,7 +388,13 @@ INSERT INTO `orderline` (`OrderLineID`, `ProductID`, `OrderID`, `Quantity`, `Pri
 (8, 11, 5, 5, 21.00),
 (9, 15, 5, 2, 25.00),
 (10, 16, 5, 3, 20.00),
-(11, 16, 5, 10, 20.00);
+(11, 16, 5, 10, 20.00),
+(12, 14, 6, 1, 55.00),
+(13, 14, 7, 1, 55.00),
+(14, 15, 7, 1, 25.00),
+(15, 19, 7, 1, 12.00),
+(16, 14, 9, 1, 55.00),
+(17, 13, 10, 5, 21.00);
 
 -- --------------------------------------------------------
 
@@ -321,7 +424,38 @@ INSERT INTO `orders` (`OrderID`, `CustomerID`, `Date`, `Total`, `Status`, `Deliv
 (2, 2, '2025-03-07 21:50:26', 76.00, 'Paid', 0, '2025-03-07 21:50:26', 1, '2025-03-07 21:50:26', 1),
 (3, 2, '2025-03-07 21:57:27', 84.00, 'Paid', 0, '2025-03-07 21:57:27', 1, '2025-03-07 21:57:27', 1),
 (4, 10, '2025-03-08 17:17:47', 215.00, 'Paid', 0, '2025-03-08 17:17:47', 1, '2025-03-08 17:17:47', 1),
-(5, 2, '2025-03-08 17:19:13', 415.00, 'Paid', 0, '2025-03-08 17:19:13', 1, '2025-03-08 17:19:13', 1);
+(5, 2, '2025-03-08 17:19:13', 415.00, 'Paid', 0, '2025-03-08 17:19:13', 1, '2025-03-08 17:19:13', 1),
+(6, 2, '2025-03-08 21:22:44', 55.00, 'Paid', 0, '2025-03-08 21:22:44', 1, '2025-03-08 21:22:44', 1),
+(7, 2, '2025-03-09 12:07:13', 92.00, 'Paid', 0, '2025-03-09 12:07:13', 1, '2025-03-09 12:07:13', 1),
+(9, 2, '2025-03-09 16:14:54', 55.00, 'Paid', 0, '2025-03-09 16:14:54', 1, '2025-03-09 16:14:54', 1),
+(10, 2, '2025-03-09 16:52:04', 105.00, 'Paid', 0, '2025-03-09 16:52:04', 1, '2025-03-09 16:52:04', 1);
+
+--
+-- Triggers `orders`
+--
+DELIMITER $$
+CREATE TRIGGER `orders_audit_insert` AFTER INSERT ON `orders` FOR EACH ROW BEGIN
+    INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
+    VALUES ('Orders', NEW.OrderID, 'Added', 'OrderDate', NEW.Date, NEW.Created_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `orders_audit_update` AFTER UPDATE ON `orders` FOR EACH ROW BEGIN
+    -- Check and log only if Total changes
+    IF OLD.Total <> NEW.Total THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Orders', NEW.OrderID, 'Updated', 'Total', OLD.Total, NEW.Total, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Check and log only if Status changes
+    IF OLD.Status <> NEW.Status THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Orders', NEW.OrderID, 'Updated', 'Status', OLD.Status, NEW.Status, NEW.Updated_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -351,12 +485,13 @@ INSERT INTO `products` (`ProductID`, `Name`, `CategoryID`, `Price`, `StockQuanti
 (10, 'Mountain Dew', 8, 23.00, 345, 'In Stock', 2, '2025-03-06 14:44:16', 1, '2025-03-08 09:22:42', 1),
 (11, 'Coca-cola', 8, 21.00, 230, 'In Stock', 2, '2025-03-06 14:44:24', 1, '2025-03-08 17:19:13', 1),
 (12, 'Sprite', 8, 21.00, 230, 'In Stock', 2, '2025-03-06 14:44:34', 1, '2025-03-08 09:21:51', 1),
-(13, 'C2 (Red)', 8, 21.00, 255, 'In Stock', 2, '2025-03-06 14:44:59', 1, '2025-03-06 21:25:22', 1),
-(14, 'Chicken Nuggets', 11, 55.00, 55, 'In Stock', 3, '2025-03-06 21:34:37', 1, '2025-03-08 08:34:32', 0),
-(15, 'Intermediate Paper', 15, 25.00, 66, 'In Stock', 3, '2025-03-06 21:37:02', 1, '2025-03-08 17:19:13', 0),
-(16, 'Argentina Beef Loaf', 10, 20.00, 29, 'In Stock', 3, '2025-03-06 21:39:20', 1, '2025-03-08 17:19:13', 1),
-(17, 'Colgate', 14, 0.00, 0, 'Out of Stock', 0, '2025-03-08 09:18:58', 1, '2025-03-08 09:18:58', 0),
-(18, 'Kagayaku Soap', 14, 0.00, 0, 'Out of Stock', 0, '2025-03-08 16:50:45', 1, '2025-03-08 16:50:45', 0);
+(13, 'C2 (Red)', 8, 21.00, 250, 'In Stock', 2, '2025-03-06 14:44:59', 1, '2025-03-09 16:52:04', 1),
+(14, 'Chicken Nuggets', 11, 55.00, 49, 'In Stock', 3, '2025-03-06 21:34:37', 1, '2025-03-09 16:14:54', 0),
+(15, 'Intermediate Paper', 15, 25.00, 65, 'In Stock', 3, '2025-03-06 21:37:02', 1, '2025-03-09 12:07:13', 0),
+(16, 'Argentina Beef Loaf', 10, 20.00, 20, 'In Stock', 3, '2025-03-06 21:39:20', 1, '2025-03-09 16:18:56', 1),
+(17, 'Colgate', 14, 3.00, 15, 'In Stock', 3, '2025-03-08 09:18:58', 1, '2025-03-09 16:30:38', 0),
+(18, 'Kagayaku Soap', 14, 0.00, 0, 'Out of Stock', 0, '2025-03-08 16:50:45', 1, '2025-03-08 16:50:45', 0),
+(19, 'Nova', 10, 12.00, 45, 'In Stock', 3, '2025-03-09 11:58:00', 1, '2025-03-09 15:24:12', 0);
 
 -- --------------------------------------------------------
 
@@ -383,7 +518,42 @@ INSERT INTO `receiving` (`ReceivingID`, `SupplierID`, `Date`, `Status`, `Created
 (8, 2, '2025-03-06 00:00:00', 'Received', '2025-03-06 07:45:53', 1, '2025-03-06 15:20:04', 1),
 (9, 3, '2025-03-06 00:00:00', 'Received', '2025-03-06 14:41:22', 1, '0000-00-00 00:00:00', 1),
 (10, 2, '2025-03-06 00:00:00', 'Received', '2025-03-06 14:42:30', 1, '2025-03-06 21:42:42', 1),
-(11, 3, '2025-03-06 00:00:00', 'Received', '2025-03-06 14:48:29', 1, '2025-03-06 21:48:33', 1);
+(11, 3, '2025-03-06 00:00:00', 'Received', '2025-03-06 14:48:29', 1, '2025-03-06 21:48:33', 1),
+(12, 3, '2025-03-09 00:00:00', 'Received', '2025-03-09 05:00:47', 1, '0000-00-00 00:00:00', 1),
+(13, 3, '2025-03-09 00:00:00', 'Received', '2025-03-09 09:24:09', 1, '2025-03-09 16:24:43', 1);
+
+--
+-- Triggers `receiving`
+--
+DELIMITER $$
+CREATE TRIGGER `receiving_audit_insert` AFTER INSERT ON `receiving` FOR EACH ROW BEGIN
+    INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
+    VALUES ('Receiving', NEW.ReceivingID, 'Added', 'Date', NEW.Date, NEW.Created_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `receiving_audit_update` AFTER UPDATE ON `receiving` FOR EACH ROW BEGIN
+    -- Log only if SupplierID changes
+    IF OLD.SupplierID <> NEW.SupplierID THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Receiving', NEW.ReceivingID, 'Updated', 'SupplierID', OLD.SupplierID, NEW.SupplierID, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if Date changes
+    IF OLD.Date <> NEW.Date THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Receiving', NEW.ReceivingID, 'Updated', 'Date', OLD.Date, NEW.Date, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if Status changes
+    IF OLD.Status <> NEW.Status THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Receiving', NEW.ReceivingID, 'Updated', 'Status', OLD.Status, NEW.Status, NEW.Updated_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -411,7 +581,9 @@ INSERT INTO `receiving_details` (`ReceivingDetailID`, `ReceivingID`, `ProductID`
 (9, 9, 16, 50, 20.00),
 (10, 9, 14, 60, 55.00),
 (11, 10, 15, 30, 25.00),
-(12, 11, 15, 50, 25.00);
+(12, 11, 15, 50, 25.00),
+(13, 12, 19, 50, 12.00),
+(14, 13, 17, 20, 3.00);
 
 -- --------------------------------------------------------
 
@@ -436,8 +608,48 @@ CREATE TABLE `returns` (
 --
 
 INSERT INTO `returns` (`ReturnID`, `CustomerID`, `OrderID`, `ReturnDate`, `Reason`, `Created_At`, `Created_By`, `Updated_At`, `Updated_By`) VALUES
-(1, 1, 1, '2025-03-05 00:00:00', 'Expired', '2025-03-05 15:22:35', 1, '2025-03-05 15:22:35', 1),
-(2, 9, 4, '2025-03-08 00:00:00', 'Expired', '2025-03-08 09:33:34', 1, '2025-03-08 09:33:34', 1);
+(1, 1, 1, '2025-03-05 00:00:00', 'Wrong item received', '2025-03-05 15:22:35', 1, '2025-03-09 16:28:39', 2),
+(2, 9, 4, '2025-03-08 00:00:00', 'Expired', '2025-03-08 09:33:34', 1, '2025-03-08 09:33:34', 1),
+(3, 9, 15, '2025-03-09 00:00:00', 'Expired', '2025-03-09 16:27:36', 1, '2025-03-09 16:27:36', 1);
+
+--
+-- Triggers `returns`
+--
+DELIMITER $$
+CREATE TRIGGER `returns_audit_insert` AFTER INSERT ON `returns` FOR EACH ROW BEGIN
+    INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
+    VALUES ('Returns', NEW.ReturnID, 'Added', 'ReturnDate', NEW.ReturnDate, NEW.Created_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `returns_audit_update` AFTER UPDATE ON `returns` FOR EACH ROW BEGIN
+    -- Log only if CustomerID changes
+    IF OLD.CustomerID <> NEW.CustomerID THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Returns', NEW.ReturnID, 'Updated', 'CustomerID', OLD.CustomerID, NEW.CustomerID, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if OrderID changes
+    IF OLD.OrderID <> NEW.OrderID THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Returns', NEW.ReturnID, 'Updated', 'OrderID', OLD.OrderID, NEW.OrderID, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if ReturnDate changes
+    IF OLD.ReturnDate <> NEW.ReturnDate THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Returns', NEW.ReturnID, 'Updated', 'ReturnDate', OLD.ReturnDate, NEW.ReturnDate, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if Reason changes
+    IF OLD.Reason <> NEW.Reason THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('Returns', NEW.ReturnID, 'Updated', 'Reason', OLD.Reason, NEW.Reason, NEW.Updated_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -463,7 +675,47 @@ CREATE TABLE `returntosupplier` (
 
 INSERT INTO `returntosupplier` (`ReturnSupplierID`, `SupplierID`, `ReturnDate`, `Reason`, `Status`, `Created_At`, `Created_By`, `Updated_At`, `Updated_By`) VALUES
 (1, 2, '2025-03-08 09:13:11', 'Expired', 0, '2025-03-08 09:13:11', 1, '2025-03-08 09:13:11', 0),
-(2, 2, '2025-03-08 09:14:03', 'Expired', 0, '2025-03-08 09:14:03', 1, '2025-03-08 09:14:03', 0);
+(2, 2, '2025-03-08 09:14:03', 'Expired', 0, '2025-03-08 09:14:03', 1, '2025-03-08 09:14:03', 0),
+(3, 3, '2025-03-09 16:30:38', 'Expired', 0, '2025-03-09 16:30:38', 1, '2025-03-09 16:30:38', 0);
+
+--
+-- Triggers `returntosupplier`
+--
+DELIMITER $$
+CREATE TRIGGER `returntosupplier_audit_insert` AFTER INSERT ON `returntosupplier` FOR EACH ROW BEGIN
+    INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
+    VALUES ('ReturnToSupplier', NEW.ReturnSupplierID, 'Added', 'ReturnDate', NEW.ReturnDate, NEW.Created_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `returntosupplier_audit_update` AFTER UPDATE ON `returntosupplier` FOR EACH ROW BEGIN
+    -- Log only if SupplierID changes
+    IF OLD.SupplierID <> NEW.SupplierID THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('ReturnToSupplier', NEW.ReturnSupplierID, 'Updated', 'SupplierID', OLD.SupplierID, NEW.SupplierID, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if ReturnDate changes
+    IF OLD.ReturnDate <> NEW.ReturnDate THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('ReturnToSupplier', NEW.ReturnSupplierID, 'Updated', 'ReturnDate', OLD.ReturnDate, NEW.ReturnDate, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if Reason changes
+    IF OLD.Reason <> NEW.Reason THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('ReturnToSupplier', NEW.ReturnSupplierID, 'Updated', 'Reason', OLD.Reason, NEW.Reason, NEW.Updated_by, NOW());
+    END IF;
+
+    -- Log only if Status changes
+    IF OLD.Status <> NEW.Status THEN
+        INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID, Timestamp)
+        VALUES ('ReturnToSupplier', NEW.ReturnSupplierID, 'Updated', 'Status', OLD.Status, NEW.Status, NEW.Updated_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -484,7 +736,8 @@ CREATE TABLE `returntosupplierdetails` (
 
 INSERT INTO `returntosupplierdetails` (`ReturnSupplierDetailID`, `ReturnSupplierID`, `ProductID`, `QuantityReturned`) VALUES
 (1, 1, 10, 5),
-(2, 2, 10, 5);
+(2, 2, 10, 5),
+(3, 3, 17, 5);
 
 -- --------------------------------------------------------
 
@@ -546,6 +799,15 @@ CREATE TABLE `supplier_order_view` (
 -- --------------------------------------------------------
 
 --
+-- Structure for view `orderdetailsview`
+--
+DROP TABLE IF EXISTS `orderdetailsview`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`` SQL SECURITY DEFINER VIEW `orderdetailsview`  AS SELECT `ol`.`OrderID` AS `OrderID`, `p`.`Name` AS `ProductName`, `ol`.`Quantity` AS `Quantity`, `ol`.`Price` AS `Price`, `ol`.`Quantity`* `ol`.`Price` AS `Total` FROM (`orderline` `ol` join `products` `p` on(`ol`.`ProductID` = `p`.`ProductID`)) ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure for view `supplier_order_view`
 --
 DROP TABLE IF EXISTS `supplier_order_view`;
@@ -572,6 +834,13 @@ ALTER TABLE `adjustment_details`
   ADD PRIMARY KEY (`AdjustmentDetailID`),
   ADD KEY `ProductID` (`ProductID`),
   ADD KEY `AdjustmentID` (`AdjustmentID`);
+
+--
+-- Indexes for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD PRIMARY KEY (`LogID`),
+  ADD KEY `AdminID` (`AdminID`);
 
 --
 -- Indexes for table `categories`
@@ -694,13 +963,19 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `adjustments`
 --
 ALTER TABLE `adjustments`
-  MODIFY `AdjustmentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `AdjustmentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `adjustment_details`
 --
 ALTER TABLE `adjustment_details`
-  MODIFY `AdjustmentDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `AdjustmentDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  MODIFY `LogID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -718,55 +993,55 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `EmployeeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `EmployeeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `orderline`
 --
 ALTER TABLE `orderline`
-  MODIFY `OrderLineID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `OrderLineID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `receiving`
 --
 ALTER TABLE `receiving`
-  MODIFY `ReceivingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `ReceivingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `receiving_details`
 --
 ALTER TABLE `receiving_details`
-  MODIFY `ReceivingDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ReceivingDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `returns`
 --
 ALTER TABLE `returns`
-  MODIFY `ReturnID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ReturnID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `returntosupplier`
 --
 ALTER TABLE `returntosupplier`
-  MODIFY `ReturnSupplierID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ReturnSupplierID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `returntosupplierdetails`
 --
 ALTER TABLE `returntosupplierdetails`
-  MODIFY `ReturnSupplierDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ReturnSupplierDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `return_details`
@@ -783,6 +1058,12 @@ ALTER TABLE `suppliers`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD CONSTRAINT `audit_logs_ibfk_1` FOREIGN KEY (`AdminID`) REFERENCES `employees` (`EmployeeID`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `employees`
