@@ -278,7 +278,7 @@ $result = $stmt->get_result();
                           <p><strong>Status:</strong> ${order.Status}</p>
                           <hr>
                           <h5>Order Items</h5>
-                          <table class="table table-bordered">
+                          <table class="table table-hover">
                             <thead>
                               <tr>
                                 <th>Product Name</th>
@@ -287,7 +287,7 @@ $result = $stmt->get_result();
                                 <th>Total</th>
                               </tr>
                             </thead>
-                            <tbody>`;
+                            <tbody class='table-group-divider'>`;
 
               orderLines.forEach(function(item) {
                 html += `<tr>
