@@ -284,15 +284,17 @@ $result = $stmt->get_result();
                                 <th>Product Name</th>
                                 <th>Quantity</th>
                                 <th>Price</th>
+                                <th>Total</th>
                               </tr>
                             </thead>
                             <tbody>`;
 
               orderLines.forEach(function(item) {
                 html += `<tr>
-                          <td>${item.Name}</td>
+                          <td>${item.ProductName}</td>
                           <td>${item.Quantity}</td>
                           <td>₱${parseFloat(item.Price).toFixed(2)}</td>
+                          <td>₱${parseFloat(item.Total).toFixed(2)}</td>
                         </tr>`;
               });
 
