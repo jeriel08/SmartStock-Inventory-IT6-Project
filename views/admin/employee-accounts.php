@@ -158,7 +158,13 @@ $result = $stmt->get_result();
     </nav>
 
     <div class="container pt-4 mb-0">
-        <h2 class="fw-semibold mt-2">Manage Employee Accounts</h2>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="fw-semibold">Manage Employee Accounts</h2>
+            <!-- Add Account Button -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                Add Account
+            </button>
+        </div>
         <?php if (isset($_SESSION['status_update_success'])): ?>
             <div class="alert alert-success">
                 <?php echo $_SESSION['status_update_success'];
@@ -210,6 +216,57 @@ $result = $stmt->get_result();
                         <?php endif; ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-semibold" id="addEmployeeModalLabel">Add New Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="../../handlers/Employee/add-employee-handler.php" method="POST">
+                        <div class="mb-3">
+                            <label for="employeeFirstName" class="form-label fw-semibold">First Name</label>
+                            <input type="text" class="form-control" id="employeeFirstName" name="employeeFirstName" placeholder="Enter first name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeeLastName" class="form-label fw-semibold">Last Name</label>
+                            <input type="text" class="form-control" id="employeeLastName" name="employeeLastName" placeholder="Enter last name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeeUsername" class="form-label fw-semibold">Username</label>
+                            <input type="text" class="form-control" id="employeeUsername" name="employeeUsername" placeholder="Enter username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeePassword" class="form-label fw-semibold">Password</label>
+                            <input type="password" class="form-control" id="employeePassword" name="employeePassword" placeholder="Enter password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeeRole" class="form-label fw-semibold">Role</label>
+                            <select class="form-select" id="employeeRole" name="employeeRole" required>
+                                <option selected disabled>Select Role</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Employee">Employee</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeeStatus" class="form-label fw-semibold">Status</label>
+                            <select class="form-select" id="employeeStatus" name="employeeStatus" required>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Employee</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

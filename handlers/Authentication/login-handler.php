@@ -41,6 +41,10 @@ function verifyUser($username, $password)
     $result = $stmt->get_result();
 
     if ($row = $result->fetch_assoc()) {
+        if ($row['Status'] === 'Inactive') {
+            $_SESSION['login_error'] = "Your account is inactive. Please contact the administrator.";
+            return false;
+        }
         if (password_verify($password, $row['Password'])) {
             return $row; // Valid credentials
         }

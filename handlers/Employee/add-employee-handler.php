@@ -35,15 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param('sssssii', $firstName, $lastName, $username, $hashedPassword, $role, $createdBy, $updatedBy);
 
         if ($stmt->execute()) {
-            $_SESSION['add_employee_success'] = "Employee added successfully!";
+            $_SESSION['status_update_success'] = "Employee added successfully!";
             header("Location: ../../views/account.php"); // Redirect to accounts on success
             exit;
         } else {
             throw new Exception("Insert failed: " . $stmt->error);
         }
     } catch (Exception $e) {
-        $_SESSION['add_employee_error'] = "Operation Failed. Please try again.";
-        header("Location: ../../views/accounts.php");
+        $_SESSION['status_update_error'] = "Operation Failed. Please try again.";
+        header("Location: ../../views/admin/employee-accounts.php");
         exit;
     }
 }
