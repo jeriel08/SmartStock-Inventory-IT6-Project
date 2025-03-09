@@ -217,7 +217,7 @@ $result = $stmt->get_result();
                   // Preview Button
                   echo "<td class='align-middle text-center'>
                     <button 
-                    class='btn add-product-button btn-primary rounded-4 d-flex align-items-center justify-content-center preview-order'
+                    class='btn add-product-button btn-primary rounded-4 d-block mx-auto d-flex align-items-center justify-content-center preview-order'
                     data-id='{$row['OrderID']}'
                     >
                         <span class='material-icons-outlined'>receipt_long</span>
