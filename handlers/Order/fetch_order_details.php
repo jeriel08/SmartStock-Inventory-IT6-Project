@@ -18,7 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["orderID"])) {
     }
 
     // Fetch order items
-    $query = "SELECT ProductID, Quantity, Price FROM OrderLine WHERE OrderID = ?";
+    $query = "SELECT p.Name, ol.Quantity, ol.Price 
+              FROM OrderLine ol
+              JOIN Products p ON ol.ProductID = p.ProductID
+              WHERE ol.OrderID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $orderID);
     $stmt->execute();

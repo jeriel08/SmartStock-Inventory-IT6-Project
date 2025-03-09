@@ -238,7 +238,7 @@ $result = $stmt->get_result();
 
   <!-- Order Preview Modal -->
   <div class="modal fade" id="orderPreviewModal" tabindex="-1" aria-labelledby="orderPreviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="orderPreviewModalLabel">Order Details</h5>
@@ -281,7 +281,7 @@ $result = $stmt->get_result();
                           <table class="table table-bordered">
                             <thead>
                               <tr>
-                                <th>Product ID</th>
+                                <th>Product Name</th>
                                 <th>Quantity</th>
                                 <th>Price</th>
                               </tr>
@@ -290,7 +290,7 @@ $result = $stmt->get_result();
 
               orderLines.forEach(function(item) {
                 html += `<tr>
-                          <td>${item.ProductID}</td>
+                          <td>${item.Name}</td>
                           <td>${item.Quantity}</td>
                           <td>₱${parseFloat(item.Price).toFixed(2)}</td>
                         </tr>`;
