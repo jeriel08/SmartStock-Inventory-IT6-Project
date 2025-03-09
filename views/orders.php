@@ -214,10 +214,13 @@ $result = $stmt->get_result();
 
                   echo "<td class='align-middle text-center'><span class='badge $badgeClass fs-6'>{$status}</span></td>";
 
-                  // Edit Button
-                  echo "<td class='align-middle'>
-                    <button class='btn edit-button add-product-button btn-primary rounded-4'>
-                        <span class='material-icons-outlined'>edit</span>
+                  // Preview Button
+                  echo "<td class='align-middle text-center'>
+                    <button 
+                    class='btn add-product-button btn-primary rounded-4 d-flex align-items-center justify-content-center preview-order'
+                    data-id='{$row['OrderID']}'
+                    >
+                        <span class='material-icons-outlined'>receipt_long</span>
                     </button>
                   </td>";
                   echo "</tr>";
@@ -232,6 +235,79 @@ $result = $stmt->get_result();
       </div>
     </div>
   </div>
+
+  <!-- Order Preview Modal -->
+  <div class="modal fade" id="orderPreviewModal" tabindex="-1" aria-labelledby="orderPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderPreviewModalLabel">Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="orderDetailsContent">
+            <!-- Order details will be loaded here dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $(".preview-order").click(function() {
+        var orderID = $(this).data("id");
+
+        $.ajax({
+          url: "../handlers/Order/fetch_order_details.php",
+          method: "POST",
+          data: {
+            orderID: orderID
+          },
+          dataType: "json",
+          success: function(response) {
+            if (response.success) {
+              var order = response.order;
+              var orderLines = response.orderLines;
+
+              var html = `<p><strong>Order ID:</strong> ${order.OrderID}</p>
+                          <p><strong>Customer ID:</strong> ${order.CustomerID}</p>
+                          <p><strong>Date:</strong> ${order.Date}</p>
+                          <p><strong>Total:</strong> ₱${parseFloat(order.Total).toFixed(2)}</p>
+                          <p><strong>Status:</strong> ${order.Status}</p>
+                          <hr>
+                          <h5>Order Items</h5>
+                          <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th>Product ID</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                              </tr>
+                            </thead>
+                            <tbody>`;
+
+              orderLines.forEach(function(item) {
+                html += `<tr>
+                          <td>${item.ProductID}</td>
+                          <td>${item.Quantity}</td>
+                          <td>₱${parseFloat(item.Price).toFixed(2)}</td>
+                        </tr>`;
+              });
+
+              html += `</tbody></table>`;
+
+              $("#orderDetailsContent").html(html);
+              $("#orderPreviewModal").modal("show");
+            } else {
+              alert("Failed to fetch order details.");
+            }
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

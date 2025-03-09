@@ -74,6 +74,15 @@ body {
   transform: scale(1.07) !important; /* More noticeable scale effect */
 }
 
+.btn.add-product-button:active {
+  background-color: var(
+    --color-4
+  ) !important; /* Slightly darker for pressed effect */
+  border-color: var(--color-5) !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) !important; /* Smaller shadow */
+  transform: scale(0.98) !important; /* Slightly shrink to mimic press effect */
+}
+
 /* Outline Secondary Button */
 .btn-outline-secondary {
   color: var(--color-1) !important;
