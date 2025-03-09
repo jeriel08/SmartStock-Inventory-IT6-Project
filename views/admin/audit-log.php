@@ -165,14 +165,14 @@ $result = $conn->query($sql);
     <div class="container pt-4 mb-0">
         <div class="card shadow-sm rounded-4 p-3">
             <div class="card-body">
-                <h5 class="card-title fw-semibold display-6">Audit Log</h5>
+                <h5 class="card-title fw-semibold display-6 mb-4">Audit Log</h5>
                 <?php if ($result->num_rows > 0): ?>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Timestamp</th>
-                                    <th>User</th>
+                                    <th>EmployeeID</th>
                                     <th>Action</th>
                                     <th>Table</th>
                                     <th>Details</th>
@@ -182,10 +182,10 @@ $result = $conn->query($sql);
                                 <?php while ($row = $result->fetch_assoc()): ?>
                                     <tr>
                                         <td><?php echo $row['Timestamp']; ?></td>
-                                        <td><?php echo $row['UserID']; ?></td>
+                                        <td><?php echo $row['AdminID']; ?></td>
                                         <td><?php echo $row['ActionType']; ?></td>
                                         <td><?php echo $row['TableName']; ?></td>
-                                        <td><?php echo $row['Details']; ?></td>
+                                        <td><?php echo $row['NewValue']; ?></td> <!-- Shows only new values -->
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
