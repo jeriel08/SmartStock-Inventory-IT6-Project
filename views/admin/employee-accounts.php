@@ -23,9 +23,11 @@ $result = $stmt->get_result();
         rel="icon"
         type="image/x-icon"
         href="../../statics/images/app-logo.ico" />
+
     <link rel="stylesheet" href="../../statics/account-style.css" />
     <link rel="stylesheet" href="../../statics/style.css" />
     <link rel="stylesheet" href="../../statics/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../statics/account-manager.css" />
 
     <!-- Google Font Icon Links -->
     <link
@@ -158,27 +160,30 @@ $result = $stmt->get_result();
     </nav>
 
     <div class="container pt-4 mb-0">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="fw-semibold">Manage Employee Accounts</h2>
-            <!-- Add Account Button -->
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-                Add Account
-            </button>
-        </div>
-        <?php if (isset($_SESSION['status_update_success'])): ?>
-            <div class="alert alert-success">
-                <?php echo $_SESSION['status_update_success'];
-                unset($_SESSION['status_update_success']); ?>
-            </div>
-        <?php endif; ?>
 
-        <?php if (isset($_SESSION['status_update_error'])): ?>
-            <div class="alert alert-danger">
-                <?php echo $_SESSION['status_update_error'];
-                unset($_SESSION['status_update_error']); ?>
-            </div>
-        <?php endif; ?>
         <div class="card shadow-sm p-3 rounded-4 mt-3">
+            <div class="card-title px-3">
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <h2 class="fw-semibold">Manage Employee Accounts</h2>
+                    <!-- Add Account Button -->
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                        Add Account
+                    </button>
+                </div>
+            </div>
+            <?php if (isset($_SESSION['status_update_success'])): ?>
+                <div class="alert alert-success">
+                    <?php echo $_SESSION['status_update_success'];
+                    unset($_SESSION['status_update_success']); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['status_update_error'])): ?>
+                <div class="alert alert-danger">
+                    <?php echo $_SESSION['status_update_error'];
+                    unset($_SESSION['status_update_error']); ?>
+                </div>
+            <?php endif; ?>
             <div class="card-body">
                 <table class="table table-hover">
                     <thead>
