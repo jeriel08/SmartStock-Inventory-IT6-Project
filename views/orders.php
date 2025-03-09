@@ -8,8 +8,30 @@ if (!isset($_SESSION['user_id'])) {
 // Include the database connection (avoid redefining $conn)
 include '../database/database.php';
 
-// Fetch orders from the database
-$stmt = $conn->prepare("SELECT OrderID, CustomerID, Date, Status, Total FROM Orders ORDER BY Date DESC");
+// Set how many records per page
+$records_per_page = 7;
+
+// Get the current page from URL, default to 1
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+
+// Calculate OFFSET
+$offset = ($page - 1) * $records_per_page;
+
+// Fetch total number of records
+$total_query = "SELECT COUNT(*) AS total FROM Orders";
+$total_result = $conn->query($total_query);
+$total_row = $total_result->fetch_assoc();
+$total_records = $total_row['total'];
+
+// Calculate total pages
+$total_pages = ceil($total_records / $records_per_page);
+
+// Fetch paginated orders using prepared statement
+$stmt = $conn->prepare("SELECT OrderID, CustomerID, Date, Status, Total 
+                        FROM Orders 
+                        ORDER BY Date DESC 
+                        LIMIT ? OFFSET ?");
+$stmt->bind_param("ii", $records_per_page, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -159,32 +181,16 @@ $result = $stmt->get_result();
 
   <!-- Add padding-top to the container to avoid overlap with the fixed navbar -->
   <div class="container mt-4 pt-5">
-    <div class="row align-items-center justify-content-between">
-      <!-- Added justify-content-between -->
-      <div class="col-md-5 d-flex">
-        <form action="#" class="d-flex w-100">
-          <input
-            type="text"
-            name="search"
-            placeholder="Search an item"
-            class="form-control me-2" />
-          <button
-            type="submit"
-            class="btn btn-primary add-product-button d-flex align-items-center gap-2 rounded-4">
-            <span class="material-icons-outlined">search</span>
-            <span>Search</span>
-          </button>
-        </form>
-      </div>
+    <div class="row align-items-center justify-content-end">
 
       <div class="col-md-auto d-flex gap-2">
         <button
-          class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4">
+          class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4 py-2 px-3">
           <span class="material-icons-outlined">tune</span>
           <span>Filter</span>
       </div>
 
-      <div class="container-fluid mt-5 rounded-5 shadow">
+      <div class="container-fluid mt-4 rounded-5 shadow">
         <div class="table-responsive mb-3">
           <table class="table table-striped rounded-3">
             <thead>
@@ -197,7 +203,7 @@ $result = $stmt->get_result();
                 <th class="text-center">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="table-group-divider">
               <?php
 
               if ($result->num_rows > 0) {
@@ -231,6 +237,28 @@ $result = $stmt->get_result();
               ?>
             </tbody>
           </table>
+          <!-- Pagination Controls -->
+          <nav>
+            <ul class="pagination justify-content-center">
+              <?php if ($page > 1): ?>
+                <li class="page-item">
+                  <a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a>
+                </li>
+              <?php endif; ?>
+
+              <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                </li>
+              <?php endfor; ?>
+
+              <?php if ($page < $total_pages): ?>
+                <li class="page-item">
+                  <a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a>
+                </li>
+              <?php endif; ?>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
