@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 function verifyUser($username, $password)
 {
     global $conn;
-    $stmt = $conn->prepare("SELECT EmployeeID, Username, Password, FirstName, LastName, Role FROM employees WHERE Username = ?");
+    $stmt = $conn->prepare("SELECT EmployeeID, Username, Password, FirstName, LastName, Role, Status FROM employees WHERE Username = ?");
     $stmt->bind_param('s', $username);
     $stmt->execute();
     $result = $stmt->get_result();
