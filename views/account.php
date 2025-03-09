@@ -151,81 +151,18 @@ if (!isset($_SESSION['user_id'])) {
   <div class="container pt-4 mb-0">
     <!-- Conditionally show the Add New Employee form only for Admins -->
     <?php if (isset($_SESSION['role']) && strtoupper($_SESSION['role']) === 'ADMIN'): ?>
-      <!-- Add New Employee -->
+      <!-- Admin Panel -->
       <div class="card mb-4 shadow border-dark-subtle">
         <div class="card-header align-items-center d-flex">
-          <h2 class="fw-semibold">Add New Employee</h2>
+          <h2 class="fw-semibold">Admin Panel</h2>
         </div>
-        <?php if (isset($_SESSION['add_employee_success'])): ?>
-          <div class="alert alert-success mt-2">
-            <?php echo $_SESSION['add_employee_success'];
-            unset($_SESSION['add_employee_success']); ?>
-          </div>
-        <?php endif; ?>
-        <?php if (isset($_SESSION['add_employee_error'])): ?>
-          <div class="alert alert-danger mt-2">
-            <?php echo $_SESSION['add_employee_error'];
-            unset($_SESSION['add_employee_error']); ?>
-          </div>
-        <?php endif; ?>
-        <div class="card-body px-5 py-4">
-          <form action="../handlers/Employee/add-employee-handler.php" method="POST">
-            <div class="mb-3 row">
-              <div class="col-6">
-                <label for="employeeFirstName" class="form-label fw-semibold">First Name</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="employeeFirstName"
-                  name="employeeFirstName"
-                  placeholder="Enter first name"
-                  required />
-              </div>
-              <div class="col-6">
-                <label for="employeeLastName" class="form-label fw-semibold">Last Name</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="employeeLastName"
-                  name="employeeLastName"
-                  placeholder="Enter last name"
-                  required />
-              </div>
-            </div>
+        <div class="card-body px-5 py-4 text-center">
+          <p class="fw-semibold">Manage system activities and employee accounts</p>
 
-            <div class="mb-3">
-              <label for="employeeUsername" class="form-label fw-semibold">Username</label>
-              <input
-                type="text"
-                class="form-control"
-                id="employeeUsername"
-                name="employeeUsername"
-                placeholder="Enter employee username"
-                required />
-            </div>
-
-            <div class="mb-3">
-              <label for="employeePassword" class="form-label fw-semibold">Password</label>
-              <input
-                type="password"
-                class="form-control"
-                id="employeePassword"
-                name="employeePassword"
-                placeholder="Enter employee password"
-                required />
-            </div>
-            <div class="mb-3">
-              <label for="employeeRole" class="form-label fw-semibold">Role</label>
-              <select class="form-select" id="employeeRole" name="employeeRole" required>
-                <option selected disabled>Select Role</option>
-                <option value="Admin">Admin</option>
-                <option value="Employee">Employee</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">
-              Add Employee
-            </button>
-          </form>
+          <div class="d-flex justify-content-center gap-3">
+            <a href="admin/audit-log.php" class="btn btn-primary">Audit Log</a>
+            <a href="admin/employee-accounts.php" class="btn btn-primary">Manage Employee Accounts</a>
+          </div>
         </div>
       </div>
     <?php endif; ?>
