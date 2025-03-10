@@ -6,8 +6,14 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 include '../database/database.php';
-// Fetch existing orders with all details using the Supplier_Order_View
-$stmt = $conn->prepare("
+
+// Get filter values from GET parameters
+$status_filter = $_GET['status'] ?? 'All'; // Default: show all statuses
+$date_from = $_GET['date_from'] ?? ''; // Start date
+$date_to = $_GET['date_to'] ?? ''; // End date
+
+// Base query
+$query = "
     SELECT 
         ReceivingDetailID,
         product_name, 
@@ -18,12 +24,38 @@ $stmt = $conn->prepare("
         supplier_name, 
         order_status
     FROM Supplier_Order_View
-    ORDER BY order_date DESC
-");
+    WHERE 1
+";
 
+// Add status filter if selected
+if ($status_filter !== 'All') {
+  $query .= " AND order_status = ?";
+}
+
+// Add date filter if both dates are provided
+if (!empty($date_from) && !empty($date_to)) {
+  $query .= " AND order_date BETWEEN ? AND ?";
+}
+
+// Append order clause
+$query .= " ORDER BY order_date DESC";
+
+// Prepare the SQL statement
+$stmt = $conn->prepare($query);
+
+// Bind parameters dynamically
+if ($status_filter !== 'All' && !empty($date_from) && !empty($date_to)) {
+  $stmt->bind_param("sss", $status_filter, $date_from, $date_to);
+} elseif ($status_filter !== 'All') {
+  $stmt->bind_param("s", $status_filter);
+} elseif (!empty($date_from) && !empty($date_to)) {
+  $stmt->bind_param("ss", $date_from, $date_to);
+}
+
+// Execute and fetch results
 $stmt->execute();
 $result = $stmt->get_result();
-
+$stmt->close();
 
 ?>
 
@@ -171,27 +203,12 @@ $result = $stmt->get_result();
 
   <!-- Add padding-top to the container to avoid overlap with the fixed navbar -->
   <div class="container mt-4 pt-5">
-    <div class="row align-items-center justify-content-between">
-      <!-- Added justify-content-between -->
-      <div class="col-md-5 d-flex">
-        <form action="#" class="d-flex w-100">
-          <input
-            type="text"
-            name="search"
-            placeholder="Search an item"
-            class="form-control me-2" />
-          <button
-            type="submit"
-            class="btn btn-primary add-product-button d-flex align-items-center gap-2 rounded-4">
-            <span class="material-icons-outlined">search</span>
-            <span>Search</span>
-          </button>
-        </form>
-      </div>
+    <div class="row align-items-center justify-content-end">
 
       <div class="col-md-auto d-flex gap-2">
-        <button
-          class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4">
+        <!-- Filter Button -->
+        <button class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+          data-bs-toggle="modal" data-bs-target="#filterModal">
           <span class="material-icons-outlined">tune</span>
           <span>Filter</span>
         </button>
@@ -388,6 +405,48 @@ $result = $stmt->get_result();
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Modal -->
+  <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filterModalLabel">Filter Orders</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="purchases.php" method="GET">
+            <!-- Status Filter -->
+            <div class="mb-3">
+              <label for="statusFilter" class="form-label">Status</label>
+              <select class="form-select" id="statusFilter" name="status">
+                <option value="All">All</option>
+                <option value="Received">Received</option>
+                <option value="Pending">Pending</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <!-- Date Range Filter -->
+            <div class="mb-3">
+              <label for="dateFrom" class="form-label">From Date</label>
+              <input type="date" class="form-control" id="dateFrom" name="date_from">
+            </div>
+
+            <div class="mb-3">
+              <label for="dateTo" class="form-label">To Date</label>
+              <input type="date" class="form-control" id="dateTo" name="date_to">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-end">
+              <button type="submit" class="btn btn-primary">Apply Filters</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
