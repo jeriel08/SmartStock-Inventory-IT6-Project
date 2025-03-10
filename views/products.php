@@ -6,41 +6,51 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Get filter and pagination parameters
+// Get filter, search, and pagination parameters
 $filter = $_GET['filter'] ?? 'In Stock'; // Default filter
+$search = $_GET['search'] ?? ''; // Search query
 $records_per_page = 10; // Products per page
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $offset = ($page - 1) * $records_per_page;
 
 try {
-    // Fetch total products count for pagination
-    if ($filter === 'All') {
-        $countQuery = "SELECT COUNT(*) AS total FROM Products"; // No WHERE clause
-        $countStmt = $conn->prepare($countQuery);
-    } else {
-        $countQuery = "SELECT COUNT(*) AS total FROM Products WHERE Status = ?";
-        $countStmt = $conn->prepare($countQuery);
-        $countStmt->bind_param("s", $filter);
+    // Fetch total product count for pagination with search
+    $countQuery = "SELECT COUNT(*) AS total FROM Products WHERE 1";
+    $params = [];
+    $types = "";
+
+    if ($filter !== 'All') {
+        $countQuery .= " AND Status = ?";
+        $params[] = $filter;
+        $types .= "s";
     }
 
+    if (!empty($search)) {
+        $countQuery .= " AND Name LIKE ?";
+        $params[] = "%" . $search . "%";
+        $types .= "s";
+    }
+
+    $countStmt = $conn->prepare($countQuery);
+    if (!empty($params)) {
+        $countStmt->bind_param($types, ...$params);
+    }
     $countStmt->execute();
     $countResult = $countStmt->get_result();
     $total_records = $countResult->fetch_assoc()['total'];
     $total_pages = ceil($total_records / $records_per_page);
     $countStmt->close();
 
-    // Convert 'All' to NULL so SQL can handle it dynamically
-    $filter_param = ($filter === 'All') ? null : $filter;
-
-    // Fetch paginated products using stored procedure
-    $stmt = $conn->prepare("CALL GetProductsWithPage(?, ?, ?)");
-    $stmt->bind_param("sii", $filter_param, $records_per_page, $offset);
+    // Fetch paginated products using stored procedure with search
+    $stmt = $conn->prepare("CALL GetProductsWithPageAndSearch(?, ?, ?, ?)");
+    $stmt->bind_param("ssii", $filter, $search, $records_per_page, $offset);
     $stmt->execute();
     $products = $stmt->get_result();
     $stmt->close();
 } catch (Exception $e) {
     die("Error fetching products: " . $e->getMessage());
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -150,12 +160,15 @@ try {
     <div class="container mt-4 pt-5">
         <div class="row align-items-center justify-content-between mb-5">
             <div class="col-md-5 d-flex">
-                <form action="#" class="d-flex w-100">
-                    <input type="text" name="search" placeholder="Search an item" class="form-control me-2" />
-                    <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 rounded-4">
-                        <span class="material-icons-outlined">search</span>
-                        <span>Search</span>
-                    </button>
+                <form method="GET" action="products.php" class="mb-3">
+                    <div class="input-group gap-2">
+                        <input type="text" name="search" class="form-control" placeholder="Search products..." value="<?= htmlspecialchars($search) ?>">
+                        <input type="hidden" name="filter" value="<?= htmlspecialchars($filter) ?>">
+                        <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 rounded-4">
+                            <span class="material-icons-outlined">search</span>
+                            <span>Search</span>
+                        </button>
+                    </div>
                 </form>
             </div>
             <div class="col-md-auto d-flex gap-2">
@@ -213,7 +226,7 @@ try {
                                 <td class="align-middle"><?php echo number_format($row['Price'], 2); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName'] ?? 'N/A'); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['CategoryName'] ?? 'N/A'); ?></td>
-                                <td class="align-middle"><?php echo htmlspecialchars($row['Stock']); ?></td>
+                                <td class="align-middle"><?php echo htmlspecialchars($row['StockQuantity']); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['Status']); ?></td>
                                 <td class="align-middle text-center">
                                     <div class="d-flex justify-content-center gap-2">
@@ -242,23 +255,23 @@ try {
                 </table>
 
                 <!-- Pagination Controls -->
-                <nav>
+                <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
                         <?php if ($page > 1): ?>
                             <li class="page-item">
-                                <a class="page-link" href="?page=<?php echo $page - 1; ?>&filter=<?php echo urlencode($filter); ?>">Previous</a>
+                                <a class="page-link" href="?filter=<?= urlencode($filter) ?>&search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
                             </li>
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                                <a class="page-link" href="?page=<?php echo $i; ?>&filter=<?php echo urlencode($filter); ?>"><?php echo $i; ?></a>
+                            <li class="page-item <?= ($i === $page) ? 'active' : '' ?>">
+                                <a class="page-link" href="?filter=<?= urlencode($filter) ?>&search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
                             </li>
                         <?php endfor; ?>
 
                         <?php if ($page < $total_pages): ?>
                             <li class="page-item">
-                                <a class="page-link" href="?page=<?php echo $page + 1; ?>&filter=<?php echo urlencode($filter); ?>">Next</a>
+                                <a class="page-link" href="?filter=<?= urlencode($filter) ?>&search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
                             </li>
                         <?php endif; ?>
                     </ul>
