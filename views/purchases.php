@@ -12,7 +12,43 @@ $status_filter = $_GET['status'] ?? 'All'; // Default: show all statuses
 $date_from = $_GET['date_from'] ?? ''; // Start date
 $date_to = $_GET['date_to'] ?? ''; // End date
 
-// Base query
+// Pagination variables
+$records_per_page = 10; // Number of orders per page
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
+$offset = ($page - 1) * $records_per_page;
+
+// Base query for counting total records
+$count_query = "SELECT COUNT(*) AS total FROM Supplier_Order_View WHERE 1";
+
+$params = [];
+$types = "";
+
+// Apply filters to the count query
+if ($status_filter !== 'All') {
+  $count_query .= " AND order_status = ?";
+  $params[] = $status_filter;
+  $types .= "s";
+}
+
+if (!empty($date_from) && !empty($date_to)) {
+  $count_query .= " AND order_date BETWEEN ? AND ?";
+  $params[] = $date_from;
+  $params[] = $date_to;
+  $types .= "ss";
+}
+
+// Prepare and execute the count query
+$count_stmt = $conn->prepare($count_query);
+if (!empty($params)) {
+  $count_stmt->bind_param($types, ...$params);
+}
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_records = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_records / $records_per_page);
+$count_stmt->close();
+
+// Base query for fetching paginated results
 $query = "
     SELECT 
         ReceivingDetailID,
@@ -27,35 +63,36 @@ $query = "
     WHERE 1
 ";
 
-// Add status filter if selected
+$params = [];
+$types = "";
+
+// Apply filters to the main query
 if ($status_filter !== 'All') {
   $query .= " AND order_status = ?";
+  $params[] = $status_filter;
+  $types .= "s";
 }
 
-// Add date filter if both dates are provided
 if (!empty($date_from) && !empty($date_to)) {
   $query .= " AND order_date BETWEEN ? AND ?";
+  $params[] = $date_from;
+  $params[] = $date_to;
+  $types .= "ss";
 }
 
-// Append order clause
-$query .= " ORDER BY order_date DESC";
+// Add pagination
+$query .= " ORDER BY order_date DESC LIMIT ? OFFSET ?";
+$params[] = $records_per_page;
+$params[] = $offset;
+$types .= "ii";
 
-// Prepare the SQL statement
+// Prepare and execute the main query
 $stmt = $conn->prepare($query);
-
-// Bind parameters dynamically
-if ($status_filter !== 'All' && !empty($date_from) && !empty($date_to)) {
-  $stmt->bind_param("sss", $status_filter, $date_from, $date_to);
-} elseif ($status_filter !== 'All') {
-  $stmt->bind_param("s", $status_filter);
-} elseif (!empty($date_from) && !empty($date_to)) {
-  $stmt->bind_param("ss", $date_from, $date_to);
-}
-
-// Execute and fetch results
+$stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
+
 
 ?>
 
@@ -202,7 +239,7 @@ $stmt->close();
   </nav>
 
   <!-- Add padding-top to the container to avoid overlap with the fixed navbar -->
-  <div class="container mt-4 pt-5">
+  <div class="container mt-4 pt-5 pb-4">
     <div class="row align-items-center justify-content-end">
 
       <div class="col-md-auto d-flex gap-2">
@@ -295,6 +332,30 @@ $stmt->close();
               <?php endif; ?>
             </tbody>
           </table>
+
+          <!-- Pagination -->
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+              <?php if ($page > 1): ?>
+                <li class="page-item">
+                  <a class="page-link" href="?status=<?= urlencode($status_filter) ?>&date_from=<?= urlencode($date_from) ?>&date_to=<?= urlencode($date_to) ?>&page=<?= $page - 1 ?>">Previous</a>
+                </li>
+              <?php endif; ?>
+
+              <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <li class="page-item <?= ($i === $page) ? 'active' : '' ?>">
+                  <a class="page-link" href="?status=<?= urlencode($status_filter) ?>&date_from=<?= urlencode($date_from) ?>&date_to=<?= urlencode($date_to) ?>&page=<?= $i ?>"><?= $i ?></a>
+                </li>
+              <?php endfor; ?>
+
+              <?php if ($page < $total_pages): ?>
+                <li class="page-item">
+                  <a class="page-link" href="?status=<?= urlencode($status_filter) ?>&date_from=<?= urlencode($date_from) ?>&date_to=<?= urlencode($date_to) ?>&page=<?= $page + 1 ?>">Next</a>
+                </li>
+              <?php endif; ?>
+            </ul>
+          </nav>
+
         </div>
       </div>
     </div>
