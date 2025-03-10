@@ -6,11 +6,35 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Get filter and pagination parameters
 $filter = $_GET['filter'] ?? 'In Stock'; // Default filter
+$records_per_page = 10; // Products per page
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
+$offset = ($page - 1) * $records_per_page;
 
 try {
-    $stmt = $conn->prepare("CALL GetProducts(?)");
-    $stmt->bind_param("s", $filter);
+    // Fetch total products count for pagination
+    if ($filter === 'All') {
+        $countQuery = "SELECT COUNT(*) AS total FROM Products"; // No WHERE clause
+        $countStmt = $conn->prepare($countQuery);
+    } else {
+        $countQuery = "SELECT COUNT(*) AS total FROM Products WHERE Status = ?";
+        $countStmt = $conn->prepare($countQuery);
+        $countStmt->bind_param("s", $filter);
+    }
+
+    $countStmt->execute();
+    $countResult = $countStmt->get_result();
+    $total_records = $countResult->fetch_assoc()['total'];
+    $total_pages = ceil($total_records / $records_per_page);
+    $countStmt->close();
+
+    // Convert 'All' to NULL so SQL can handle it dynamically
+    $filter_param = ($filter === 'All') ? null : $filter;
+
+    // Fetch paginated products using stored procedure
+    $stmt = $conn->prepare("CALL GetProductsWithPage(?, ?, ?)");
+    $stmt->bind_param("sii", $filter_param, $records_per_page, $offset);
     $stmt->execute();
     $products = $stmt->get_result();
     $stmt->close();
@@ -167,6 +191,7 @@ try {
         <?php endif; ?>
         <div class="container-fluid rounded-5 shadow">
             <div class="table-responsive mb-3">
+                <!-- Products Table -->
                 <table class="table table-striped rounded-3">
                     <thead>
                         <tr>
@@ -188,7 +213,7 @@ try {
                                 <td class="align-middle"><?php echo number_format($row['Price'], 2); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName'] ?? 'N/A'); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['CategoryName'] ?? 'N/A'); ?></td>
-                                <td class="align-middle"><?php echo htmlspecialchars($row['StockQuantity']); ?></td>
+                                <td class="align-middle"><?php echo htmlspecialchars($row['Stock']); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['Status']); ?></td>
                                 <td class="align-middle text-center">
                                     <div class="d-flex justify-content-center gap-2">
@@ -215,6 +240,29 @@ try {
                         <?php endif; ?>
                     </tbody>
                 </table>
+
+                <!-- Pagination Controls -->
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <?php if ($page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?php echo $page - 1; ?>&filter=<?php echo urlencode($filter); ?>">Previous</a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                <a class="page-link" href="?page=<?php echo $i; ?>&filter=<?php echo urlencode($filter); ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if ($page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?php echo $page + 1; ?>&filter=<?php echo urlencode($filter); ?>">Next</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
             </div>
         </div>
 
