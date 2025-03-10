@@ -5,35 +5,68 @@ if (!isset($_SESSION['user_id'])) {
   exit();
 }
 
-// Include the database connection (avoid redefining $conn)
+// Include the database connection
 include '../database/database.php';
 
 // Set how many records per page
-$records_per_page = 7;
+$records_per_page = 10;
 
 // Get the current page from URL, default to 1
-$page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 
 // Calculate OFFSET
 $offset = ($page - 1) * $records_per_page;
 
-// Fetch total number of records
-$total_query = "SELECT COUNT(*) AS total FROM Orders";
-$total_result = $conn->query($total_query);
-$total_row = $total_result->fetch_assoc();
+// Get filter values (default is empty)
+$start_date = $_GET['start_date'] ?? '';
+$end_date = $_GET['end_date'] ?? '';
+
+// Build the WHERE clause dynamically
+$where_clause = "";
+$params = [];
+$types = "";
+
+if (!empty($start_date) && !empty($end_date)) {
+  $where_clause = " WHERE Date BETWEEN ? AND ? ";
+  $params = [$start_date, $end_date];
+  $types = "ss";
+}
+
+// Count total records with filtering
+$total_query = "SELECT COUNT(*) AS total FROM Orders " . $where_clause;
+$count_stmt = $conn->prepare($total_query);
+
+if (!empty($where_clause)) {
+  $count_stmt->bind_param($types, ...$params);
+}
+
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_row = $count_result->fetch_assoc();
 $total_records = $total_row['total'];
-
-// Calculate total pages
 $total_pages = ceil($total_records / $records_per_page);
+$count_stmt->close();
 
-// Fetch paginated orders using prepared statement
-$stmt = $conn->prepare("SELECT OrderID, CustomerID, Date, Status, Total 
-                        FROM Orders 
-                        ORDER BY Date DESC 
-                        LIMIT ? OFFSET ?");
-$stmt->bind_param("ii", $records_per_page, $offset);
+// Fetch paginated orders with filtering
+$query = "SELECT OrderID, CustomerID, Date, Status, Total 
+          FROM Orders " . $where_clause . " 
+          ORDER BY Date DESC 
+          LIMIT ? OFFSET ?";
+
+$stmt = $conn->prepare($query);
+
+if (!empty($where_clause)) {
+  $params[] = $records_per_page;
+  $params[] = $offset;
+  $types .= "ii";
+  $stmt->bind_param($types, ...$params);
+} else {
+  $stmt->bind_param("ii", $records_per_page, $offset);
+}
+
 $stmt->execute();
 $result = $stmt->get_result();
+
 
 ?>
 
@@ -184,10 +217,10 @@ $result = $stmt->get_result();
     <div class="row align-items-center justify-content-end">
 
       <div class="col-md-auto d-flex gap-2">
-        <button
-          class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4 py-2 px-3">
+        <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4 py-2 px-3" data-bs-toggle="modal" data-bs-target="#filterModal">
           <span class="material-icons-outlined">tune</span>
           <span>Filter</span>
+        </button>
       </div>
 
       <div class="container-fluid mt-4 rounded-5 shadow">
@@ -280,6 +313,35 @@ $result = $stmt->get_result();
       </div>
     </div>
   </div>
+
+  <!-- Filter Modal -->
+  <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filterModalLabel">Filter Orders by Date</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="GET" action="orders.php">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="start_date" class="form-label">Start Date</label>
+              <input type="date" name="start_date" id="start_date" class="form-control" value="<?= htmlspecialchars($_GET['start_date'] ?? '') ?>">
+            </div>
+            <div class="mb-3">
+              <label for="end_date" class="form-label">End Date</label>
+              <input type="date" name="end_date" id="end_date" class="form-control" value="<?= htmlspecialchars($_GET['end_date'] ?? '') ?>">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Apply Filter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
