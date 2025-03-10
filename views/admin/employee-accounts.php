@@ -185,42 +185,44 @@ $result = $stmt->get_result();
                 </div>
             <?php endif; ?>
             <div class="card-body">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Employee ID</th>
-                            <th>Name</th>
-                            <th>Username</th>
-                            <th>Role</th>
-                            <th class="align-middle text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
-                        <?php if ($result->num_rows > 0): ?>
-                            <?php while ($row = $result->fetch_assoc()): ?>
-                                <tr>
-                                    <td class="align-middle"><?php echo $row['EmployeeID']; ?></td>
-                                    <td class="align-middle"><?php echo $row['FirstName'] . " " . $row['LastName']; ?></td>
-                                    <td class="align-middle"><?php echo $row['Username']; ?></td>
-                                    <td class="align-middle"><?php echo $row['Role']; ?></td>
-                                    <td class="align-middle">
-                                        <form action="../../handlers/Employee/update-account-status.php" method="POST">
-                                            <input type="hidden" name="employeeID" value="<?php echo $row['EmployeeID']; ?>">
-                                            <select name="status" class="form-select" onchange="this.form.submit()">
-                                                <option value="Active" <?php echo ($row['Status'] == 'Active') ? 'selected' : ''; ?>>Active</option>
-                                                <option value="Inactive" <?php echo ($row['Status'] == 'Inactive') ? 'selected' : ''; ?>>Inactive</option>
-                                            </select>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
                             <tr>
-                                <td colspan="5" class="text-center">No employee records available.</td>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th class="align-middle text-center">Status</th>
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <?php if ($result->num_rows > 0): ?>
+                                <?php while ($row = $result->fetch_assoc()): ?>
+                                    <tr>
+                                        <td class="align-middle"><?php echo $row['EmployeeID']; ?></td>
+                                        <td class="align-middle"><?php echo $row['FirstName'] . " " . $row['LastName']; ?></td>
+                                        <td class="align-middle"><?php echo $row['Username']; ?></td>
+                                        <td class="align-middle"><?php echo $row['Role']; ?></td>
+                                        <td class="align-middle">
+                                            <form action="../../handlers/Employee/update-account-status.php" method="POST">
+                                                <input type="hidden" name="employeeID" value="<?php echo $row['EmployeeID']; ?>">
+                                                <select name="status" class="form-select" onchange="this.form.submit()">
+                                                    <option value="Active" <?php echo ($row['Status'] == 'Active') ? 'selected' : ''; ?>>Active</option>
+                                                    <option value="Inactive" <?php echo ($row['Status'] == 'Inactive') ? 'selected' : ''; ?>>Inactive</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5" class="text-center">No employee records available.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

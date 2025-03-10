@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306:3308
--- Generation Time: Mar 09, 2025 at 01:58 PM
+-- Generation Time: Mar 09, 2025 at 02:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,17 +20,21 @@ SET time_zone = "+00:00";
 --
 -- Database: `smartstock_inventory`
 --
+CREATE DATABASE IF NOT EXISTS `smartstock_inventory_backup` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `smartstock_inventory_backup`;
 
 DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`` PROCEDURE `AddProduct` (IN `p_Name` VARCHAR(255), IN `p_CategoryID` INT, IN `p_CreatedBy` INT)   BEGIN
+DROP PROCEDURE IF EXISTS `AddProduct`$$
+CREATE PROCEDURE `AddProduct` (IN `p_Name` VARCHAR(255), IN `p_CategoryID` INT, IN `p_CreatedBy` INT)   BEGIN
     INSERT INTO products (Name, CategoryID, StockQuantity, Price, Status, Created_At, Created_By)
     VALUES (p_Name, p_CategoryID, 0, 0.00, 'Out of Stock', NOW(), p_CreatedBy);
 END$$
 
-CREATE DEFINER=`` PROCEDURE `DiscardStock` (IN `p_AdminID` INT, IN `p_ProductID` INT, IN `p_Reason` VARCHAR(255), IN `p_Quantity` INT)   BEGIN
+DROP PROCEDURE IF EXISTS `DiscardStock`$$
+CREATE PROCEDURE `DiscardStock` (IN `p_AdminID` INT, IN `p_ProductID` INT, IN `p_Reason` VARCHAR(255), IN `p_Quantity` INT)   BEGIN
     DECLARE adjustmentID INT;
 
     -- Start transaction
@@ -53,7 +57,8 @@ CREATE DEFINER=`` PROCEDURE `DiscardStock` (IN `p_AdminID` INT, IN `p_ProductID`
     COMMIT;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `GetDashboardStats` ()   BEGIN
+DROP PROCEDURE IF EXISTS `GetDashboardStats`$$
+CREATE PROCEDURE `GetDashboardStats` ()   BEGIN
     -- Total Sales (Completed Orders)
     SELECT COALESCE(SUM(total), 0) AS total_sales FROM orders WHERE Status = 'Paid';
 
@@ -67,7 +72,8 @@ CREATE DEFINER=`` PROCEDURE `GetDashboardStats` ()   BEGIN
     SELECT COUNT(*) AS low_stock_products FROM products WHERE StockQuantity < 5;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `GetProducts` (IN `filterType` VARCHAR(20))   BEGIN
+DROP PROCEDURE IF EXISTS `GetProducts`$$
+CREATE PROCEDURE `GetProducts` (IN `filterType` VARCHAR(20))   BEGIN
     SELECT p.Name, p.ProductID, p.Price, s.Name AS SupplierName, 
            c.Name AS CategoryName, p.StockQuantity, p.Status 
     FROM products p
@@ -80,7 +86,8 @@ CREATE DEFINER=`` PROCEDURE `GetProducts` (IN `filterType` VARCHAR(20))   BEGIN
     
 END$$
 
-CREATE DEFINER=`` PROCEDURE `GetSalesByCategory` ()   BEGIN
+DROP PROCEDURE IF EXISTS `GetSalesByCategory`$$
+CREATE PROCEDURE `GetSalesByCategory` ()   BEGIN
     SELECT c.Name AS CategoryName, SUM(o.Total) AS TotalSales
     FROM orders o
     JOIN orderline ol ON o.OrderID = ol.OrderID
@@ -90,7 +97,8 @@ CREATE DEFINER=`` PROCEDURE `GetSalesByCategory` ()   BEGIN
     ORDER BY TotalSales DESC;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `insert_audit_log` (IN `table_name` VARCHAR(50), IN `record_id` INT, IN `action_type` ENUM('Add','Change'), IN `column_name` VARCHAR(50), IN `old_value` TEXT, IN `new_value` TEXT, IN `admin_id` INT)   BEGIN
+DROP PROCEDURE IF EXISTS `insert_audit_log`$$
+CREATE PROCEDURE `insert_audit_log` (IN `table_name` VARCHAR(50), IN `record_id` INT, IN `action_type` ENUM('Add','Change'), IN `column_name` VARCHAR(50), IN `old_value` TEXT, IN `new_value` TEXT, IN `admin_id` INT)   BEGIN
     INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, OldValue, NewValue, AdminID)
     VALUES (table_name, record_id, action_type, column_name, old_value, new_value, admin_id);
 END$$
@@ -103,16 +111,21 @@ DELIMITER ;
 -- Table structure for table `adjustments`
 --
 
-CREATE TABLE `adjustments` (
-  `AdjustmentID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `adjustments`;
+CREATE TABLE IF NOT EXISTS `adjustments` (
+  `AdjustmentID` int(11) NOT NULL AUTO_INCREMENT,
   `AdminID` int(11) DEFAULT NULL,
   `Reason` text NOT NULL,
   `AdjustmentDate` datetime NOT NULL,
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`AdjustmentID`),
+  KEY `AdminID` (`AdminID`),
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `adjustments`
@@ -140,6 +153,7 @@ INSERT INTO `adjustments` (`AdjustmentID`, `AdminID`, `Reason`, `AdjustmentDate`
 --
 -- Triggers `adjustments`
 --
+DROP TRIGGER IF EXISTS `adjustments_audit_insert`;
 DELIMITER $$
 CREATE TRIGGER `adjustments_audit_insert` AFTER INSERT ON `adjustments` FOR EACH ROW BEGIN
     INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
@@ -147,6 +161,7 @@ CREATE TRIGGER `adjustments_audit_insert` AFTER INSERT ON `adjustments` FOR EACH
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `adjustments_audit_update`;
 DELIMITER $$
 CREATE TRIGGER `adjustments_audit_update` AFTER UPDATE ON `adjustments` FOR EACH ROW BEGIN
     -- Log only if Reason changes
@@ -170,13 +185,17 @@ DELIMITER ;
 -- Table structure for table `adjustment_details`
 --
 
-CREATE TABLE `adjustment_details` (
-  `AdjustmentDetailID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `adjustment_details`;
+CREATE TABLE IF NOT EXISTS `adjustment_details` (
+  `AdjustmentDetailID` int(11) NOT NULL AUTO_INCREMENT,
   `ProductID` int(11) DEFAULT NULL,
   `AdjustmentID` int(11) DEFAULT NULL,
   `AdjustmentType` varchar(50) NOT NULL,
-  `QuantityAdjusted` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `QuantityAdjusted` int(11) NOT NULL,
+  PRIMARY KEY (`AdjustmentDetailID`),
+  KEY `ProductID` (`ProductID`),
+  KEY `AdjustmentID` (`AdjustmentID`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `adjustment_details`
@@ -207,8 +226,9 @@ INSERT INTO `adjustment_details` (`AdjustmentDetailID`, `ProductID`, `Adjustment
 -- Table structure for table `audit_logs`
 --
 
-CREATE TABLE `audit_logs` (
-  `LogID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `audit_logs`;
+CREATE TABLE IF NOT EXISTS `audit_logs` (
+  `LogID` int(11) NOT NULL AUTO_INCREMENT,
   `TableName` varchar(50) NOT NULL,
   `RecordID` int(11) NOT NULL,
   `ActionType` enum('Added','Updated') NOT NULL,
@@ -216,8 +236,10 @@ CREATE TABLE `audit_logs` (
   `OldValue` text DEFAULT NULL,
   `NewValue` text NOT NULL,
   `AdminID` int(11) NOT NULL,
-  `Timestamp` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`LogID`),
+  KEY `AdminID` (`AdminID`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `audit_logs`
@@ -241,15 +263,19 @@ INSERT INTO `audit_logs` (`LogID`, `TableName`, `RecordID`, `ActionType`, `Colum
 -- Table structure for table `categories`
 --
 
-CREATE TABLE `categories` (
-  `CategoryID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE IF NOT EXISTS `categories` (
+  `CategoryID` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(50) NOT NULL,
   `Description` text DEFAULT NULL,
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`CategoryID`),
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `categories`
@@ -271,16 +297,20 @@ INSERT INTO `categories` (`CategoryID`, `Name`, `Description`, `Created_At`, `Cr
 -- Table structure for table `customers`
 --
 
-CREATE TABLE `customers` (
-  `CustomerID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `customers`;
+CREATE TABLE IF NOT EXISTS `customers` (
+  `CustomerID` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(50) DEFAULT NULL,
   `Address` text DEFAULT NULL,
   `PhoneNumber` varchar(255) DEFAULT NULL,
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`CustomerID`),
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customers`
@@ -320,8 +350,9 @@ INSERT INTO `customers` (`CustomerID`, `Name`, `Address`, `PhoneNumber`, `Create
 -- Table structure for table `employees`
 --
 
-CREATE TABLE `employees` (
-  `EmployeeID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `employees`;
+CREATE TABLE IF NOT EXISTS `employees` (
+  `EmployeeID` int(11) NOT NULL AUTO_INCREMENT,
   `FirstName` varchar(50) NOT NULL,
   `LastName` varchar(50) NOT NULL,
   `Username` varchar(255) NOT NULL,
@@ -331,8 +362,11 @@ CREATE TABLE `employees` (
   `Created_By` int(11) DEFAULT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `Updated_By` int(11) DEFAULT NULL,
-  `Status` enum('Active','Inactive') NOT NULL DEFAULT 'Active'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  PRIMARY KEY (`EmployeeID`),
+  KEY `employees_ibfk_1` (`Created_By`),
+  KEY `employees_ibfk_2` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employees`
@@ -352,7 +386,8 @@ INSERT INTO `employees` (`EmployeeID`, `FirstName`, `LastName`, `Username`, `Pas
 -- Stand-in structure for view `orderdetailsview`
 -- (See below for the actual view)
 --
-CREATE TABLE `orderdetailsview` (
+DROP VIEW IF EXISTS `orderdetailsview`;
+CREATE TABLE IF NOT EXISTS `orderdetailsview` (
 `OrderID` int(11)
 ,`ProductName` varchar(50)
 ,`Quantity` int(11)
@@ -366,13 +401,17 @@ CREATE TABLE `orderdetailsview` (
 -- Table structure for table `orderline`
 --
 
-CREATE TABLE `orderline` (
-  `OrderLineID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `orderline`;
+CREATE TABLE IF NOT EXISTS `orderline` (
+  `OrderLineID` int(11) NOT NULL AUTO_INCREMENT,
   `ProductID` int(11) DEFAULT NULL,
   `OrderID` int(11) DEFAULT NULL,
   `Quantity` int(11) NOT NULL,
-  `Price` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Price` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`OrderLineID`),
+  KEY `ProductID` (`ProductID`),
+  KEY `OrderID` (`OrderID`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `orderline`
@@ -402,8 +441,9 @@ INSERT INTO `orderline` (`OrderLineID`, `ProductID`, `OrderID`, `Quantity`, `Pri
 -- Table structure for table `orders`
 --
 
-CREATE TABLE `orders` (
-  `OrderID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE IF NOT EXISTS `orders` (
+  `OrderID` int(11) NOT NULL AUTO_INCREMENT,
   `CustomerID` int(11) DEFAULT NULL,
   `Date` datetime NOT NULL,
   `Total` decimal(10,2) NOT NULL,
@@ -412,8 +452,12 @@ CREATE TABLE `orders` (
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`OrderID`),
+  KEY `CustomerID` (`CustomerID`),
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `orders`
@@ -433,6 +477,7 @@ INSERT INTO `orders` (`OrderID`, `CustomerID`, `Date`, `Total`, `Status`, `Deliv
 --
 -- Triggers `orders`
 --
+DROP TRIGGER IF EXISTS `orders_audit_insert`;
 DELIMITER $$
 CREATE TRIGGER `orders_audit_insert` AFTER INSERT ON `orders` FOR EACH ROW BEGIN
     INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
@@ -440,6 +485,7 @@ CREATE TRIGGER `orders_audit_insert` AFTER INSERT ON `orders` FOR EACH ROW BEGIN
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `orders_audit_update`;
 DELIMITER $$
 CREATE TRIGGER `orders_audit_update` AFTER UPDATE ON `orders` FOR EACH ROW BEGIN
     -- Check and log only if Total changes
@@ -463,8 +509,9 @@ DELIMITER ;
 -- Table structure for table `products`
 --
 
-CREATE TABLE `products` (
-  `ProductID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `products`;
+CREATE TABLE IF NOT EXISTS `products` (
+  `ProductID` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(50) NOT NULL,
   `CategoryID` int(11) DEFAULT NULL,
   `Price` decimal(10,2) NOT NULL,
@@ -474,8 +521,12 @@ CREATE TABLE `products` (
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`ProductID`),
+  KEY `CategoryID` (`CategoryID`),
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `products`
@@ -499,16 +550,21 @@ INSERT INTO `products` (`ProductID`, `Name`, `CategoryID`, `Price`, `StockQuanti
 -- Table structure for table `receiving`
 --
 
-CREATE TABLE `receiving` (
-  `ReceivingID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `receiving`;
+CREATE TABLE IF NOT EXISTS `receiving` (
+  `ReceivingID` int(11) NOT NULL AUTO_INCREMENT,
   `SupplierID` int(11) DEFAULT NULL,
   `Date` datetime NOT NULL,
   `Status` varchar(20) DEFAULT 'Pending',
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`ReceivingID`),
+  KEY `SupplierID` (`SupplierID`),
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `receiving`
@@ -525,6 +581,7 @@ INSERT INTO `receiving` (`ReceivingID`, `SupplierID`, `Date`, `Status`, `Created
 --
 -- Triggers `receiving`
 --
+DROP TRIGGER IF EXISTS `receiving_audit_insert`;
 DELIMITER $$
 CREATE TRIGGER `receiving_audit_insert` AFTER INSERT ON `receiving` FOR EACH ROW BEGIN
     INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
@@ -532,6 +589,7 @@ CREATE TRIGGER `receiving_audit_insert` AFTER INSERT ON `receiving` FOR EACH ROW
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `receiving_audit_update`;
 DELIMITER $$
 CREATE TRIGGER `receiving_audit_update` AFTER UPDATE ON `receiving` FOR EACH ROW BEGIN
     -- Log only if SupplierID changes
@@ -561,13 +619,17 @@ DELIMITER ;
 -- Table structure for table `receiving_details`
 --
 
-CREATE TABLE `receiving_details` (
-  `ReceivingDetailID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `receiving_details`;
+CREATE TABLE IF NOT EXISTS `receiving_details` (
+  `ReceivingDetailID` int(11) NOT NULL AUTO_INCREMENT,
   `ReceivingID` int(11) DEFAULT NULL,
   `ProductID` int(11) DEFAULT NULL,
   `Quantity` int(11) NOT NULL,
-  `UnitCost` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `UnitCost` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`ReceivingDetailID`),
+  KEY `ReceivingID` (`ReceivingID`),
+  KEY `ProductID` (`ProductID`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `receiving_details`
@@ -591,8 +653,9 @@ INSERT INTO `receiving_details` (`ReceivingDetailID`, `ReceivingID`, `ProductID`
 -- Table structure for table `returns`
 --
 
-CREATE TABLE `returns` (
-  `ReturnID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `returns`;
+CREATE TABLE IF NOT EXISTS `returns` (
+  `ReturnID` int(11) NOT NULL AUTO_INCREMENT,
   `CustomerID` int(11) DEFAULT NULL,
   `OrderID` int(11) DEFAULT NULL,
   `ReturnDate` datetime NOT NULL,
@@ -600,8 +663,13 @@ CREATE TABLE `returns` (
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`ReturnID`),
+  KEY `CustomerID` (`CustomerID`),
+  KEY `OrderID` (`OrderID`),
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `returns`
@@ -615,6 +683,7 @@ INSERT INTO `returns` (`ReturnID`, `CustomerID`, `OrderID`, `ReturnDate`, `Reaso
 --
 -- Triggers `returns`
 --
+DROP TRIGGER IF EXISTS `returns_audit_insert`;
 DELIMITER $$
 CREATE TRIGGER `returns_audit_insert` AFTER INSERT ON `returns` FOR EACH ROW BEGIN
     INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
@@ -622,6 +691,7 @@ CREATE TRIGGER `returns_audit_insert` AFTER INSERT ON `returns` FOR EACH ROW BEG
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `returns_audit_update`;
 DELIMITER $$
 CREATE TRIGGER `returns_audit_update` AFTER UPDATE ON `returns` FOR EACH ROW BEGIN
     -- Log only if CustomerID changes
@@ -657,8 +727,9 @@ DELIMITER ;
 -- Table structure for table `returntosupplier`
 --
 
-CREATE TABLE `returntosupplier` (
-  `ReturnSupplierID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `returntosupplier`;
+CREATE TABLE IF NOT EXISTS `returntosupplier` (
+  `ReturnSupplierID` int(11) NOT NULL AUTO_INCREMENT,
   `SupplierID` int(11) DEFAULT NULL,
   `ReturnDate` datetime NOT NULL,
   `Reason` text NOT NULL,
@@ -666,8 +737,12 @@ CREATE TABLE `returntosupplier` (
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`ReturnSupplierID`),
+  KEY `SupplierID` (`SupplierID`),
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `returntosupplier`
@@ -681,6 +756,7 @@ INSERT INTO `returntosupplier` (`ReturnSupplierID`, `SupplierID`, `ReturnDate`, 
 --
 -- Triggers `returntosupplier`
 --
+DROP TRIGGER IF EXISTS `returntosupplier_audit_insert`;
 DELIMITER $$
 CREATE TRIGGER `returntosupplier_audit_insert` AFTER INSERT ON `returntosupplier` FOR EACH ROW BEGIN
     INSERT INTO audit_logs (TableName, RecordID, ActionType, ColumnName, NewValue, AdminID, Timestamp)
@@ -688,6 +764,7 @@ CREATE TRIGGER `returntosupplier_audit_insert` AFTER INSERT ON `returntosupplier
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `returntosupplier_audit_update`;
 DELIMITER $$
 CREATE TRIGGER `returntosupplier_audit_update` AFTER UPDATE ON `returntosupplier` FOR EACH ROW BEGIN
     -- Log only if SupplierID changes
@@ -723,12 +800,16 @@ DELIMITER ;
 -- Table structure for table `returntosupplierdetails`
 --
 
-CREATE TABLE `returntosupplierdetails` (
-  `ReturnSupplierDetailID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `returntosupplierdetails`;
+CREATE TABLE IF NOT EXISTS `returntosupplierdetails` (
+  `ReturnSupplierDetailID` int(11) NOT NULL AUTO_INCREMENT,
   `ReturnSupplierID` int(11) DEFAULT NULL,
   `ProductID` int(11) DEFAULT NULL,
-  `QuantityReturned` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `QuantityReturned` int(11) NOT NULL,
+  PRIMARY KEY (`ReturnSupplierDetailID`),
+  KEY `ReturnSupplierID` (`ReturnSupplierID`),
+  KEY `ProductID` (`ProductID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `returntosupplierdetails`
@@ -745,11 +826,15 @@ INSERT INTO `returntosupplierdetails` (`ReturnSupplierDetailID`, `ReturnSupplier
 -- Table structure for table `return_details`
 --
 
-CREATE TABLE `return_details` (
-  `ReturnDetailID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `return_details`;
+CREATE TABLE IF NOT EXISTS `return_details` (
+  `ReturnDetailID` int(11) NOT NULL AUTO_INCREMENT,
   `ProductID` int(11) DEFAULT NULL,
   `ReturnID` int(11) DEFAULT NULL,
-  `QuantityReturned` int(11) NOT NULL
+  `QuantityReturned` int(11) NOT NULL,
+  PRIMARY KEY (`ReturnDetailID`),
+  KEY `ProductID` (`ProductID`),
+  KEY `ReturnID` (`ReturnID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -758,8 +843,9 @@ CREATE TABLE `return_details` (
 -- Table structure for table `suppliers`
 --
 
-CREATE TABLE `suppliers` (
-  `SupplierID` int(11) NOT NULL,
+DROP TABLE IF EXISTS `suppliers`;
+CREATE TABLE IF NOT EXISTS `suppliers` (
+  `SupplierID` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(50) NOT NULL,
   `Address` text NOT NULL,
   `PhoneNumber` varchar(255) NOT NULL,
@@ -767,8 +853,14 @@ CREATE TABLE `suppliers` (
   `Created_At` datetime NOT NULL DEFAULT current_timestamp(),
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `Updated_By` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Updated_By` int(11) NOT NULL,
+  PRIMARY KEY (`SupplierID`),
+  UNIQUE KEY `Name` (`Name`),
+  UNIQUE KEY `PhoneNumber` (`PhoneNumber`),
+  UNIQUE KEY `Address` (`Address`) USING HASH,
+  KEY `Created_By` (`Created_By`),
+  KEY `Updated_By` (`Updated_By`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `suppliers`
@@ -784,7 +876,8 @@ INSERT INTO `suppliers` (`SupplierID`, `Name`, `Address`, `PhoneNumber`, `Profil
 -- Stand-in structure for view `supplier_order_view`
 -- (See below for the actual view)
 --
-CREATE TABLE `supplier_order_view` (
+DROP VIEW IF EXISTS `supplier_order_view`;
+CREATE TABLE IF NOT EXISTS `supplier_order_view` (
 `ReceivingDetailID` int(11)
 ,`product_name` varchar(50)
 ,`product_quantity` int(11)
@@ -803,7 +896,8 @@ CREATE TABLE `supplier_order_view` (
 --
 DROP TABLE IF EXISTS `orderdetailsview`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`` SQL SECURITY DEFINER VIEW `orderdetailsview`  AS SELECT `ol`.`OrderID` AS `OrderID`, `p`.`Name` AS `ProductName`, `ol`.`Quantity` AS `Quantity`, `ol`.`Price` AS `Price`, `ol`.`Quantity`* `ol`.`Price` AS `Total` FROM (`orderline` `ol` join `products` `p` on(`ol`.`ProductID` = `p`.`ProductID`)) ;
+DROP VIEW IF EXISTS `orderdetailsview`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY VIEW `orderdetailsview`  AS SELECT `ol`.`OrderID` AS `OrderID`, `p`.`Name` AS `ProductName`, `ol`.`Quantity` AS `Quantity`, `ol`.`Price` AS `Price`, `ol`.`Quantity`* `ol`.`Price` AS `Total` FROM (`orderline` `ol` join `products` `p` on(`ol`.`ProductID` = `p`.`ProductID`)) ;
 
 -- --------------------------------------------------------
 
@@ -812,248 +906,8 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`` SQL SECURITY DEFINER VIEW `orderdetailsvie
 --
 DROP TABLE IF EXISTS `supplier_order_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`` SQL SECURITY DEFINER VIEW `supplier_order_view`  AS SELECT `rd`.`ReceivingDetailID` AS `ReceivingDetailID`, `p`.`Name` AS `product_name`, `rd`.`Quantity` AS `product_quantity`, `rd`.`UnitCost` AS `unit_cost`, `rd`.`Quantity`* `rd`.`UnitCost` AS `total_cost`, `r`.`Date` AS `order_date`, `s`.`SupplierID` AS `supplier_id`, `s`.`Name` AS `supplier_name`, `r`.`Status` AS `order_status` FROM (((`receiving_details` `rd` join `receiving` `r` on(`rd`.`ReceivingID` = `r`.`ReceivingID`)) join `products` `p` on(`rd`.`ProductID` = `p`.`ProductID`)) join `suppliers` `s` on(`r`.`SupplierID` = `s`.`SupplierID`)) ;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `adjustments`
---
-ALTER TABLE `adjustments`
-  ADD PRIMARY KEY (`AdjustmentID`),
-  ADD KEY `AdminID` (`AdminID`),
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- Indexes for table `adjustment_details`
---
-ALTER TABLE `adjustment_details`
-  ADD PRIMARY KEY (`AdjustmentDetailID`),
-  ADD KEY `ProductID` (`ProductID`),
-  ADD KEY `AdjustmentID` (`AdjustmentID`);
-
---
--- Indexes for table `audit_logs`
---
-ALTER TABLE `audit_logs`
-  ADD PRIMARY KEY (`LogID`),
-  ADD KEY `AdminID` (`AdminID`);
-
---
--- Indexes for table `categories`
---
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`CategoryID`),
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- Indexes for table `customers`
---
-ALTER TABLE `customers`
-  ADD PRIMARY KEY (`CustomerID`),
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- Indexes for table `employees`
---
-ALTER TABLE `employees`
-  ADD PRIMARY KEY (`EmployeeID`),
-  ADD KEY `employees_ibfk_1` (`Created_By`),
-  ADD KEY `employees_ibfk_2` (`Updated_By`);
-
---
--- Indexes for table `orderline`
---
-ALTER TABLE `orderline`
-  ADD PRIMARY KEY (`OrderLineID`),
-  ADD KEY `ProductID` (`ProductID`),
-  ADD KEY `OrderID` (`OrderID`);
-
---
--- Indexes for table `orders`
---
-ALTER TABLE `orders`
-  ADD PRIMARY KEY (`OrderID`),
-  ADD KEY `CustomerID` (`CustomerID`),
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- Indexes for table `products`
---
-ALTER TABLE `products`
-  ADD PRIMARY KEY (`ProductID`),
-  ADD KEY `CategoryID` (`CategoryID`),
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- Indexes for table `receiving`
---
-ALTER TABLE `receiving`
-  ADD PRIMARY KEY (`ReceivingID`),
-  ADD KEY `SupplierID` (`SupplierID`),
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- Indexes for table `receiving_details`
---
-ALTER TABLE `receiving_details`
-  ADD PRIMARY KEY (`ReceivingDetailID`),
-  ADD KEY `ReceivingID` (`ReceivingID`),
-  ADD KEY `ProductID` (`ProductID`);
-
---
--- Indexes for table `returns`
---
-ALTER TABLE `returns`
-  ADD PRIMARY KEY (`ReturnID`),
-  ADD KEY `CustomerID` (`CustomerID`),
-  ADD KEY `OrderID` (`OrderID`),
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- Indexes for table `returntosupplier`
---
-ALTER TABLE `returntosupplier`
-  ADD PRIMARY KEY (`ReturnSupplierID`),
-  ADD KEY `SupplierID` (`SupplierID`),
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- Indexes for table `returntosupplierdetails`
---
-ALTER TABLE `returntosupplierdetails`
-  ADD PRIMARY KEY (`ReturnSupplierDetailID`),
-  ADD KEY `ReturnSupplierID` (`ReturnSupplierID`),
-  ADD KEY `ProductID` (`ProductID`);
-
---
--- Indexes for table `return_details`
---
-ALTER TABLE `return_details`
-  ADD PRIMARY KEY (`ReturnDetailID`),
-  ADD KEY `ProductID` (`ProductID`),
-  ADD KEY `ReturnID` (`ReturnID`);
-
---
--- Indexes for table `suppliers`
---
-ALTER TABLE `suppliers`
-  ADD PRIMARY KEY (`SupplierID`),
-  ADD UNIQUE KEY `Name` (`Name`),
-  ADD UNIQUE KEY `PhoneNumber` (`PhoneNumber`),
-  ADD UNIQUE KEY `Address` (`Address`) USING HASH,
-  ADD KEY `Created_By` (`Created_By`),
-  ADD KEY `Updated_By` (`Updated_By`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `adjustments`
---
-ALTER TABLE `adjustments`
-  MODIFY `AdjustmentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
-
---
--- AUTO_INCREMENT for table `adjustment_details`
---
-ALTER TABLE `adjustment_details`
-  MODIFY `AdjustmentDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
--- AUTO_INCREMENT for table `audit_logs`
---
-ALTER TABLE `audit_logs`
-  MODIFY `LogID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- AUTO_INCREMENT for table `categories`
---
-ALTER TABLE `categories`
-  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
--- AUTO_INCREMENT for table `customers`
---
-ALTER TABLE `customers`
-  MODIFY `CustomerID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
-
---
--- AUTO_INCREMENT for table `employees`
---
-ALTER TABLE `employees`
-  MODIFY `EmployeeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `orderline`
---
-ALTER TABLE `orderline`
-  MODIFY `OrderLineID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
--- AUTO_INCREMENT for table `orders`
---
-ALTER TABLE `orders`
-  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT for table `products`
---
-ALTER TABLE `products`
-  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
-
---
--- AUTO_INCREMENT for table `receiving`
---
-ALTER TABLE `receiving`
-  MODIFY `ReceivingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
-
---
--- AUTO_INCREMENT for table `receiving_details`
---
-ALTER TABLE `receiving_details`
-  MODIFY `ReceivingDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- AUTO_INCREMENT for table `returns`
---
-ALTER TABLE `returns`
-  MODIFY `ReturnID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `returntosupplier`
---
-ALTER TABLE `returntosupplier`
-  MODIFY `ReturnSupplierID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `returntosupplierdetails`
---
-ALTER TABLE `returntosupplierdetails`
-  MODIFY `ReturnSupplierDetailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `return_details`
---
-ALTER TABLE `return_details`
-  MODIFY `ReturnDetailID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `suppliers`
---
-ALTER TABLE `suppliers`
-  MODIFY `SupplierID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+DROP VIEW IF EXISTS `supplier_order_view`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY VIEW `supplier_order_view`  AS SELECT `rd`.`ReceivingDetailID` AS `ReceivingDetailID`, `p`.`Name` AS `product_name`, `rd`.`Quantity` AS `product_quantity`, `rd`.`UnitCost` AS `unit_cost`, `rd`.`Quantity`* `rd`.`UnitCost` AS `total_cost`, `r`.`Date` AS `order_date`, `s`.`SupplierID` AS `supplier_id`, `s`.`Name` AS `supplier_name`, `r`.`Status` AS `order_status` FROM (((`receiving_details` `rd` join `receiving` `r` on(`rd`.`ReceivingID` = `r`.`ReceivingID`)) join `products` `p` on(`rd`.`ProductID` = `p`.`ProductID`)) join `suppliers` `s` on(`r`.`SupplierID` = `s`.`SupplierID`)) ;
 
 --
 -- Constraints for dumped tables

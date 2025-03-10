@@ -31,6 +31,7 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="../../statics/account-style.css" />
     <link rel="stylesheet" href="../../statics/style.css" />
     <link rel="stylesheet" href="../../statics/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../statics/account-manager.css" />
 
     <!-- Google Font Icon Links -->
     <link
@@ -168,7 +169,7 @@ $result = $conn->query($sql);
                 <h5 class="card-title fw-semibold display-6 mb-4">Audit Log</h5>
                 <?php if ($result->num_rows > 0): ?>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th>Timestamp</th>
@@ -181,11 +182,11 @@ $result = $conn->query($sql);
                             <tbody>
                                 <?php while ($row = $result->fetch_assoc()): ?>
                                     <tr>
-                                        <td><?php echo $row['Timestamp']; ?></td>
-                                        <td><?php echo $row['AdminID']; ?></td>
-                                        <td><?php echo $row['ActionType']; ?></td>
-                                        <td><?php echo $row['TableName']; ?></td>
-                                        <td><?php echo $row['NewValue']; ?></td> <!-- Shows only new values -->
+                                        <td class="py-2"><?php echo $row['Timestamp']; ?></td>
+                                        <td class="py-2"><?php echo $row['AdminID']; ?></td>
+                                        <td class="py-2"><?php echo $row['ActionType']; ?></td>
+                                        <td class="py-2"><?php echo $row['TableName']; ?></td>
+                                        <td class="py-2"><?php echo $row['NewValue']; ?></td> <!-- Shows only new values -->
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
