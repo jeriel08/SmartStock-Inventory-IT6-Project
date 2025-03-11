@@ -188,7 +188,7 @@ include '../../database/database.php';
 
     <!-- Category List -->
     <?php
-    $stmt = $conn->prepare("SELECT CategoryID, Name, Description FROM categories");
+    $stmt = $conn->prepare("SELECT CategoryID, Name, Description, Status FROM categories");
     if ($stmt === false) {
       echo '<div class="card mb-3"><div class="card-body text-center"><p>Error preparing statement!</p></div></div>';
     }
@@ -201,6 +201,9 @@ include '../../database/database.php';
             <div>
               <h3 class="card-title fw-semibold" style="color: #f66435;"><?php echo htmlspecialchars($row['Name']); ?></h3>
               <p class="card-text" style="color: #f66435;"><?php echo htmlspecialchars($row['Description'] ?: 'No description'); ?></p>
+              <span class="badge <?php echo $row['Status'] === 'Active' ? 'bg-success' : 'bg-danger'; ?>">
+                <?php echo $row['Status']; ?>
+              </span>
             </div>
             <div class="d-flex gap-2">
               <button class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4"
@@ -208,15 +211,9 @@ include '../../database/database.php';
                 data-bs-target="#editCategoryModal"
                 data-category-id="<?php echo $row['CategoryID']; ?>"
                 data-category-name="<?php echo htmlspecialchars($row['Name']); ?>"
-                data-category-desc="<?php echo htmlspecialchars($row['Description']); ?>">
+                data-category-desc="<?php echo htmlspecialchars($row['Description']); ?>"
+                data-category-status="<?php echo $row['Status']; ?>">
                 <span class="material-icons-outlined">edit</span>
-              </button>
-              <button class="btn btn-outline-danger d-flex align-items-center gap-2 py-2 rounded-4"
-                data-bs-toggle="modal"
-                data-bs-target="#deleteCategoryModal"
-                data-category-id="<?php echo $row['CategoryID']; ?>"
-                data-category-name="<?php echo htmlspecialchars($row['Name']); ?>">
-                <span class="material-icons-outlined">remove_circle_outline</span>
               </button>
             </div>
           </div>
@@ -289,14 +286,25 @@ include '../../database/database.php';
         <form action="../../handlers/Category/update-category-handler.php" method="POST">
           <div class="modal-body">
             <input type="hidden" name="categoryID" id="editCategoryID">
+
             <div class="mb-3">
               <label for="editCategoryName" class="form-label">Name</label>
               <input type="text" class="form-control" id="editCategoryName" name="categoryName" required />
             </div>
+
             <div class="mb-3">
               <label for="editCategoryDescription" class="form-label">Description</label>
               <textarea class="form-control" id="editCategoryDescription" name="categoryDescription"></textarea>
             </div>
+
+            <div class="mb-3">
+              <label for="editCategoryStatus" class="form-label">Status</label>
+              <select class="form-select" id="editCategoryStatus" name="categoryStatus" required>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
@@ -313,88 +321,27 @@ include '../../database/database.php';
     </div>
   </div>
 
-  <!-- Delete Category Modal -->
-  <div class="modal fade" id="deleteCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false"
-    tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title me-3 d-flex align-items-center gap-2" id="deleteCategoryModalLabel">
-            <span class="material-icons-outlined fs-2">delete</span>
-            Delete Category
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="../../handlers/Category/delete-category-handler.php" method="POST">
-          <div class="modal-body">
-            <input type="hidden" name="categoryID" id="deleteCategoryID">
-            <p>Are you sure you want to delete the category "<span id="deleteCategoryName"></span>"? This action cannot be undone.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-danger d-flex align-items-center gap-2 py-2 rounded-4">
-              <span class="material-icons-outlined">delete_forever</span>
-              <span>Delete</span>
-            </button>
-            <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4" data-bs-dismiss="modal">
-              <span class="material-icons-outlined">close</span>
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 
 
   <script src="../statics/js/bootstrap.min.js"></script>
   <script>
-    // JavaScript to populate Edit and Delete modals with data
-    document.addEventListener('DOMContentLoaded', function() {
-      // Debug: Ensure script runs
-      console.log("DOMContentLoaded event fired");
+    document.addEventListener("DOMContentLoaded", function() {
+      const editCategoryModal = document.getElementById("editCategoryModal");
 
-      // Edit Modal
-      const editModal = document.getElementById('editCategoryModal');
-      if (editModal) {
-        editModal.addEventListener('show.bs.modal', function(event) {
-          try {
-            console.log("Edit modal show event triggered");
-            const button = event.relatedTarget; // Button that triggered the modal
-            const categoryId = button.getAttribute('data-category-id');
-            const categoryName = button.getAttribute('data-category-name');
-            const categoryDesc = button.getAttribute('data-category-desc');
+      if (editCategoryModal) {
+        editCategoryModal.addEventListener("show.bs.modal", function(event) {
+          const button = event.relatedTarget; // Button that triggered the modal
+          const categoryId = button.getAttribute("data-category-id");
+          const categoryName = button.getAttribute("data-category-name");
+          const categoryDesc = button.getAttribute("data-category-desc");
+          const categoryStatus = button.getAttribute("data-category-status");
 
-            // Populate the form fields
-            editModal.querySelector('#editCategoryID').value = categoryId;
-            editModal.querySelector('#editCategoryName').value = categoryName;
-            editModal.querySelector('#editCategoryDescription').value = categoryDesc || '';
-          } catch (e) {
-            console.error("Error in edit modal handler:", e);
-          }
+          // Populate modal fields
+          document.getElementById("editCategoryID").value = categoryId;
+          document.getElementById("editCategoryName").value = categoryName;
+          document.getElementById("editCategoryDescription").value = categoryDesc;
+          document.getElementById("editCategoryStatus").value = categoryStatus;
         });
-      } else {
-        console.error("Edit modal element not found");
-      }
-
-      // Delete Modal
-      const deleteModal = document.getElementById('deleteCategoryModal');
-      if (deleteModal) {
-        deleteModal.addEventListener('show.bs.modal', function(event) {
-          try {
-            console.log("Delete modal show event triggered");
-            const button = event.relatedTarget; // Button that triggered the modal
-            const categoryId = button.getAttribute('data-category-id');
-            const categoryName = button.getAttribute('data-category-name');
-
-            // Populate the hidden input and confirmation text
-            deleteModal.querySelector('#deleteCategoryID').value = categoryId;
-            deleteModal.querySelector('#deleteCategoryName').textContent = categoryName;
-          } catch (e) {
-            console.error("Error in delete modal handler:", e);
-          }
-        });
-      } else {
-        console.error("Delete modal element not found");
       }
     });
   </script>

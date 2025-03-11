@@ -1,3 +1,6 @@
+<?
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,18 +42,17 @@
         <div class="w-100">
           <div class="row mb-3">
             <p class="display-5 fw-bold">Login</p>
+            <?php if (isset($_SESSION['login_error'])): ?>
+              <div class="alert alert-danger">
+                <?php
+                echo $_SESSION['login_error'];
+                unset($_SESSION['login_error']);
+                ?>
+              </div>
+            <?php endif; ?>
           </div>
           <div>
-
             <form action="handlers/Authentication/login-handler.php" method="POST" class="form">
-              <?php if (isset($_SESSION['login_error'])): ?>
-                <div class="alert alert-danger">
-                  <?php
-                  echo $_SESSION['login_error'];
-                  unset($_SESSION['login_error']);
-                  ?>
-                </div>
-              <?php endif; ?>
               <div class="mb-3">
                 <label for="username" class="fw-semibold mb-1">Username</label>
                 <input
@@ -90,6 +92,8 @@
       </div>
     </div>
   </div>
+
+  <!-- Script for show password -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const togglePassword = document.querySelector(".toggle-password");
