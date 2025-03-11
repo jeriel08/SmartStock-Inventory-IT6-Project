@@ -5,13 +5,12 @@ include '../../database/database.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productName = trim($_POST["productName"]);
     $categoryId = $_POST["categoryId"];
-    $createdBy = $_SESSION["user_id"]; // Assuming user session is active
+    $unitId = $_POST["unitId"]; // Get Unit ID from form
+    $createdBy = $_SESSION["user_id"];
 
     try {
-        $stmt = $conn->prepare("
-            CALL AddProduct(?, ?, ?)
-        ");
-        $stmt->bind_param("sii", $productName, $categoryId, $createdBy);
+        $stmt = $conn->prepare("CALL AddProduct(?, ?, ?, ?)");
+        $stmt->bind_param("siis", $productName, $categoryId, $unitId, $createdBy);
         if ($stmt->execute()) {
             $_SESSION["product_success"] = "Product added successfully!";
         } else {

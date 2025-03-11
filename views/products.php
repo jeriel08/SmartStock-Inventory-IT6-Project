@@ -303,6 +303,34 @@ try {
                             </div>
                         </div>
 
+                        <!-- Unit of Measurement -->
+                        <div class="row mb-3">
+                            <label for="unit" class="col-md-3 col-form-label text-md-end">Unit</label>
+                            <div class="col-md-9">
+                                <select name="unitId" id="unit" class="form-select" required>
+                                    <option value="" selected disabled>Select a unit</option>
+                                    <?php
+                                    $stmt = $conn->prepare("SELECT UnitID, Name FROM units WHERE Status = 'Active'");
+                                    if ($stmt === false) {
+                                        error_log("Prepare failed for units: " . $conn->error);
+                                        echo "<option value=''>Error loading units</option>";
+                                    } else {
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo "<option value='{$row['UnitID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                                            }
+                                        } else {
+                                            echo "<option value=''>No active units available</option>";
+                                        }
+                                        $stmt->close();
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+
                         <!-- Category -->
                         <div class="row mb-3">
                             <label for="category" class="col-md-3 col-form-label text-md-end">Category</label>
