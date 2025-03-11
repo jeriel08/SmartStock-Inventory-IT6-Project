@@ -14,6 +14,14 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] 
 $offset = ($page - 1) * $records_per_page;
 
 try {
+    // Fetch all units once and store in an array
+    $unitOptions = [];
+    $query = "SELECT UnitID, Name FROM units ORDER BY Name ASC";
+    $result = $conn->query($query);
+    while ($row = $result->fetch_assoc()) {
+        $unitOptions[] = $row;
+    }
+
     // Fetch total product count for pagination with search
     $countQuery = "SELECT COUNT(*) AS total FROM Products WHERE 1";
     $params = [];
@@ -50,8 +58,8 @@ try {
 } catch (Exception $e) {
     die("Error fetching products: " . $e->getMessage());
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -234,9 +242,11 @@ try {
                                             data-bs-toggle="modal" data-bs-target="#editProductModal"
                                             data-product-id="<?php echo $row['ProductID']; ?>"
                                             data-price="<?php echo $row['Price']; ?>"
-                                            data-status="<?php echo $row['Status']; ?>">
+                                            data-status="<?php echo $row['Status']; ?>"
+                                            data-unit-id="<?php echo $row['UnitID']; ?>">
                                             <span class="material-icons-outlined">edit</span>
                                         </button>
+
                                         <button type="button" class="btn btn-danger d-flex align-items-center gap-2 py-2 rounded-4 discard-button"
                                             data-bs-toggle="modal" data-bs-target="#discardStockModal">
                                             <span class="material-icons-outlined">remove_circle_outline</span>
@@ -439,6 +449,19 @@ try {
                             </div>
                         </div>
                         <div class="row mb-3">
+                            <label for="editUnit" class="col-md-3 col-form-label text-md-end">Unit</label>
+                            <div class="col-md-9">
+                                <select class="form-select" id="editUnit" name="unit" required>
+                                    <?php foreach ($unitOptions as $unit): ?>
+                                        <option value="<?= htmlspecialchars($unit['UnitID']); ?>">
+                                            <?= htmlspecialchars($unit['Name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
                             <label for="editStatus" class="col-md-3 col-form-label text-md-end">Status</label>
                             <div class="col-md-9">
                                 <select class="form-select" id="editStatus" name="status" required>
@@ -519,28 +542,33 @@ try {
 
     <!-- JavaScript to Populate Edit Modal -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var editModal = document.getElementById('editProductModal');
-            editModal.addEventListener('show.bs.modal', function(event) {
-                var button = event.relatedTarget;
-                var productId = button.getAttribute('data-product-id');
-                var price = button.getAttribute('data-price');
-                var status = button.getAttribute('data-status');
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".edit-button").forEach(button => {
+                button.addEventListener("click", function() {
+                    const productId = this.getAttribute("data-product-id");
+                    const price = this.getAttribute("data-price");
+                    const status = this.getAttribute("data-status");
+                    const unitId = this.getAttribute("data-unit-id");
 
-                var modal = this;
-                modal.querySelector('#editProductId').value = productId;
-                modal.querySelector('#editPrice').value = price;
-                modal.querySelector('#editStatus').value = status;
+                    document.getElementById("editProductId").value = productId;
+                    document.getElementById("editPrice").value = price;
+                    document.getElementById("editStatus").value = status;
+
+                    // Set the correct unit in dropdown
+                    const unitDropdown = document.getElementById("editUnit");
+                    if (unitId) {
+                        unitDropdown.value = unitId;
+                    }
+                });
             });
         });
 
-        // Script for the filter
         document.querySelectorAll('.filter-btn').forEach(button => {
             button.addEventListener('click', function() {
-                const filterValue = this.getAttribute('data-filter');
+                const filterStatus = this.getAttribute('data-filter');
                 const url = new URL(window.location.href);
-                url.searchParams.set('filter', filterValue);
-                window.location.href = url.toString(); // Redirect with the new filter
+                url.searchParams.set('filter', filterStatus);
+                window.location.href = url.toString();
             });
         });
     </script>
