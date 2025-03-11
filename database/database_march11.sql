@@ -169,7 +169,7 @@ CREATE TABLE `audit_logs` (
   PRIMARY KEY (`LogID`),
   KEY `AdminID` (`AdminID`),
   CONSTRAINT `audit_logs_ibfk_1` FOREIGN KEY (`AdminID`) REFERENCES `employees` (`EmployeeID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +178,7 @@ CREATE TABLE `audit_logs` (
 
 LOCK TABLES `audit_logs` WRITE;
 /*!40000 ALTER TABLE `audit_logs` DISABLE KEYS */;
-INSERT INTO `audit_logs` VALUES (5,'Orders',9,'Added','OrderDate',NULL,'2025-03-09 16:14:54',1,'2025-03-09 08:14:54'),(6,'Adjustments',22,'Added','AdjustmentDate',NULL,'2025-03-09 16:18:56',1,'2025-03-09 08:18:56'),(7,'Adjustments',1,'Updated','Reason','Expired','Damaged Stock',2,'2025-03-09 08:19:56'),(8,'Adjustments',1,'Updated','AdjustmentDate','2025-03-08 08:05:34','2025-03-09 16:19:56',2,'2025-03-09 08:19:56'),(9,'Receiving',13,'Added','Date',NULL,'2025-03-09 00:00:00',1,'2025-03-09 08:24:09'),(10,'Receiving',13,'Updated','Status','Pending','Received',1,'2025-03-09 08:24:43'),(11,'Returns',3,'Added','ReturnDate',NULL,'2025-03-09 00:00:00',1,'2025-03-09 08:27:36'),(12,'Returns',1,'Updated','Reason','Expired','Wrong item received',2,'2025-03-09 08:28:39'),(13,'ReturnToSupplier',3,'Added','ReturnDate',NULL,'2025-03-09 16:30:38',1,'2025-03-09 08:30:38'),(14,'Orders',10,'Added','OrderDate',NULL,'2025-03-09 16:52:04',1,'2025-03-09 08:52:04'),(15,'Orders',11,'Added','OrderDate',NULL,'2025-03-10 09:53:22',1,'2025-03-10 01:53:22');
+INSERT INTO `audit_logs` VALUES (5,'Orders',9,'Added','OrderDate',NULL,'2025-03-09 16:14:54',1,'2025-03-09 08:14:54'),(6,'Adjustments',22,'Added','AdjustmentDate',NULL,'2025-03-09 16:18:56',1,'2025-03-09 08:18:56'),(7,'Adjustments',1,'Updated','Reason','Expired','Damaged Stock',2,'2025-03-09 08:19:56'),(8,'Adjustments',1,'Updated','AdjustmentDate','2025-03-08 08:05:34','2025-03-09 16:19:56',2,'2025-03-09 08:19:56'),(9,'Receiving',13,'Added','Date',NULL,'2025-03-09 00:00:00',1,'2025-03-09 08:24:09'),(10,'Receiving',13,'Updated','Status','Pending','Received',1,'2025-03-09 08:24:43'),(11,'Returns',3,'Added','ReturnDate',NULL,'2025-03-09 00:00:00',1,'2025-03-09 08:27:36'),(12,'Returns',1,'Updated','Reason','Expired','Wrong item received',2,'2025-03-09 08:28:39'),(13,'ReturnToSupplier',3,'Added','ReturnDate',NULL,'2025-03-09 16:30:38',1,'2025-03-09 08:30:38'),(14,'Orders',10,'Added','OrderDate',NULL,'2025-03-09 16:52:04',1,'2025-03-09 08:52:04'),(15,'Orders',11,'Added','OrderDate',NULL,'2025-03-10 09:53:22',1,'2025-03-10 01:53:22'),(16,'Orders',12,'Added','OrderDate',NULL,'2025-03-11 08:24:38',1,'2025-03-11 00:24:38'),(17,'Orders',13,'Added','OrderDate',NULL,'2025-03-11 08:26:14',1,'2025-03-11 00:26:14');
 /*!40000 ALTER TABLE `audit_logs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,6 +197,7 @@ CREATE TABLE `categories` (
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `Updated_By` int(11) NOT NULL,
+  `Status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
   PRIMARY KEY (`CategoryID`),
   KEY `Created_By` (`Created_By`),
   KEY `Updated_By` (`Updated_By`)
@@ -209,7 +210,7 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (8,'Beverages','- Soft Drinks\r\n- Coffee & Tea\r\n- Powdered Juice & Energy Drinks\r\n- Bottled Water\r\n- Alcoholic Drinks (if permitted)','2025-03-04 09:27:45',1,'2025-03-06 14:51:51',1),(10,'Food & Snacks','- Canned Goods (e.g., sardines, corned beef, meatloaf)\r\n- Instant Noodles & Pasta\r\n- Rice & Grains\r\n- Bread & Bakery Products\r\n- Chips & Junk Food\r\n- Biscuits & Crackers\r\n- Chocolates & Candies','2025-03-06 14:51:09',1,'2025-03-06 14:51:09',1),(11,'Frozen & Chilled Products','- Hotdogs & Sausages\r\n- Frozen Meat & Fish\r\n- Ice Cream & Frozen Desserts\r\n- Ice Cubes','2025-03-06 14:52:43',1,'2025-03-06 14:52:43',1),(12,'Condiments & Cooking Essentials','- Cooking Oil\r\n- Soy Sauce, Vinegar, Fish Sauce\r\n- Salt, Sugar, & Other Spices\r\n- Powdered & Liquid Seasonings','2025-03-06 14:53:07',1,'2025-03-06 14:53:07',1),(13,'Household Essentials','- Detergents & Fabric Softeners\r\n- Dishwashing Liquids & Sponges\r\n- Cleaning Agents (e.g., bleach, floor wax)\r\n- Plastic Bags & Garbage Bags','2025-03-06 14:53:31',1,'2025-03-06 14:53:31',1),(14,'Personal Care & Hygiene','- Shampoo & Conditioner\r\n- Soap & Body Wash\r\n- Toothpaste & Toothbrush\r\n- Deodorants & Powders\r\n- Feminine Hygiene Products\r\n- Baby Products (e.g., diapers, wipes)','2025-03-06 14:53:58',1,'2025-03-06 14:53:58',1),(15,'School & Office Supplies','- Notebooks & Papers\r\n- Pens, Pencils, & Markers\r\n- Glue, Tape, & Scissors\r\n- Envelopes & Folders','2025-03-06 14:54:22',1,'2025-03-06 14:54:22',1),(16,'Miscellaneous Items','- Candles & Matches\r\n- Batteries\r\n- Light Bulbs\r\n- Small Toys','2025-03-06 14:55:11',1,'2025-03-06 14:55:11',1);
+INSERT INTO `categories` VALUES (8,'Beverages','- Soft Drinks\r\n- Coffee & Tea\r\n- Powdered Juice & Energy Drinks\r\n- Bottled Water\r\n- Alcoholic Drinks (if permitted)','2025-03-04 09:27:45',1,'2025-03-11 12:29:44',1,'Active'),(10,'Food & Snacks','- Canned Goods (e.g., sardines, corned beef, meatloaf)\r\n- Instant Noodles & Pasta\r\n- Rice & Grains\r\n- Bread & Bakery Products\r\n- Chips & Junk Food\r\n- Biscuits & Crackers\r\n- Chocolates & Candies','2025-03-06 14:51:09',1,'2025-03-06 14:51:09',1,'Active'),(11,'Frozen & Chilled Products','- Hotdogs & Sausages\r\n- Frozen Meat & Fish\r\n- Ice Cream & Frozen Desserts\r\n- Ice Cubes','2025-03-06 14:52:43',1,'2025-03-06 14:52:43',1,'Active'),(12,'Condiments & Cooking Essentials','- Cooking Oil\r\n- Soy Sauce, Vinegar, Fish Sauce\r\n- Salt, Sugar, & Other Spices\r\n- Powdered & Liquid Seasonings','2025-03-06 14:53:07',1,'2025-03-06 14:53:07',1,'Active'),(13,'Household Essentials','- Detergents & Fabric Softeners\r\n- Dishwashing Liquids & Sponges\r\n- Cleaning Agents (e.g., bleach, floor wax)\r\n- Plastic Bags & Garbage Bags','2025-03-06 14:53:31',1,'2025-03-06 14:53:31',1,'Active'),(14,'Personal Care & Hygiene','- Shampoo & Conditioner\r\n- Soap & Body Wash\r\n- Toothpaste & Toothbrush\r\n- Deodorants & Powders\r\n- Feminine Hygiene Products\r\n- Baby Products (e.g., diapers, wipes)','2025-03-06 14:53:58',1,'2025-03-06 14:53:58',1,'Active'),(15,'School & Office Supplies','- Notebooks & Papers\r\n- Pens, Pencils, & Markers\r\n- Glue, Tape, & Scissors\r\n- Envelopes & Folders','2025-03-06 14:54:22',1,'2025-03-06 14:54:22',1,'Active'),(16,'Miscellaneous Items','- Candles & Matches\r\n- Batteries\r\n- Light Bulbs\r\n- Small Toys','2025-03-06 14:55:11',1,'2025-03-06 14:55:11',1,'Active');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -269,7 +270,7 @@ CREATE TABLE `employees` (
   KEY `employees_ibfk_2` (`Updated_By`),
   CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`Created_By`) REFERENCES `employees` (`EmployeeID`) ON DELETE SET NULL,
   CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`Updated_By`) REFERENCES `employees` (`EmployeeID`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -278,7 +279,7 @@ CREATE TABLE `employees` (
 
 LOCK TABLES `employees` WRITE;
 /*!40000 ALTER TABLE `employees` DISABLE KEYS */;
-INSERT INTO `employees` VALUES (1,'Junits','Coretico','junitsstore_admin','$2y$10$WfGbACvKiCJM40LAMkFAf.AYENhhGddZSszrlFeIYGJjF8MdbMc3S','admin','2025-03-01 15:01:46',NULL,'2025-03-01 16:51:17',1,'Active'),(2,'Jeriel','Sanao','jerielsanao1','$2y$10$gNysNXP63PW21vIkuqMjJufdCDApTJDs2BsIpJ6uOo8lb3sPxSASG','Employee','2025-03-01 15:46:32',1,'2025-03-09 14:21:51',1,'Active'),(3,'Russel','Labiaga','russelito1','$2y$10$lIpDauqYu1cmpxxkehhxiOuxtmj269dcygSV4TW2omlbEiAPG6i5O','Employee','2025-03-01 16:03:13',1,'2025-03-01 16:03:13',1,'Active'),(4,'Jeriel','Sanao','jerielsanao27','$2y$10$Cn0TZh6.wg9Gnwas.gCQcO6CUz4VpfyNox/dT8V2t/VRCsl9w7.0.','Employee','2025-03-01 16:39:57',1,'2025-03-09 13:47:15',4,'Active'),(5,'Jeriel','Sanao','jerielsanao2','$2y$10$pNvA1CpVd4q.N7hJZkUyhOTa8xO7K.ZGTKq/to218Kd47/X2X1guS','Employee','2025-03-09 13:55:19',1,'2025-03-09 14:19:07',1,'Active'),(6,'John','Doe','sampleemp1','$2y$10$o8MTCeb0G66jCv483t/nCuLiA0uxun039/6DgLQeP1EWeWMTetl/6','Employee','2025-03-09 13:56:38',1,'2025-03-09 13:56:38',1,'Active');
+INSERT INTO `employees` VALUES (1,'Junits','Coretico','junitsstore_admin','$2y$10$WfGbACvKiCJM40LAMkFAf.AYENhhGddZSszrlFeIYGJjF8MdbMc3S','admin','2025-03-01 15:01:46',NULL,'2025-03-01 16:51:17',1,'Active'),(2,'Jeriel','Sanao','jerielsanao1','$2y$10$gNysNXP63PW21vIkuqMjJufdCDApTJDs2BsIpJ6uOo8lb3sPxSASG','Employee','2025-03-01 15:46:32',1,'2025-03-09 14:21:51',1,'Active'),(3,'Russel','Labiaga','russelito1','$2y$10$lIpDauqYu1cmpxxkehhxiOuxtmj269dcygSV4TW2omlbEiAPG6i5O','Employee','2025-03-01 16:03:13',1,'2025-03-01 16:03:13',1,'Active'),(4,'Jeriel','Sanao','jerielsanao27','$2y$10$Cn0TZh6.wg9Gnwas.gCQcO6CUz4VpfyNox/dT8V2t/VRCsl9w7.0.','Employee','2025-03-01 16:39:57',1,'2025-03-09 13:47:15',4,'Active'),(5,'Jeriel','Sanao','jerielsanao2','$2y$10$pNvA1CpVd4q.N7hJZkUyhOTa8xO7K.ZGTKq/to218Kd47/X2X1guS','Employee','2025-03-09 13:55:19',1,'2025-03-11 08:29:51',1,'Active'),(6,'John','Doe','sampleemp1','$2y$10$o8MTCeb0G66jCv483t/nCuLiA0uxun039/6DgLQeP1EWeWMTetl/6','Employee','2025-03-09 13:56:38',1,'2025-03-09 13:56:38',1,'Active'),(7,'John','Doe','johndoe1','$2y$10$HU45Cazu4itNPtkezxfoDurxtXfvMJvpOUqD/N6qCaG2XjYdmROt.','Employee','2025-03-11 14:46:50',1,'2025-03-11 14:46:50',1,'Active');
 /*!40000 ALTER TABLE `employees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -314,7 +315,7 @@ CREATE TABLE `orderline` (
   PRIMARY KEY (`OrderLineID`),
   KEY `ProductID` (`ProductID`),
   KEY `OrderID` (`OrderID`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -323,7 +324,7 @@ CREATE TABLE `orderline` (
 
 LOCK TABLES `orderline` WRITE;
 /*!40000 ALTER TABLE `orderline` DISABLE KEYS */;
-INSERT INTO `orderline` VALUES (2,14,2,1,55.00),(3,12,2,1,21.00),(4,12,3,4,21.00),(5,11,4,5,21.00),(6,15,4,2,25.00),(7,16,4,3,20.00),(8,11,5,5,21.00),(9,15,5,2,25.00),(10,16,5,3,20.00),(11,16,5,10,20.00),(12,14,6,1,55.00),(13,14,7,1,55.00),(14,15,7,1,25.00),(15,19,7,1,12.00),(16,14,9,1,55.00),(17,13,10,5,21.00),(18,14,11,10,55.00);
+INSERT INTO `orderline` VALUES (2,14,2,1,55.00),(3,12,2,1,21.00),(4,12,3,4,21.00),(5,11,4,5,21.00),(6,15,4,2,25.00),(7,16,4,3,20.00),(8,11,5,5,21.00),(9,15,5,2,25.00),(10,16,5,3,20.00),(11,16,5,10,20.00),(12,14,6,1,55.00),(13,14,7,1,55.00),(14,15,7,1,25.00),(15,19,7,1,12.00),(16,14,9,1,55.00),(17,13,10,5,21.00),(18,14,11,10,55.00),(19,16,12,5,20.00),(20,14,12,5,55.00),(21,14,13,4,55.00);
 /*!40000 ALTER TABLE `orderline` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -349,7 +350,7 @@ CREATE TABLE `orders` (
   KEY `CustomerID` (`CustomerID`),
   KEY `Created_By` (`Created_By`),
   KEY `Updated_By` (`Updated_By`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -358,7 +359,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (1,2,'2025-03-07 21:44:24',55.00,'Paid',0,'2025-03-07 21:44:24',1,'2025-03-07 21:44:24',1),(2,2,'2025-03-07 21:50:26',76.00,'Paid',0,'2025-03-07 21:50:26',1,'2025-03-07 21:50:26',1),(3,2,'2025-03-07 21:57:27',84.00,'Paid',0,'2025-03-07 21:57:27',1,'2025-03-07 21:57:27',1),(4,10,'2025-03-08 17:17:47',215.00,'Paid',0,'2025-03-08 17:17:47',1,'2025-03-08 17:17:47',1),(5,2,'2025-03-08 17:19:13',415.00,'Paid',0,'2025-03-08 17:19:13',1,'2025-03-08 17:19:13',1),(6,2,'2025-03-08 21:22:44',55.00,'Paid',0,'2025-03-08 21:22:44',1,'2025-03-08 21:22:44',1),(7,2,'2025-03-09 12:07:13',92.00,'Paid',0,'2025-03-09 12:07:13',1,'2025-03-09 12:07:13',1),(9,2,'2025-03-09 16:14:54',55.00,'Paid',0,'2025-03-09 16:14:54',1,'2025-03-09 16:14:54',1),(10,2,'2025-03-09 16:52:04',105.00,'Paid',0,'2025-03-09 16:52:04',1,'2025-03-09 16:52:04',1),(11,2,'2025-03-10 09:53:22',550.00,'Paid',0,'2025-03-10 09:53:22',1,'2025-03-10 09:53:22',1);
+INSERT INTO `orders` VALUES (1,2,'2025-03-07 21:44:24',55.00,'Paid',0,'2025-03-07 21:44:24',1,'2025-03-07 21:44:24',1),(2,2,'2025-03-07 21:50:26',76.00,'Paid',0,'2025-03-07 21:50:26',1,'2025-03-07 21:50:26',1),(3,2,'2025-03-07 21:57:27',84.00,'Paid',0,'2025-03-07 21:57:27',1,'2025-03-07 21:57:27',1),(4,10,'2025-03-08 17:17:47',215.00,'Paid',0,'2025-03-08 17:17:47',1,'2025-03-08 17:17:47',1),(5,2,'2025-03-08 17:19:13',415.00,'Paid',0,'2025-03-08 17:19:13',1,'2025-03-08 17:19:13',1),(6,2,'2025-03-08 21:22:44',55.00,'Paid',0,'2025-03-08 21:22:44',1,'2025-03-08 21:22:44',1),(7,2,'2025-03-09 12:07:13',92.00,'Paid',0,'2025-03-09 12:07:13',1,'2025-03-09 12:07:13',1),(9,2,'2025-03-09 16:14:54',55.00,'Paid',0,'2025-03-09 16:14:54',1,'2025-03-09 16:14:54',1),(10,2,'2025-03-09 16:52:04',105.00,'Paid',0,'2025-03-09 16:52:04',1,'2025-03-09 16:52:04',1),(11,2,'2025-03-10 09:53:22',550.00,'Paid',0,'2025-03-10 09:53:22',1,'2025-03-10 09:53:22',1),(12,2,'2025-03-11 08:24:38',375.00,'Paid',0,'2025-03-11 08:24:38',1,'2025-03-11 08:24:38',1),(13,2,'2025-03-11 08:26:14',220.00,'Paid',0,'2025-03-11 08:26:14',1,'2025-03-11 08:26:14',1);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -453,11 +454,14 @@ CREATE TABLE `products` (
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `Updated_By` int(11) NOT NULL,
+  `UnitID` int(11) NOT NULL,
   PRIMARY KEY (`ProductID`),
   KEY `CategoryID` (`CategoryID`),
   KEY `Created_By` (`Created_By`),
-  KEY `Updated_By` (`Updated_By`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `Updated_By` (`Updated_By`),
+  KEY `fk_products_units` (`UnitID`),
+  CONSTRAINT `fk_products_units` FOREIGN KEY (`UnitID`) REFERENCES `units` (`UnitID`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -466,7 +470,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (10,'Mountain Dew',8,23.00,345,'In Stock',2,'2025-03-06 14:44:16',1,'2025-03-08 09:22:42',1),(11,'Coca-cola',8,21.00,230,'In Stock',2,'2025-03-06 14:44:24',1,'2025-03-08 17:19:13',1),(12,'Sprite',8,21.00,230,'In Stock',2,'2025-03-06 14:44:34',1,'2025-03-08 09:21:51',1),(13,'C2 (Red)',8,21.00,250,'In Stock',2,'2025-03-06 14:44:59',1,'2025-03-09 16:52:04',1),(14,'Chicken Nuggets',11,55.00,39,'In Stock',3,'2025-03-06 21:34:37',1,'2025-03-10 09:53:22',0),(15,'Intermediate Paper',15,25.00,65,'In Stock',3,'2025-03-06 21:37:02',1,'2025-03-09 12:07:13',0),(16,'Argentina Beef Loaf',10,20.00,20,'In Stock',3,'2025-03-06 21:39:20',1,'2025-03-09 16:18:56',1),(17,'Colgate',14,3.00,15,'In Stock',3,'2025-03-08 09:18:58',1,'2025-03-09 16:30:38',0),(18,'Kagayaku Soap',14,0.00,0,'Out of Stock',0,'2025-03-08 16:50:45',1,'2025-03-08 16:50:45',0),(19,'Nova',10,12.00,45,'In Stock',3,'2025-03-09 11:58:00',1,'2025-03-09 15:24:12',0),(20,'Silver Swan Soy Sauce',12,0.00,0,'Out of Stock',0,'2025-03-10 11:12:22',1,'2025-03-10 11:12:22',0),(21,'Silver Swan Vinegar',12,0.00,0,'Out of Stock',0,'2025-03-10 11:12:33',1,'2025-03-10 11:12:33',0),(22,'Pic-a',10,0.00,0,'Out of Stock',0,'2025-03-10 11:13:08',1,'2025-03-10 11:13:08',0);
+INSERT INTO `products` VALUES (10,'Mountain Dew',8,23.00,345,'In Stock',2,'2025-03-06 14:44:16',1,'2025-03-11 13:37:15',1,1),(11,'Coca-cola',8,21.00,230,'In Stock',2,'2025-03-06 14:44:24',1,'2025-03-11 13:37:15',1,1),(12,'Sprite',8,21.00,230,'In Stock',2,'2025-03-06 14:44:34',1,'2025-03-11 13:37:15',1,1),(13,'C2 (Red)',8,21.00,250,'In Stock',2,'2025-03-06 14:44:59',1,'2025-03-11 13:37:15',1,1),(14,'Chicken Nuggets',11,55.00,30,'In Stock',3,'2025-03-06 21:34:37',1,'2025-03-11 13:37:15',0,1),(15,'Intermediate Paper',15,25.00,65,'In Stock',3,'2025-03-06 21:37:02',1,'2025-03-11 13:37:15',0,1),(16,'Argentina Beef Loaf',10,20.00,15,'In Stock',3,'2025-03-06 21:39:20',1,'2025-03-11 14:23:38',1,1),(17,'Colgate',14,3.00,15,'In Stock',3,'2025-03-08 09:18:58',1,'2025-03-11 13:37:15',0,1),(18,'Kagayaku Soap',14,0.00,0,'Out of Stock',0,'2025-03-08 16:50:45',1,'2025-03-11 13:37:15',0,1),(19,'Nova',10,12.00,45,'In Stock',3,'2025-03-09 11:58:00',1,'2025-03-11 13:37:15',0,1),(20,'Silver Swan Soy Sauce',12,0.00,0,'Out of Stock',0,'2025-03-10 11:12:22',1,'2025-03-11 13:37:15',0,1),(21,'Silver Swan Vinegar',12,0.00,0,'Out of Stock',0,'2025-03-10 11:12:33',1,'2025-03-11 13:37:15',0,1),(22,'Pic-a',10,0.00,0,'Out of Stock',0,'2025-03-10 11:13:08',1,'2025-03-11 13:37:15',0,1),(23,'Kohaku (Red)',10,0.00,0,'Out of Stock',0,'2025-03-11 13:49:23',1,'2025-03-11 13:49:23',0,2);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -969,13 +973,14 @@ CREATE TABLE `suppliers` (
   `Created_By` int(11) NOT NULL,
   `Updated_At` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `Updated_By` int(11) NOT NULL,
+  `Status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
   PRIMARY KEY (`SupplierID`),
   UNIQUE KEY `Name` (`Name`),
   UNIQUE KEY `PhoneNumber` (`PhoneNumber`),
   UNIQUE KEY `Address` (`Address`) USING HASH,
   KEY `Created_By` (`Created_By`),
   KEY `Updated_By` (`Updated_By`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -984,8 +989,38 @@ CREATE TABLE `suppliers` (
 
 LOCK TABLES `suppliers` WRITE;
 /*!40000 ALTER TABLE `suppliers` DISABLE KEYS */;
-INSERT INTO `suppliers` VALUES (2,'Supplier2','supplier2, address','0912345689',NULL,'2025-03-03 14:29:33',1,'2025-03-03 14:29:33',1),(3,'Supplier3','Mintal, Davao City','09123456789',NULL,'2025-03-06 20:10:31',1,'2025-03-06 20:10:31',1);
+INSERT INTO `suppliers` VALUES (2,'Supplier2','supplier2, address','0912345689',NULL,'2025-03-03 14:29:33',1,'2025-03-11 12:27:20',1,'Inactive'),(3,'Supplier3','Mintal, Davao City','09123456789',NULL,'2025-03-06 20:10:31',1,'2025-03-06 20:10:31',1,'Active'),(4,'Supplier4','Calinan, Davao City','09123456788',NULL,'2025-03-11 12:16:05',1,'2025-03-11 12:16:05',1,'Active');
 /*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `units`
+--
+
+DROP TABLE IF EXISTS `units`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `units` (
+  `UnitID` int(11) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(50) NOT NULL,
+  `Abbreviation` varchar(10) NOT NULL,
+  `Status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  `Created_At` timestamp NOT NULL DEFAULT current_timestamp(),
+  `Updated_At` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`UnitID`),
+  UNIQUE KEY `Name` (`Name`),
+  UNIQUE KEY `Abbreviation` (`Abbreviation`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `units`
+--
+
+LOCK TABLES `units` WRITE;
+/*!40000 ALTER TABLE `units` DISABLE KEYS */;
+INSERT INTO `units` VALUES (1,'Piece','pc','Active','2025-03-11 05:36:00','2025-03-11 05:36:00'),(2,'Kilogram','kg','Active','2025-03-11 05:36:00','2025-03-11 05:36:00'),(3,'Liter','L','Active','2025-03-11 05:36:00','2025-03-11 05:36:00'),(4,'Pack','pk','Active','2025-03-11 05:36:00','2025-03-11 05:36:00'),(5,'Box','bx','Active','2025-03-11 05:36:00','2025-03-11 05:36:00');
+/*!40000 ALTER TABLE `units` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1007,14 +1042,16 @@ CREATE PROCEDURE `AddProduct`(
 
     IN p_CategoryID INT,
 
+    IN p_UnitID INT,
+
     IN p_CreatedBy INT
 
 )
 BEGIN
 
-    INSERT INTO products (Name, CategoryID, StockQuantity, Price, Status, Created_At, Created_By)
+    INSERT INTO products (Name, CategoryID, UnitID, StockQuantity, Price, Status, Created_At, Created_By)
 
-    VALUES (p_Name, p_CategoryID, 0, 0.00, 'Out of Stock', NOW(), p_CreatedBy);
+    VALUES (p_Name, p_CategoryID, p_UnitID, 0, 0.00, 'Out of Stock', NOW(), p_CreatedBy);
 
 END ;;
 DELIMITER ;
@@ -1228,36 +1265,42 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `GetProductsWithPageAndSearch`(
+CREATE PROCEDURE `GetProductsWithPageAndSearch`(IN `filterStatus` VARCHAR(20), IN `searchQuery` VARCHAR(255), IN `limitCount` INT, IN `offsetCount` INT)
+SELECT 
 
-    IN filterStatus VARCHAR(20), 
+    p.ProductID, 
 
-    IN searchQuery VARCHAR(100), 
+    p.Name, 
 
-    IN limitCount INT, 
+    p.Price, 
 
-    IN offsetCount INT
+    p.UnitID,
 
-)
-BEGIN
+    s.Name AS SupplierName, 
 
-    SELECT p.ProductID, p.Name, p.Price, s.Name AS SupplierName, c.Name AS CategoryName, p.StockQuantity, p.Status
+    c.Name AS CategoryName, 
 
-    FROM Products p
+    p.StockQuantity, 
 
-    LEFT JOIN Suppliers s ON p.SupplierID = s.SupplierID
+    u.Abbreviation,  
 
-    LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
+    p.Status
 
-    WHERE (filterStatus = 'All' OR p.Status = filterStatus)
+FROM Products p
 
-    AND (searchQuery IS NULL OR p.Name LIKE CONCAT('%', searchQuery, '%'))
+LEFT JOIN Suppliers s ON p.SupplierID = s.SupplierID
 
-    ORDER BY p.Name ASC
+LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
 
-    LIMIT limitCount OFFSET offsetCount;
+LEFT JOIN Units u ON p.UnitID = u.UnitID  -- Join the Units table
 
-END ;;
+WHERE (filterStatus = 'All' OR p.Status = filterStatus)
+
+AND (searchQuery IS NULL OR p.Name LIKE CONCAT('%', searchQuery, '%'))
+
+ORDER BY p.Name ASC
+
+LIMIT limitCount OFFSET offsetCount ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -1361,4 +1404,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-10 20:40:38
+-- Dump completed on 2025-03-11 14:59:20

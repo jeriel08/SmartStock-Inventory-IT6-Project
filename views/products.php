@@ -234,7 +234,14 @@ try {
                                 <td class="align-middle"><?php echo number_format($row['Price'], 2); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName'] ?? 'N/A'); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['CategoryName'] ?? 'N/A'); ?></td>
-                                <td class="align-middle"><?php echo htmlspecialchars($row['StockQuantity']); ?></td>
+                                <td class="align-middle">
+                                    <?php
+                                    $stockQuantity = htmlspecialchars($row['StockQuantity']);
+                                    $unit = htmlspecialchars($row['Abbreviation'] ?? '');
+                                    echo $stockQuantity . ' ' . $unit;
+                                    ?>
+                                </td>
+
                                 <td class="align-middle"><?php echo htmlspecialchars($row['Status']); ?></td>
                                 <td class="align-middle text-center">
                                     <div class="d-flex justify-content-center gap-2">
