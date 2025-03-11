@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status'];
     $unitId = filter_input(INPUT_POST, 'unit', FILTER_VALIDATE_INT);
     $updatedBy = $_SESSION['user_id'];
+    $filter = $_GET['filter'] ?? 'In Stock';
 
     if (!$productId || !$price || $price < 0 || !$unitId) {
         $_SESSION['product_error'] = "Invalid input.";
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($price < $unitCost) {
         $_SESSION['product_error'] = "Error: Price cannot be lower than UnitCost.";
-        header('Location: ../../views/products.php?filter=" . urlencode($filter)');
+        header('Location: ../../views/products.php?filter=' . urlencode($filter));
         exit();
     }
 
