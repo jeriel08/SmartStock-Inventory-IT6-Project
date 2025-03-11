@@ -44,7 +44,7 @@ if (!in_array($status, $validStatuses)) {
 $conn->begin_transaction();
 
 try {
-    // Insert into Receiving with explicit timestamps
+    // Insert into Receiving
     $stmt = $conn->prepare(
         "INSERT INTO Receiving (SupplierID, Date, Status, Created_At, Created_By, Updated_At, Updated_By) 
          VALUES (?, ?, ?, ?, ?, ?, ?)"
@@ -55,7 +55,7 @@ try {
 
     $createdBy = $_SESSION['user_id'];
     $updatedBy = $_SESSION['user_id'];
-    $createdAt = date('Y-m-d H:i:s'); // Current timestamp
+    $createdAt = date('Y-m-d H:i:s');
     $updatedAt = $createdAt;
     $stmt->bind_param('issssii', $supplierId, $date, $status, $createdAt, $createdBy, $updatedAt, $updatedBy);
     if (!$stmt->execute()) {
@@ -77,8 +77,9 @@ try {
         $productId = $product['productId'] ?? '';
         $quantity = $product['quantity'] ?? '';
         $cost = $product['cost'] ?? '';
+        $sellingPrice = $product['sellingPrice'] ?? '';
 
-        if (empty($productId) || empty($quantity) || $cost === '' || $quantity < 1 || $cost < 0) {
+        if (empty($productId) || empty($quantity) || $cost === '' || $sellingPrice === '' || $quantity < 1 || $cost < 0 || $sellingPrice < 0) {
             throw new Exception("Invalid product data at row " . ($index + 1) . ".");
         }
 
@@ -91,17 +92,16 @@ try {
 
     // Update Products stock, price, supplier, and status if Status is 'Received'
     if ($status === 'Received') {
-        $stmt = $conn->prepare("
-        UPDATE Products p
-        JOIN receiving_details rd ON p.ProductID = rd.ProductID
-        JOIN Receiving r ON rd.ReceivingID = r.ReceivingID
-        SET p.StockQuantity = p.StockQuantity + ?,
-            p.Price = ?,
-            p.SupplierID = r.SupplierID,
-            p.Status = 'In Stock'
-        WHERE p.ProductID = ?
-    ");
-
+        $stmt = $conn->prepare(
+            "UPDATE Products 
+             SET StockQuantity = StockQuantity + ?, 
+                 Price = ?, 
+                 SupplierID = ?, 
+                 Status = 'In Stock', 
+                 Updated_At = ?, 
+                 Updated_By = ? 
+             WHERE ProductID = ?"
+        );
         if ($stmt === false) {
             throw new Exception("Prepare failed for Products update: " . $conn->error);
         }
@@ -109,17 +109,15 @@ try {
         foreach ($products as $index => $product) {
             $productId = $product['productId'];
             $quantity = $product['quantity'];
-            $cost = $product['cost']; // Ensure this value is passed correctly in the request
+            $sellingPrice = $product['sellingPrice'];
 
-            $stmt->bind_param('idi', $quantity, $cost, $productId);
+            $stmt->bind_param('idsisi', $quantity, $sellingPrice, $supplierId, $updatedAt, $updatedBy, $productId);
             if (!$stmt->execute()) {
-                throw new Exception("Stock update failed for ProductID " . $productId . ": " . $stmt->error);
+                throw new Exception("Update failed for ProductID " . $productId . ": " . $stmt->error);
             }
         }
-
         $stmt->close();
     }
-
 
     // Commit transaction
     $conn->commit();

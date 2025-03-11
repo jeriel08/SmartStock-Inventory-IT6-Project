@@ -289,8 +289,8 @@ $stmt->close();
                   <tr>
                     <td class="align-middle"><?php echo htmlspecialchars($row['product_name']); ?></td>
                     <td class="align-middle"><?php echo $row['product_quantity']; ?></td>
-                    <td class="align-middle"><?php echo number_format($row['unit_cost'], 2); ?></td>
-                    <td class="align-middle"><?php echo $row['total_cost']; ?></td>
+                    <td class="align-middle">₱<?php echo number_format($row['unit_cost'], 2); ?></td>
+                    <td class="align-middle">₱<?php echo $row['total_cost']; ?></td>
                     <td class="align-middle"><?php echo date("m-d-y", strtotime($row['order_date'])); ?></td>
                     <td class="align-middle"><?php echo htmlspecialchars($row['supplier_name']); ?></td>
                     <td class="align-middle">

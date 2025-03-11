@@ -231,7 +231,7 @@ try {
                             <tr>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['Name']); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['ProductID']); ?></td>
-                                <td class="align-middle"><?php echo number_format($row['Price'], 2); ?></td>
+                                <td class="align-middle">₱<?php echo number_format($row['Price'], 2); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['SupplierName'] ?? 'N/A'); ?></td>
                                 <td class="align-middle"><?php echo htmlspecialchars($row['CategoryName'] ?? 'N/A'); ?></td>
                                 <td class="align-middle">

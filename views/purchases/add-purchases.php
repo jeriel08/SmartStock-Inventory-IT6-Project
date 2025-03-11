@@ -169,10 +169,11 @@ if (!isset($conn) || $conn->connect_error) {
             </div>
         <?php endif; ?>
         <form action="../../handlers/SupplierOrder/add-purchase-handler.php" method="POST">
-            <!-- Receiving Header Fields -->
+            <!-- Receiving Header Fields (unchanged) -->
             <div class="row justify-content-center mb-5">
                 <h4 class="fw-semibold mb-3 text-center">Suppliers</h4>
-                <div class="col-md-8  pe-5">
+                <div class="col-md-8 pe-5">
+                    <!-- Supplier, Date, Status fields remain the same -->
                     <div class="row mb-3">
                         <label for="supplier" class="col-md-3 col-form-label text-md-end fw-semibold">Supplier</label>
                         <div class="col-md-9">
@@ -215,7 +216,7 @@ if (!isset($conn) || $conn->connect_error) {
                     <h4 class="fw-semibold mb-3 text-center">Products</h4>
                     <div id="product-rows">
                         <div class="product-row row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="productId_0" class="form-label fw-semibold">Product</label>
                                 <select name="products[0][productId]" id="productId_0" class="form-select" required>
                                     <option value="" selected disabled>Select a product</option>
@@ -230,15 +231,20 @@ if (!isset($conn) || $conn->connect_error) {
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="quantity_0" class="form-label fw-semibold">Quantity</label>
                                 <input type="number" class="form-control" id="quantity_0" name="products[0][quantity]"
                                     placeholder="Qty" min="1" required />
                             </div>
-                            <div class="col-md-3">
-                                <label for="cost_0" class="form-label fw-semibold">Cost</label>
+                            <div class="col-md-2">
+                                <label for="cost_0" class="form-label fw-semibold">Unit Cost</label>
                                 <input type="number" class="form-control" id="cost_0" name="products[0][cost]"
                                     placeholder="Cost" step="0.01" min="0" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="sellingPrice_0" class="form-label fw-semibold">Selling Price</label>
+                                <input type="number" class="form-control" id="sellingPrice_0" name="products[0][sellingPrice]"
+                                    placeholder="Price" step="0.01" min="0" required />
                             </div>
                             <div class="col-md-2 d-flex align-items-center justify-content-center">
                                 <button type="button" class="btn btn-danger remove-row d-flex justify-content-center align-items-center" disabled>
@@ -287,40 +293,62 @@ if (!isset($conn) || $conn->connect_error) {
                 const newRow = document.createElement('div');
                 newRow.className = 'product-row row mb-3';
                 newRow.innerHTML = `
-                        <div class="col-md-4">
-                            <label for="productId_${rowCount}" class="form-label fw-semibold">Product</label>
-                            <select name="products[${rowCount}][productId]" id="productId_${rowCount}" class="form-select" required>
-                                <option value="" selected disabled>Select a product</option>
-                                <?php
-                                $stmt = $conn->prepare("SELECT ProductID, Name FROM products");
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                while ($row = $result->fetch_assoc()) {
-                                    echo "<option value='{$row['ProductID']}'>" . htmlspecialchars($row['Name']) . "</option>";
-                                }
-                                $stmt->close();
-                                ?>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="quantity_${rowCount}" class="form-label fw-semibold">Quantity</label>
-                            <input type="number" class="form-control" id="quantity_${rowCount}" name="products[${rowCount}][quantity]" 
-                                placeholder="Qty" min="1" required />
-                        </div>
-                        <div class="col-md-3">
-                            <label for="cost_${rowCount}" class="form-label fw-semibold">Cost</label>
-                            <input type="number" class="form-control" id="cost_${rowCount}" name="products[${rowCount}][cost]" 
-                                placeholder="Cost" step="0.01" min="0" required />
-                        </div>
-                        <div class="col-md-2 d-flex align-items-center justify-content-center">
-                            <button type="button" class="btn btn-danger remove-row d-flex justify-content-center align-items-center">
-                                <span class="material-icons-outlined">remove</span>
-                            </button>
-                        </div>
-                    `;
+            <div class="col-md-3">
+                <label for="productId_${rowCount}" class="form-label fw-semibold">Product</label>
+                <select name="products[${rowCount}][productId]" id="productId_${rowCount}" class="form-select" required>
+                    <option value="" selected disabled>Select a product</option>
+                    <?php
+                    $stmt = $conn->prepare("SELECT ProductID, Name FROM products");
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<option value='{$row['ProductID']}'>" . htmlspecialchars($row['Name']) . "</option>";
+                    }
+                    $stmt->close();
+                    ?>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="quantity_${rowCount}" class="form-label fw-semibold">Quantity</label>
+                <input type="number" class="form-control" id="quantity_${rowCount}" name="products[${rowCount}][quantity]" 
+                    placeholder="Qty" min="1" required />
+            </div>
+            <div class="col-md-2">
+                <label for="cost_${rowCount}" class="form-label fw-semibold">Unit Cost</label>
+                <input type="number" class="form-control" id="cost_${rowCount}" name="products[${rowCount}][cost]" 
+                    placeholder="Cost" step="0.01" min="0" required />
+            </div>
+            <div class="col-md-3">
+                <label for="sellingPrice_${rowCount}" class="form-label fw-semibold">Selling Price</label>
+                <input type="number" class="form-control" id="sellingPrice_${rowCount}" name="products[${rowCount}][sellingPrice]" 
+                    placeholder="Price" step="0.01" min="0" required />
+            </div>
+            <div class="col-md-2 d-flex align-items-center justify-content-center">
+                <button type="button" class="btn btn-danger remove-row d-flex justify-content-center align-items-center">
+                    <span class="material-icons-outlined">remove</span>
+                </button>
+            </div>
+        `;
                 productRows.appendChild(newRow);
                 rowCount++;
                 updateRemoveButtons();
+            });
+
+            // Form submission validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                let isValid = true;
+                const rows = document.querySelectorAll('.product-row');
+                rows.forEach((row, index) => {
+                    const cost = parseFloat(row.querySelector(`#cost_${index}`).value) || 0;
+                    const sellingPrice = parseFloat(row.querySelector(`#sellingPrice_${index}`).value) || 0;
+                    if (sellingPrice < cost) {
+                        isValid = false;
+                        if (!confirm(`Selling Price ($${sellingPrice.toFixed(2)}) is below Unit Cost ($${cost.toFixed(2)}) for row ${index + 1}. Proceed anyway?`)) {
+                            event.preventDefault();
+                        }
+                    }
+                });
             });
 
             function updateRemoveButtons() {
