@@ -179,7 +179,7 @@ if (!isset($conn) || $conn->connect_error) {
                             <select name="supplierId" id="supplier" class="form-select" required>
                                 <option value="" selected disabled>Select a supplier</option>
                                 <?php
-                                $stmt = $conn->prepare("SELECT SupplierID, Name FROM suppliers");
+                                $stmt = $conn->prepare("SELECT SupplierID, Name FROM suppliers WHERE Status = 'Active'");
                                 $stmt->execute();
                                 $result = $stmt->get_result();
                                 while ($row = $result->fetch_assoc()) {
