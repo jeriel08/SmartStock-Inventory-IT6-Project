@@ -182,7 +182,7 @@ include '../database/database.php';
     <div class="supplier-page my-4">
       <div class="row mt-4">
         <?php
-        $stmt = $conn->prepare('SELECT SupplierID, Name, Address, PhoneNumber, ProfileImage FROM suppliers');
+        $stmt = $conn->prepare('SELECT SupplierID, Name, Address, PhoneNumber, ProfileImage, Status FROM suppliers');
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -192,29 +192,42 @@ include '../database/database.php';
             $name = htmlspecialchars($row['Name']);
             $address = htmlspecialchars($row['Address']);
             $phone = htmlspecialchars($row['PhoneNumber']);
+            $status = htmlspecialchars($row['Status']);
             $imagePath = $row['ProfileImage'] ? htmlspecialchars($row['ProfileImage']) : '../statics/images/default_supplier_profile.png';
+            $statusClass = ($status === 'Active') ? 'badge bg-success' : 'badge bg-danger';
         ?>
-            <div class="col-md-4 mb-4">
-              <div class="card supplier-card">
-                <div class="card-body">
-                  <img src="<?php echo $imagePath; ?>" alt="<?php echo $name; ?>" class="pic" />
-                  <h5 class="card-title"><?php echo $name; ?></h5>
-                  <p class="card-text">
+            <div class="col-12 mb-3">
+              <div class="card supplier-card p-3 d-flex flex-row align-items-center">
+                <!-- Supplier Image -->
+                <img src="<?php echo $imagePath; ?>" alt="<?php echo $name; ?>" class="rounded-circle me-3" style="width: 150px; height: 150px; object-fit: cover;" />
+
+                <!-- Supplier Details -->
+                <div class="flex-grow-1 ms-2">
+                  <h5 class="mb-1"><?php echo $name; ?></h5>
+                  <p class="mb-1">
                     <strong>Address:</strong> <?php echo $address; ?><br />
-                    <strong>Phone:</strong> <?php echo $phone; ?><br />
+                    <strong>Phone:</strong> <?php echo $phone; ?>
                   </p>
-                  <div class="btn-container">
-                    <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 rounded-4"
-                      data-bs-toggle="modal" data-bs-target="#contactModal<?php echo $supplierId; ?>">
-                      <span class="material-icons-outlined">phone</span>
-                      <span>Contact Supplier</span>
-                    </button>
-                    <button class="btn btn-danger d-flex align-items-center justify-content-center gap-2 py-2 rounded-4"
-                      data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $supplierId; ?>">
-                      <span class="material-icons-outlined">delete</span>
-                      <span>Delete Supplier</span>
-                    </button>
-                  </div>
+                  <span class="<?php echo $statusClass; ?>"> <?php echo $status; ?> </span>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex flex-column gap-2">
+                  <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 px-5 rounded-4"
+                    data-bs-toggle="modal" data-bs-target="#contactModal<?php echo $supplierId; ?>">
+                    <span class="material-icons-outlined">phone</span>
+                    <span>Contact</span>
+                  </button>
+                  <button class="btn btn-danger d-flex align-items-center justify-content-center gap-2 py-2 rounded-4"
+                    data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $supplierId; ?>">
+                    <span class="material-icons-outlined">delete</span>
+                    <span>Delete</span>
+                  </button>
+                  <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 rounded-4"
+                    data-bs-toggle="modal" data-bs-target="#editModal<?php echo $supplierId; ?>">
+                    <span class="material-icons-outlined">edit</span>
+                    <span>Edit</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -233,18 +246,69 @@ include '../database/database.php';
                     <p>Contact this supplier by calling the number above.</p>
                   </div>
                   <div class="modal-footer">
-                    <a href="tel:<?php echo $phone; ?>" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
+                    <a href="tel:<?php echo $phone; ?>" class="btn btn-primary d-flex align-items-center gap-2 py-2 rounded-4">
                       <span class="material-icons-outlined">phone</span>
                       Call Now
                     </a>
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
-                      data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                       <span class="material-icons-outlined">close</span>
                       Close
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit Supplier Modal -->
+            <div class="modal fade" id="editModal<?php echo $supplierId; ?>" tabindex="-1"
+              aria-labelledby="editModalLabel<?php echo $supplierId; ?>" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title d-flex align-items-center gap-2">
+                      <span class="material-icons-outlined">edit</span>
+                      Edit Supplier
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <form action="../handlers/Supplier/update-supplier-handler.php" method="POST">
+                    <div class="modal-body">
+                      <input type="hidden" name="supplierId" value="<?php echo $supplierId; ?>">
+                      <div class="mb-3">
+                        <label for="supplierName<?php echo $supplierId; ?>" class="form-label">Supplier Name</label>
+                        <input type="text" class="form-control" id="supplierName<?php echo $supplierId; ?>"
+                          name="supplierName" value="<?php echo $name; ?>" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="supplierAddress<?php echo $supplierId; ?>" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="supplierAddress<?php echo $supplierId; ?>"
+                          name="supplierAddress" value="<?php echo $address; ?>" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="supplierPhone<?php echo $supplierId; ?>" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="supplierPhone<?php echo $supplierId; ?>"
+                          name="supplierPhone" value="<?php echo $phone; ?>" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="supplierStatus<?php echo $supplierId; ?>" class="form-label">Status</label>
+                        <select class="form-select" id="supplierStatus<?php echo $supplierId; ?>" name="supplierStatus" required>
+                          <option value="Active" <?php echo ($status === 'Active') ? 'selected' : ''; ?>>Active</option>
+                          <option value="Inactive" <?php echo ($status === 'Inactive') ? 'selected' : ''; ?>>Inactive</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 py-2 rounded-4">
+                        <span class="material-icons-outlined">save</span>
+                        <span>Save Changes</span>
+                      </button>
+                      <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
+                        data-bs-dismiss="modal">
+                        <span class="material-icons-outlined">close</span>
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -280,6 +344,7 @@ include '../database/database.php';
         ?>
       </div>
     </div>
+
   </div>
   </div>
 
@@ -393,6 +458,8 @@ include '../database/database.php';
       </div>
     </div>
   </div>
+
+
 
 
 </body>
