@@ -310,7 +310,7 @@ try {
                                 <select name="categoryId" id="category" class="form-select" required>
                                     <option value="" selected disabled>Select a category</option>
                                     <?php
-                                    $stmt = $conn->prepare("SELECT CategoryID, Name FROM categories");
+                                    $stmt = $conn->prepare("SELECT CategoryID, Name FROM categories WHERE Status = 'Active'");
                                     if ($stmt === false) {
                                         error_log("Prepare failed for categories: " . $conn->error);
                                         echo "<option value=''>Error loading categories</option>";
@@ -322,7 +322,7 @@ try {
                                                 echo "<option value='{$row['CategoryID']}'>" . htmlspecialchars($row['Name']) . "</option>";
                                             }
                                         } else {
-                                            echo "<option value=''>No categories available</option>";
+                                            echo "<option value=''>No active categories available</option>";
                                         }
                                         $stmt->close();
                                     }
