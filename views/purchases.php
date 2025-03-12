@@ -298,8 +298,8 @@ $stmt->close();
                           </button>
                         <?php endif; ?>
                         <?php if ($row['order_status'] == 'Received'): ?>
-                          <button class="btn btn-danger px-3 btn-sm rounded-4 d-flex justify-content-center align-items-center returnToSupplierBtn"
-                            data-id="<?= $row['ReceivingID']; ?>"
+                          <button class="btn btn-danger btn-sm px-3 rounded-4 d-flex justify-content-center align-items-center returnToSupplierBtn"
+                            onclick="window.location.href='purchases/return-to-supplier.php?receiving_id=<?= $row['ReceivingID']; ?>'"
                             data-supplier="<?= $row['supplier_name']; ?>">
                             <span class="material-icons-outlined">assignment_return</span>
                           </button>
