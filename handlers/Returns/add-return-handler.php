@@ -7,53 +7,64 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $customerName = trim($_POST['customerName']);
-    $address = trim($_POST['address']);
-    $phoneNumber = trim($_POST['phoneNumber']);
-    $orderId = $_POST['orderId'];
-    $returnDate = $_POST['returnDate'];
-    $reason = $_POST['reason'];
-    $createdBy = $_SESSION['user_id'];
+$customerId = $_POST['customerId'];
+$orderId = $_POST['orderId'];
+$returnDate = $_POST['returnDate'];
+$products = $_POST['products'];
 
-    // Validate inputs
-    if (empty($customerName) || empty($address) || empty($phoneNumber) || empty($orderId) || empty($returnDate) || empty($reason)) {
-        $_SESSION['return_error'] = "All fields are required";
-        header('Location: ../../views/returns.php');
-        exit();
+$conn->begin_transaction();
+
+try {
+    // Insert into returns table (no Reason) - unchanged
+    $stmt = $conn->prepare("INSERT INTO returns (CustomerID, OrderID, ReturnDate) VALUES (?, ?, ?)");
+    if (!$stmt) {
+        throw new Exception("Prepare failed for returns insert: " . $conn->error);
+    }
+    $stmt->bind_param("iis", $customerId, $orderId, $returnDate);
+    $stmt->execute();
+    $returnId = $conn->insert_id;
+
+    // Insert into return_details with Reason - unchanged
+    $detailStmt = $conn->prepare("INSERT INTO return_details (ReturnID, ProductID, QuantityReturned, Reason) VALUES (?, ?, ?, ?)");
+    if (!$detailStmt) {
+        throw new Exception("Prepare failed for return_details insert: " . $conn->error);
     }
 
-    // Look up or create CustomerID based on CustomerName
-    $stmt = $conn->prepare("SELECT CustomerID FROM customers WHERE Name = ?");
-    $stmt->bind_param("s", $customerName);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows === 0) {
-        // Customer not found, create new customer with address and phone number
-        $stmt = $conn->prepare("
-            INSERT INTO customers (Name, Address, PhoneNumber, Created_At, Created_By, Updated_At, Updated_By)
-            VALUES (?, ?, ?, NOW(), ?, NOW(), ?)
-        ");
-        $stmt->bind_param("sssii", $customerName, $address, $phoneNumber, $createdBy, $createdBy);
-        $stmt->execute();
-        $customerId = $conn->insert_id; // Get the new CustomerID
-        $stmt->close();
-    } else {
-        $customer = $result->fetch_assoc();
-        $customerId = $customer['CustomerID'];
-        $stmt->close();
+    // Update StockQuantity instead of stock - unchanged
+    $stockStmt = $conn->prepare("UPDATE products SET StockQuantity = StockQuantity + ? WHERE ProductID = ?");
+    if (!$stockStmt) {
+        throw new Exception("Prepare failed for stock update: " . $conn->error);
     }
 
-    // Insert into returns table
-    $stmt = $conn->prepare("
-        INSERT INTO returns (CustomerID, OrderID, ReturnDate, Reason, Created_At, Created_By, Updated_At, Updated_By)
-        VALUES (?, ?, ?, ?, NOW(), ?, NOW(), ?)
-    ");
-    $stmt->bind_param("iissii", $customerId, $orderId, $returnDate, $reason, $createdBy, $createdBy);
+    foreach ($products as $product) {
+        $quantity = (int)$product['quantity'];
+        if ($quantity > 0) {
+            $productId = $product['productId'];
+            $reason = $product['reason'];
+            $detailStmt->bind_param("iiis", $returnId, $productId, $quantity, $reason);
+            $detailStmt->execute();
 
-    $stmt->execute();
-    $stmt->close();
-    $_SESSION['return_success'] = "Return recorded successfully.";
-    header('Location: ../../views/returns.php');
-    exit();
+            // Update stock if reason is "Wrong Item" - unchanged
+            if ($reason === "Wrong Item") {
+                $stockStmt->bind_param("ii", $quantity, $productId);
+                $stockStmt->execute();
+            }
+            // Removed: No "Damaged/Expired" logic involving Active or DamagedQuantity
+        }
+    }
+
+    $conn->commit();
+    $_SESSION['return_success'] = "Return added successfully.";
+} catch (Exception $e) {
+    $conn->rollback();
+    $_SESSION['return_error'] = "Error adding return: " . $e->getMessage();
 }
+
+if (isset($stmt) && $stmt !== false) $stmt->close();
+if (isset($detailStmt) && $detailStmt !== false) $detailStmt->close();
+if (isset($stockStmt) && $stockStmt !== false) $stockStmt->close();
+$conn->close();
+
+header('Location: ../../views/returns.php');
+exit();
+?>
