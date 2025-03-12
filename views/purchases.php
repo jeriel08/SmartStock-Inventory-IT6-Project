@@ -292,7 +292,7 @@ $stmt->close();
                         </button>
                         <?php if ($row['order_status'] == 'Pending'): ?>
                           <button class="btn add-product-button px-3 btn-sm rounded-4 d-flex justify-content-center align-items-center editPurchaseBtn"
-                            data-id="<?= $row['ReceivingID']; ?>"
+                            onclick="window.location.href='purchases/update-purchases.php?receiving_id=<?= $row['ReceivingID']; ?>'"
                             data-status="<?= $row['order_status']; ?>">
                             <span class="material-icons-outlined">edit</span>
                           </button>
@@ -340,117 +340,7 @@ $stmt->close();
               <?php endif; ?>
             </ul>
           </nav>
-
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Purchase Modal -->
-  <div class="modal fade" id="editPurchaseModal" tabindex="-1" aria-labelledby="editPurchaseLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editPurchaseLabel">Edit Purchase</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="../handlers/SupplierOrder/update-purchase-handler.php" method="POST">
-          <div class="modal-body">
-            <input type="hidden" id="editReceivingID" name="receivingDetailID">
-
-            <!-- Product Name (Read-only) -->
-            <div class="mb-3">
-              <label class="form-label">Product</label>
-              <input type="text" class="form-control" id="editProductName" name="productName" readonly>
-            </div>
-
-            <!-- Quantity -->
-            <div class="mb-3">
-              <label class="form-label">Quantity</label>
-              <input type="number" class="form-control" id="editQuantity" name="quantity" min="1" required>
-            </div>
-
-            <!-- Unit Cost -->
-            <div class="mb-3">
-              <label class="form-label">Unit Cost</label>
-              <input type="number" class="form-control" id="editCost" name="cost" step="0.01" min="0" required>
-            </div>
-
-            <!-- Status Dropdown -->
-            <div class="mb-3">
-              <label class="form-label">Status</label>
-              <select class="form-select" id="editStatus" name="status" required>
-                <option value="Pending">Pending</option>
-                <option value="Received">Received</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Return to Supplier Modal -->
-  <div class="modal fade" id="returnToSupplierModal" tabindex="-1" aria-labelledby="returnToSupplierLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title d-flex align-items-center gap-2" id="returnToSupplierLabel">
-            <span class="material-icons-outlined fs-2">assignment_return</span>
-            Return to Supplier
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="../handlers/SupplierOrder/return-to-supplier-handler.php" method="POST">
-          <div class="modal-body">
-            <input type="hidden" name="receivingDetailId" id="returnReceivingDetailId">
-            <input type="hidden" name="productId" id="returnProductId">
-
-            <div class="row mb-3">
-              <label class="col-md-4 col-form-label text-md-end">Product</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" id="returnProductName" readonly>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <label class="col-md-4 col-form-label text-md-end">Quantity</label>
-              <div class="col-md-8">
-                <input type="number" class="form-control" id="returnQuantity" name="quantity" required min="1">
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <label class="col-md-4 col-form-label text-md-end">Supplier</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" id="returnSupplier" readonly>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <label class="col-md-4 col-form-label text-md-end">Reason</label>
-              <div class="col-md-8">
-                <textarea class="form-control" name="reason" id="returnReason" rows="3" required></textarea>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer justify-content-center">
-            <button type="submit" class="btn btn-danger d-flex align-items-center gap-2 py-2 rounded-4">
-              <span class="material-icons-outlined">assignment_return</span>
-              <span>Confirm Return</span>
-            </button>
-            <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-4"
-              data-bs-dismiss="modal">
-              <span class="material-icons-outlined">close</span>
-              Close
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   </div>
