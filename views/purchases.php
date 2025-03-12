@@ -261,16 +261,16 @@ $stmt->close();
       <?php endif; ?>
       <div class="container-fluid mt-5 rounded-5 shadow">
         <div class="table-responsive mb-3">
-          <table class="table table-striped rounded-3">
+          <table class="table table-striped table-hover rounded-3">
             <thead>
               <tr>
                 <th class="text-center">Date</th>
                 <th class="text-center">Supplier</th>
                 <th class="text-center">Status</th>
-                <th class="text-center">Action</th>
+                <th class="text-center" style="width: 200px;">Action</th> <!-- Fixed width -->
               </tr>
             </thead>
-            <tbody class="">
+            <tbody class="table-group-divider">
               <?php if ($result->num_rows > 0): ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
                   <tr>
@@ -282,21 +282,23 @@ $stmt->close();
                       </span>
                     </td>
                     <td class="align-middle text-center">
-                      <div class="d-flex justify-content-center gap-2">
-                        <button class="btn edit-button btn-primary add-product-button rounded-4 d-flex justify-content-center align-items-center editPurchaseBtn"
-                          data-id="<?= $row['ReceivingID']; ?>"
-                          data-status="<?= $row['order_status']; ?>">
-                          <span class="material-icons-outlined">edit</span>
-                        </button>
+                      <div class="d-flex justify-content-center gap-1">
                         <!-- Preview Button -->
-                        <button class="btn add-product-button rounded-4 previewBtn d-flex justify-content-center align-items-center"
+                        <button class="btn add-product-button px-3 btn-sm rounded-4 d-flex justify-content-center align-items-center previewBtn"
                           data-id="<?= $row['ReceivingID']; ?>"
                           data-bs-toggle="modal"
                           data-bs-target="#previewModal">
                           <span class="material-icons-outlined">visibility</span>
                         </button>
+                        <?php if ($row['order_status'] == 'Pending'): ?>
+                          <button class="btn add-product-button px-3 btn-sm rounded-4 d-flex justify-content-center align-items-center editPurchaseBtn"
+                            data-id="<?= $row['ReceivingID']; ?>"
+                            data-status="<?= $row['order_status']; ?>">
+                            <span class="material-icons-outlined">edit</span>
+                          </button>
+                        <?php endif; ?>
                         <?php if ($row['order_status'] == 'Received'): ?>
-                          <button class="btn btn-danger rounded-4 returnToSupplierBtn d-flex justify-content-center align-items-center"
+                          <button class="btn btn-danger px-3 btn-sm rounded-4 d-flex justify-content-center align-items-center returnToSupplierBtn"
                             data-id="<?= $row['ReceivingID']; ?>"
                             data-supplier="<?= $row['supplier_name']; ?>">
                             <span class="material-icons-outlined">assignment_return</span>
@@ -455,7 +457,7 @@ $stmt->close();
 
   <!-- Filter Modal -->
   <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="filterModalLabel">Filter Orders</h5>
@@ -487,7 +489,7 @@ $stmt->close();
 
             <!-- Submit Button -->
             <div class="text-end">
-              <button type="submit" class="btn btn-primary">Apply Filters</button>
+              <button type="submit" class="btn btn-primary add-product-button">Apply Filters</button>
             </div>
           </form>
         </div>
@@ -497,7 +499,7 @@ $stmt->close();
 
   <!-- Preview Modal -->
   <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="previewModalLabel">Order Details</h5>
@@ -509,7 +511,7 @@ $stmt->close();
             <p><strong>SupplierID:</strong> <span id="modal-supplier-id"></span></p>
             <p><strong>Date:</strong> <span id="modal-date"></span></p>
             <h6>Products</h6>
-            <table class="table table-striped">
+            <table class="table table-striped table-hover">
               <thead>
                 <tr>
                   <th>Product Name</th>
@@ -518,12 +520,12 @@ $stmt->close();
                   <th>Total</th>
                 </tr>
               </thead>
-              <tbody id="modal-products-table"></tbody>
+              <tbody id="modal-products-table" class="table-group-divider"></tbody>
             </table>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
