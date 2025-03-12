@@ -1,0 +1,1 @@
+Error: Prepare failed for damage update: Unknown column 'DamagedQuantity' in 'field list'
