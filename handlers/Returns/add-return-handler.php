@@ -11,16 +11,17 @@ $customerId = $_POST['customerId'];
 $orderId = $_POST['orderId'];
 $returnDate = $_POST['returnDate'];
 $products = $_POST['products'];
+$createdBy = $_SESSION['user_id'];
 
 $conn->begin_transaction();
 
 try {
     // Insert into returns table (no Reason) - unchanged
-    $stmt = $conn->prepare("INSERT INTO returns (CustomerID, OrderID, ReturnDate) VALUES (?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO returns (CustomerID, OrderID, ReturnDate, Created_by) VALUES (?, ?, ?, ?)");
     if (!$stmt) {
         throw new Exception("Prepare failed for returns insert: " . $conn->error);
     }
-    $stmt->bind_param("iis", $customerId, $orderId, $returnDate);
+    $stmt->bind_param("iisi", $customerId, $orderId, $returnDate, $createdBy);
     $stmt->execute();
     $returnId = $conn->insert_id;
 
@@ -67,4 +68,3 @@ $conn->close();
 
 header('Location: ../../views/returns.php');
 exit();
-?>

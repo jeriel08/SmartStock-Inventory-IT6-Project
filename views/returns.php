@@ -26,6 +26,7 @@ $orders = $conn->query("
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -37,16 +38,42 @@ $orders = $conn->query("
     <script src="../statics/js/bootstrap.min.js"></script>
     <title>Returns | SmartStock Inventory</title>
     <style>
-        .clickable-icon { cursor: pointer; color: #007bff; }
-        .clickable-icon:hover { color: #0056b3; }
-        .modal-body { max-height: calc(100vh - 200px); overflow-y: scroll; }
-        #productDetailsTable { margin-top: 10px; }
-        #productDetailsTable input[type="number"] { width: 80px; }
-        #productDetailsTable select { width: 150px; }
-        .modal-lg { max-width: 800px; }
-        #returnDetailsTable { margin-top: 20px; }
+        .clickable-icon {
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        .clickable-icon:hover {
+            color: #0056b3;
+        }
+
+        .modal-body {
+            max-height: calc(100vh - 200px);
+            overflow-y: scroll;
+        }
+
+        #productDetailsTable {
+            margin-top: 10px;
+        }
+
+        #productDetailsTable input[type="number"] {
+            width: 80px;
+        }
+
+        #productDetailsTable select {
+            width: 150px;
+        }
+
+        .modal-lg {
+            max-width: 800px;
+        }
+
+        #returnDetailsTable {
+            margin-top: 20px;
+        }
     </style>
 </head>
+
 <body class="main">
     <!-- Navbar unchanged -->
     <nav class="navbar bg-body-tertiary fixed-top shadow-sm">
@@ -95,10 +122,12 @@ $orders = $conn->query("
                 </button>
             </div>
             <?php if (isset($_SESSION['return_success'])): ?>
-                <div class="alert alert-success mt-4 w-100"><?php echo $_SESSION['return_success']; unset($_SESSION['return_success']); ?></div>
+                <div class="alert alert-success mt-4 w-100"><?php echo $_SESSION['return_success'];
+                                                            unset($_SESSION['return_success']); ?></div>
             <?php endif; ?>
             <?php if (isset($_SESSION['return_error'])): ?>
-                <div class="alert alert-danger mt-4 w-100"><?php echo $_SESSION['return_error']; unset($_SESSION['return_error']); ?></div>
+                <div class="alert alert-danger mt-4 w-100"><?php echo $_SESSION['return_error'];
+                                                            unset($_SESSION['return_error']); ?></div>
             <?php endif; ?>
             <div class="container-fluid mt-4 rounded-5 shadow">
                 <div class="table-responsive mb-3">
@@ -134,7 +163,9 @@ $orders = $conn->query("
                                 </tr>
                             <?php endwhile; ?>
                             <?php if ($returns->num_rows === 0): ?>
-                                <tr><td colspan="5" class="text-center">No returns found.</td></tr>
+                                <tr>
+                                    <td colspan="5" class="text-center">No returns found.</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -154,7 +185,7 @@ $orders = $conn->query("
                     </h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="/SmartStock-Inventory-IT6-Project-3/handlers/Returns/add-return-handler.php" method="POST">
+                <form action="../handlers/Returns/add-return-handler.php" method="POST">
                     <div class="modal-body px-3 py-2">
                         <div class="row mb-2 align-items-center">
                             <label for="orderId" class="col-md-3 col-form-label text-md-end fw-medium">Order ID</label>
@@ -162,9 +193,9 @@ $orders = $conn->query("
                                 <select class="form-control form-control-sm" id="orderId" name="orderId" required>
                                     <option value="" disabled selected>Select an order</option>
                                     <?php while ($order = $orders->fetch_assoc()): ?>
-                                        <option value="<?php echo $order['OrderID']; ?>" 
-                                                data-customer-id="<?php echo $order['CustomerID']; ?>" 
-                                                data-customer-name="<?php echo htmlspecialchars($order['CustomerName']); ?>">
+                                        <option value="<?php echo $order['OrderID']; ?>"
+                                            data-customer-id="<?php echo $order['CustomerID']; ?>"
+                                            data-customer-name="<?php echo htmlspecialchars($order['CustomerName']); ?>">
                                             Order ID: <?php echo $order['OrderID']; ?> (<?php echo date('m-d-Y', strtotime($order['Date'])); ?>)
                                         </option>
                                     <?php endwhile; ?>
@@ -230,23 +261,33 @@ $orders = $conn->query("
                 <div class="modal-body">
                     <div class="row mb-3">
                         <label class="col-md-3 col-form-label text-md-end">Customer Name: </label>
-                        <div class="col-md-9"><p class="form-control-plaintext" id="viewCustomerName"></p></div>
+                        <div class="col-md-9">
+                            <p class="form-control-plaintext" id="viewCustomerName"></p>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-md-3 col-form-label text-md-end">Address: </label>
-                        <div class="col-md-9"><p class="form-control-plaintext" id="viewAddress"></p></div>
+                        <div class="col-md-9">
+                            <p class="form-control-plaintext" id="viewAddress"></p>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-md-3 col-form-label text-md-end">Phone Number: </label>
-                        <div class="col-md-9"><p class="form-control-plaintext" id="viewPhoneNumber"></p></div>
+                        <div class="col-md-9">
+                            <p class="form-control-plaintext" id="viewPhoneNumber"></p>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-md-3 col-form-label text-md-end">Order ID: </label>
-                        <div class="col-md-9"><p class="form-control-plaintext" id="viewOrderId"></p></div>
+                        <div class="col-md-9">
+                            <p class="form-control-plaintext" id="viewOrderId"></p>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-md-3 col-form-label text-md-end">Return Date: </label>
-                        <div class="col-md-9"><p class="form-control-plaintext" id="viewReturnDate"></p></div>
+                        <div class="col-md-9">
+                            <p class="form-control-plaintext" id="viewReturnDate"></p>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-md-3 col-form-label text-md-end">Returned Products: </label>
@@ -275,128 +316,130 @@ $orders = $conn->query("
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', function () {
-    var viewModal = document.getElementById('viewReturnModal');
-    viewModal.addEventListener('show.bs.modal', function (event) {
-        var icon = event.relatedTarget;
-        var returnId = icon.getAttribute('data-return-id');
-        var customerName = icon.getAttribute('data-customer-name');
-        var address = icon.getAttribute('data-address');
-        var phoneNumber = icon.getAttribute('data-phone-number');
-        var orderId = icon.getAttribute('data-order-id');
-        var returnDate = icon.getAttribute('data-return-date');
+        document.addEventListener('DOMContentLoaded', function() {
+            var viewModal = document.getElementById('viewReturnModal');
+            viewModal.addEventListener('show.bs.modal', function(event) {
+                var icon = event.relatedTarget;
+                var returnId = icon.getAttribute('data-return-id');
+                var customerName = icon.getAttribute('data-customer-name');
+                var address = icon.getAttribute('data-address');
+                var phoneNumber = icon.getAttribute('data-phone-number');
+                var orderId = icon.getAttribute('data-order-id');
+                var returnDate = icon.getAttribute('data-return-date');
 
-        viewModal.querySelector('#viewCustomerName').textContent = customerName;
-        viewModal.querySelector('#viewAddress').textContent = address;
-        viewModal.querySelector('#viewPhoneNumber').textContent = phoneNumber;
-        viewModal.querySelector('#viewOrderId').textContent = orderId;
-        viewModal.querySelector('#viewReturnDate').textContent = returnDate;
+                viewModal.querySelector('#viewCustomerName').textContent = customerName;
+                viewModal.querySelector('#viewAddress').textContent = address;
+                viewModal.querySelector('#viewPhoneNumber').textContent = phoneNumber;
+                viewModal.querySelector('#viewOrderId').textContent = orderId;
+                viewModal.querySelector('#viewReturnDate').textContent = returnDate;
 
-        // Fetch return details
-        fetch('/SmartStock-Inventory-IT6-Project-3/handlers/Returns/get-return-details.php?returnId=' + returnId, {
-            credentials: 'include'
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response not ok: ' + response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('Fetched Return Details:', data);
-                updateReturnDetailsTable(data);
-            })
-            .catch(error => {
-                console.error('Fetch Error:', error);
-                document.getElementById('returnDetailsBody').innerHTML = '<tr><td colspan="3">Error loading details</td></tr>';
+                // Fetch return details
+                fetch('../handlers/Returns/get-return-details.php?returnId=' + returnId, {
+                        credentials: 'include'
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response not ok: ' + response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Fetched Return Details:', data);
+                        updateReturnDetailsTable(data);
+                    })
+                    .catch(error => {
+                        console.error('Fetch Error:', error);
+                        document.getElementById('returnDetailsBody').innerHTML = '<tr><td colspan="3">Error loading details</td></tr>';
+                    });
             });
-    });
 
-    function updateReturnDetailsTable(data) {
-        var returnDetailsBody = document.getElementById('returnDetailsBody');
-        returnDetailsBody.innerHTML = '';
+            function updateReturnDetailsTable(data) {
+                var returnDetailsBody = document.getElementById('returnDetailsBody');
+                returnDetailsBody.innerHTML = '';
 
-        if (!data || data.length === 0) {
-            returnDetailsBody.innerHTML = '<tr><td colspan="3">No return details found.</td></tr>';
-            return;
-        }
+                if (!data || data.length === 0) {
+                    returnDetailsBody.innerHTML = '<tr><td colspan="3">No return details found.</td></tr>';
+                    return;
+                }
 
-        data.forEach(item => {
-            var row = document.createElement('tr');
-            row.innerHTML = `
+                data.forEach(item => {
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
                 <td>${item.ProductName || 'Unknown'}</td>
                 <td>${item.QuantityReturned || 0}</td>
                 <td>${item.Reason || 'N/A'}</td>
             `;
-            returnDetailsBody.appendChild(row);
-        });
-    }
-
-    var orderIdSelect = document.getElementById('orderId');
-    var customerIdInput = document.getElementById('customerId');
-    var customerNameInput = document.getElementById('customerName');
-    var productDetailsTable = document.getElementById('productDetailsTable');
-    var productDetailsBody = document.getElementById('productDetailsBody');
-    var submitBtn = document.getElementById('submitBtn');
-
-    orderIdSelect.addEventListener('change', function () {
-        var orderId = this.value;
-        var selectedOption = this.options[this.selectedIndex];
-        var customerId = selectedOption.getAttribute('data-customer-id');
-        var customerName = selectedOption.getAttribute('data-customer-name');
-
-        console.log('Selected Order ID:', orderId);
-        console.log('Customer ID:', customerId, 'Customer Name:', customerName);
-
-        if (orderId) {
-            customerIdInput.value = customerId;
-            customerNameInput.value = customerName;
-
-            var fetchUrl = '/SmartStock-Inventory-IT6-Project-3/handlers/Returns/get-order-products.php?orderId=' + orderId;
-            console.log('Fetching from:', fetchUrl);
-
-            fetch(fetchUrl, { credentials: 'include' })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response not ok: ' + response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Fetched Products:', data);
-                    updateProductTable(data);
-                })
-                .catch(error => {
-                    console.error('Fetch Error:', error);
-                    resetProductTable();
-                    alert('Failed to load products. Check console for details.');
+                    returnDetailsBody.appendChild(row);
                 });
-        } else {
-            resetProductTable();
-            customerIdInput.value = '';
-            customerNameInput.value = '';
-        }
-    });
+            }
 
-    function updateProductTable(data) {
-        productDetailsBody.innerHTML = '';
-        console.log('Updating table with data:', data);
+            var orderIdSelect = document.getElementById('orderId');
+            var customerIdInput = document.getElementById('customerId');
+            var customerNameInput = document.getElementById('customerName');
+            var productDetailsTable = document.getElementById('productDetailsTable');
+            var productDetailsBody = document.getElementById('productDetailsBody');
+            var submitBtn = document.getElementById('submitBtn');
 
-        if (data.error) {
-            productDetailsBody.innerHTML = '<tr><td colspan="4">' + data.error + '</td></tr>';
-            productDetailsTable.style.display = 'table';
-            return;
-        }
-        if (data.message) {
-            productDetailsBody.innerHTML = '<tr><td colspan="4">' + data.message + '</td></tr>';
-            productDetailsTable.style.display = 'table';
-            return;
-        }
-        if (!data || data.length === 0) {
-            productDetailsBody.innerHTML = '<tr><td colspan="4">No products found for this order.</td></tr>';
-            productDetailsTable.style.display = 'table';
-            return;
-        }
+            orderIdSelect.addEventListener('change', function() {
+                var orderId = this.value;
+                var selectedOption = this.options[this.selectedIndex];
+                var customerId = selectedOption.getAttribute('data-customer-id');
+                var customerName = selectedOption.getAttribute('data-customer-name');
 
-        data.forEach((product, index) => {
-            var row = document.createElement('tr');
-            row.innerHTML = `
+                console.log('Selected Order ID:', orderId);
+                console.log('Customer ID:', customerId, 'Customer Name:', customerName);
+
+                if (orderId) {
+                    customerIdInput.value = customerId;
+                    customerNameInput.value = customerName;
+
+                    var fetchUrl = '../handlers/Returns/get-order-products.php?orderId=' + orderId;
+                    console.log('Fetching from:', fetchUrl);
+
+                    fetch(fetchUrl, {
+                            credentials: 'include'
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response not ok: ' + response.status);
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Fetched Products:', data);
+                            updateProductTable(data);
+                        })
+                        .catch(error => {
+                            console.error('Fetch Error:', error);
+                            resetProductTable();
+                            alert('Failed to load products. Check console for details.');
+                        });
+                } else {
+                    resetProductTable();
+                    customerIdInput.value = '';
+                    customerNameInput.value = '';
+                }
+            });
+
+            function updateProductTable(data) {
+                productDetailsBody.innerHTML = '';
+                console.log('Updating table with data:', data);
+
+                if (data.error) {
+                    productDetailsBody.innerHTML = '<tr><td colspan="4">' + data.error + '</td></tr>';
+                    productDetailsTable.style.display = 'table';
+                    return;
+                }
+                if (data.message) {
+                    productDetailsBody.innerHTML = '<tr><td colspan="4">' + data.message + '</td></tr>';
+                    productDetailsTable.style.display = 'table';
+                    return;
+                }
+                if (!data || data.length === 0) {
+                    productDetailsBody.innerHTML = '<tr><td colspan="4">No products found for this order.</td></tr>';
+                    productDetailsTable.style.display = 'table';
+                    return;
+                }
+
+                data.forEach((product, index) => {
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
                 <td><input type="text" class="form-control form-control-sm" value="${product.ProductName || 'Unknown'}" readonly></td>
                 <td><input type="number" class="form-control form-control-sm" value="${product.Quantity || 0}" readonly></td>
                 <td>
@@ -416,60 +459,61 @@ document.addEventListener('DOMContentLoaded', function () {
                     </select>
                 </td>
             `;
-            productDetailsBody.appendChild(row);
+                    productDetailsBody.appendChild(row);
+                });
+                productDetailsTable.style.display = 'table';
+            }
+
+            function resetProductTable() {
+                productDetailsBody.innerHTML = '';
+                productDetailsTable.style.display = 'none';
+            }
+
+            productDetailsTable.addEventListener('input', function(e) {
+                if (e.target.type === 'number' && e.target.name.includes('[quantity]')) {
+                    var max = parseInt(e.target.max) || 0;
+                    var value = parseInt(e.target.value) || 0;
+                    if (value > max) {
+                        e.target.value = max;
+                        alert(`Cannot return more than ${max} for this product.`);
+                    }
+                }
+            });
+
+            submitBtn.addEventListener('click', function(e) {
+                var inputs = productDetailsTable.getElementsByTagName('input');
+                var selects = productDetailsTable.getElementsByTagName('select');
+                var hasQuantity = false;
+
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].type === 'number' && inputs[i].name.includes('[quantity]') && inputs[i].value > 0) {
+                        hasQuantity = true;
+                        break;
+                    }
+                }
+
+                if (!hasQuantity) {
+                    e.preventDefault();
+                    alert('Please enter at least one return quantity.');
+                    return;
+                }
+
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].type === 'number' && inputs[i].name.includes('[quantity]') && inputs[i].value > 0 && !selects[Math.floor(i / 2)].value) {
+                        e.preventDefault();
+                        alert('Please select a reason for each product being returned.');
+                        return;
+                    }
+                }
+            });
+
+            <?php if (isset($_SESSION['return_error'])): ?>
+                var modal = new bootstrap.Modal(document.getElementById('addReturnModal'));
+                modal.show();
+            <?php endif; ?>
         });
-        productDetailsTable.style.display = 'table';
-    }
-
-    function resetProductTable() {
-        productDetailsBody.innerHTML = '';
-        productDetailsTable.style.display = 'none';
-    }
-
-    productDetailsTable.addEventListener('input', function (e) {
-        if (e.target.type === 'number' && e.target.name.includes('[quantity]')) {
-            var max = parseInt(e.target.max) || 0;
-            var value = parseInt(e.target.value) || 0;
-            if (value > max) {
-                e.target.value = max;
-                alert(`Cannot return more than ${max} for this product.`);
-            }
-        }
-    });
-
-    submitBtn.addEventListener('click', function (e) {
-        var inputs = productDetailsTable.getElementsByTagName('input');
-        var selects = productDetailsTable.getElementsByTagName('select');
-        var hasQuantity = false;
-
-        for (var i = 0; i < inputs.length; i++) {
-            if (inputs[i].type === 'number' && inputs[i].name.includes('[quantity]') && inputs[i].value > 0) {
-                hasQuantity = true;
-                break;
-            }
-        }
-
-        if (!hasQuantity) {
-            e.preventDefault();
-            alert('Please enter at least one return quantity.');
-            return;
-        }
-
-        for (var i = 0; i < inputs.length; i++) {
-            if (inputs[i].type === 'number' && inputs[i].name.includes('[quantity]') && inputs[i].value > 0 && !selects[Math.floor(i / 2)].value) {
-                e.preventDefault();
-                alert('Please select a reason for each product being returned.');
-                return;
-            }
-        }
-    });
-
-    <?php if (isset($_SESSION['return_error'])): ?>
-        var modal = new bootstrap.Modal(document.getElementById('addReturnModal'));
-        modal.show();
-    <?php endif; ?>
-});
-</script>
+    </script>
 </body>
+
 </html>
 <?php $conn->close(); ?>
