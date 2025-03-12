@@ -8,22 +8,20 @@ if (!isset($_SESSION['user_id'])) {
 include '../database/database.php';
 
 // Get filter values from GET parameters
-$status_filter = $_GET['status'] ?? 'All'; // Default: show all statuses
-$date_from = $_GET['date_from'] ?? ''; // Start date
-$date_to = $_GET['date_to'] ?? ''; // End date
+$status_filter = $_GET['status'] ?? 'All';
+$date_from = $_GET['date_from'] ?? '';
+$date_to = $_GET['date_to'] ?? '';
 
 // Pagination variables
-$records_per_page = 10; // Number of orders per page
-$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
+$records_per_page = 10;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $records_per_page;
 
 // Base query for counting total records
 $count_query = "SELECT COUNT(*) AS total FROM Supplier_Order_View WHERE 1";
-
 $params = [];
 $types = "";
 
-// Apply filters to the count query
 if ($status_filter !== 'All') {
   $count_query .= " AND order_status = ?";
   $params[] = $status_filter;
@@ -51,13 +49,9 @@ $count_stmt->close();
 // Base query for fetching paginated results
 $query = "
     SELECT 
-        ReceivingDetailID,
-        product_name, 
-        product_quantity, 
-        unit_cost, 
-        total_cost, 
-        order_date, 
-        supplier_name, 
+        ReceivingID,
+        order_date,
+        supplier_name,
         order_status
     FROM Supplier_Order_View
     WHERE 1
@@ -66,7 +60,6 @@ $query = "
 $params = [];
 $types = "";
 
-// Apply filters to the main query
 if ($status_filter !== 'All') {
   $query .= " AND order_status = ?";
   $params[] = $status_filter;
@@ -92,8 +85,6 @@ $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
-
-
 ?>
 
 <!DOCTYPE html>
@@ -273,27 +264,19 @@ $stmt->close();
           <table class="table table-striped rounded-3">
             <thead>
               <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Unit Cost</th>
-                <th>Total</th>
-                <th>Date</th>
-                <th>Supplier</th>
-                <th>Status</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Supplier</th>
+                <th class="text-center">Status</th>
                 <th class="text-center">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="">
               <?php if ($result->num_rows > 0): ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
                   <tr>
-                    <td class="align-middle"><?php echo htmlspecialchars($row['product_name']); ?></td>
-                    <td class="align-middle"><?php echo $row['product_quantity']; ?></td>
-                    <td class="align-middle">₱<?php echo number_format($row['unit_cost'], 2); ?></td>
-                    <td class="align-middle">₱<?php echo $row['total_cost']; ?></td>
-                    <td class="align-middle"><?php echo date("m-d-y", strtotime($row['order_date'])); ?></td>
-                    <td class="align-middle"><?php echo htmlspecialchars($row['supplier_name']); ?></td>
-                    <td class="align-middle">
+                    <td class="align-middle text-center"><?php echo date("m-d-y", strtotime($row['order_date'])); ?></td>
+                    <td class="align-middle text-center"><?php echo htmlspecialchars($row['supplier_name']); ?></td>
+                    <td class="align-middle text-center">
                       <span class="badge text-bg-<?php echo ($row['order_status'] == 'Received') ? 'success' : 'warning'; ?> fs-6">
                         <?php echo htmlspecialchars($row['order_status']); ?>
                       </span>
@@ -301,31 +284,31 @@ $stmt->close();
                     <td class="align-middle text-center">
                       <div class="d-flex justify-content-center gap-2">
                         <button class="btn edit-button btn-primary add-product-button rounded-4 d-flex justify-content-center align-items-center editPurchaseBtn"
-                          data-id="<?= $row['ReceivingDetailID']; ?>"
-                          data-product="<?= $row['product_name']; ?>"
-                          data-quantity="<?= $row['product_quantity']; ?>"
-                          data-cost="<?= $row['unit_cost']; ?>"
+                          data-id="<?= $row['ReceivingID']; ?>"
                           data-status="<?= $row['order_status']; ?>">
                           <span class="material-icons-outlined">edit</span>
                         </button>
-                        <!-- Return to Supplier Button -->
+                        <!-- Preview Button -->
+                        <button class="btn add-product-button rounded-4 previewBtn d-flex justify-content-center align-items-center"
+                          data-id="<?= $row['ReceivingID']; ?>"
+                          data-bs-toggle="modal"
+                          data-bs-target="#previewModal">
+                          <span class="material-icons-outlined">visibility</span>
+                        </button>
                         <?php if ($row['order_status'] == 'Received'): ?>
                           <button class="btn btn-danger rounded-4 returnToSupplierBtn d-flex justify-content-center align-items-center"
-                            data-id="<?= $row['ReceivingDetailID']; ?>"
-                            data-product="<?= $row['product_name']; ?>"
-                            data-quantity="<?= $row['product_quantity']; ?>"
+                            data-id="<?= $row['ReceivingID']; ?>"
                             data-supplier="<?= $row['supplier_name']; ?>">
                             <span class="material-icons-outlined">assignment_return</span>
                           </button>
                         <?php endif; ?>
                       </div>
-
                     </td>
                   </tr>
                 <?php endwhile; ?>
               <?php else: ?>
                 <tr>
-                  <td colspan="7" class="text-center text-muted py-2">
+                  <td colspan="4" class="text-center text-muted py-2">
                     <p class="fs-6">No purchases have been made yet.</p>
                   </td>
                 </tr>
@@ -512,6 +495,43 @@ $stmt->close();
     </div>
   </div>
 
+  <!-- Preview Modal -->
+  <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="previewModalLabel">Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="modal-details">
+            <p><strong>ReceivingID:</strong> <span id="modal-receiving-id"></span></p>
+            <p><strong>SupplierID:</strong> <span id="modal-supplier-id"></span></p>
+            <p><strong>Date:</strong> <span id="modal-date"></span></p>
+            <h6>Products</h6>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Quantity</th>
+                  <th>Unit Cost</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="modal-products-table"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Edit Script -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const editButtons = document.querySelectorAll(".editPurchaseBtn");
@@ -536,7 +556,58 @@ $stmt->close();
       });
     });
   </script>
+
+  <!-- Return to Supplier Script -->
   <script src="../statics/return-to-supplier.js"></script>
+
+  <!-- Preview Script -->
+  <script>
+    $(document).ready(function() {
+      $('.previewBtn').on('click', function() {
+        var receivingId = $(this).data('id');
+
+        // AJAX request to fetch receiving details
+        $.ajax({
+          url: '../handlers/SupplierOrder/fetch-receiving-details.php',
+          type: 'POST',
+          data: {
+            receiving_id: receivingId
+          },
+          dataType: 'json',
+          success: function(response) {
+            // Populate modal with data
+            $('#modal-receiving-id').text(response.receiving_id);
+            $('#modal-supplier-id').text(response.supplier_id);
+            $('#modal-date').text(response.date);
+
+            // Clear previous table data
+            $('#modal-products-table').empty();
+
+            // Populate products table
+            if (response.products.length > 0) {
+              response.products.forEach(function(product) {
+                var row = `
+                            <tr>
+                                <td>${product.product_name}</td>
+                                <td>${product.quantity}</td>
+                                <td>₱${parseFloat(product.unit_cost).toFixed(2)}</td>
+                                <td>₱${(product.quantity * product.unit_cost).toFixed(2)}</td>
+                            </tr>
+                        `;
+                $('#modal-products-table').append(row);
+              });
+            } else {
+              $('#modal-products-table').append('<tr><td colspan="4" class="text-center">No products found.</td></tr>');
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error('Error fetching details:', error);
+            $('#modal-products-table').html('<tr><td colspan="4" class="text-center">Error loading details.</td></tr>');
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>
