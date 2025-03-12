@@ -49,7 +49,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
     href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round"
     rel="stylesheet" />
 
-  <script src="../statics/js/bootstrap.min.js"></script>
+
 
   <title>Dashboard | SmartStock Inventory</title>
 </head>
@@ -71,16 +71,21 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
         <a class="navbar-brand fw-semibold" href="dashboard.php">DASHBOARD</a>
       </div>
 
-      <!-- Right side: Account Section -->
+      <!-- Right side: Account Section with Dropdown Button -->
       <div class="d-flex align-items-center me-5 ms-auto">
         <span class="material-icons-outlined me-2 fs-1">account_circle</span>
         <div>
-          <p class="fw-bold mb-0">
-            <?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?>
-          </p>
-          <small class="mt-0">
-            <?php echo htmlspecialchars($_SESSION['role']); ?>
-          </small>
+          <p class="fw-bold mb-0"><?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?></p>
+          <small class="mt-0"><?php echo htmlspecialchars($_SESSION['role']); ?></small>
+        </div>
+        <div class="d-flex align-items-center">
+          <button class="btn border-0 bg-transparent p-0 ms-2" type="button" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="material-icons-outlined">arrow_drop_down</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end me-2" aria-labelledby="accountDropdown">
+            <li><a class="dropdown-item" href="account.php">Account Settings</a></li>
+            <li><a class="dropdown-item" href="../handlers/Authentication/logout-handler.php">Logout</a></li>
+          </ul>
         </div>
       </div>
 
@@ -150,27 +155,27 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
                 Returns
               </a>
             </li>
-            <li class="nav-item">
-              <a
-                class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                href="account.php">
-                <span class="material-icons-outlined"> account_circle </span>
-                Account
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4"
-                href="../handlers/Authentication/logout-handler.php">
-                <span class="material-icons-outlined"> logout </span>
-                Logout
-              </a>
-            </li>
+            <?php if (isset($_SESSION['role']) && strtoupper($_SESSION['role']) === 'ADMIN'): ?>
+              <li class="nav-item">
+                <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="admin/audit-log.php">
+                  <span class="material-icons-outlined">local_activity</span>
+                  Audit Log
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="admin/employee-accounts.php">
+                  <span class="material-icons-outlined">manage_accounts</span>
+                  Manage Employee Accounts
+                </a>
+              </li>
+            <?php endif; ?>
           </ul>
         </div>
       </div>
     </div>
   </nav>
+
+
   <div class="container pt-5 mt-3">
     <div class="row">
       <div class="col-md-12 mt-5 d-inline-flex align-items-center">
@@ -224,6 +229,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../statics/js/bootstrap.bundle.js"></script>
 
   <!-- Line Chart / Sales Overview -->
   <script>
