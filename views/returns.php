@@ -35,7 +35,7 @@ $orders = $conn->query("
     <link rel="stylesheet" href="../statics/products-style.css" />
     <link rel="stylesheet" href="../statics/style.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet" />
-    <script src="../statics/js/bootstrap.min.js"></script>
+    <script src="../statics/js/bootstrap.bundle.js"></script>
     <title>Returns | SmartStock Inventory</title>
     <style>
         .clickable-icon {
@@ -84,11 +84,21 @@ $orders = $conn->query("
                 </button>
                 <a class="navbar-brand fw-semibold" href="returns.php">RETURNS</a>
             </div>
+            <!-- Right side: Account Section with Dropdown Button -->
             <div class="d-flex align-items-center me-5 ms-auto">
                 <span class="material-icons-outlined me-2 fs-1">account_circle</span>
                 <div>
                     <p class="fw-bold mb-0"><?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?></p>
                     <small class="mt-0"><?php echo htmlspecialchars($_SESSION['role']); ?></small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button class="btn border-0 bg-transparent p-0 ms-2" type="button" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="material-icons-outlined">arrow_drop_down</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end me-2" aria-labelledby="accountDropdown">
+                        <li><a class="dropdown-item" href="account.php">Account Settings</a></li>
+                        <li><a class="dropdown-item" href="../handlers/Authentication/logout-handler.php">Logout</a></li>
+                    </ul>
                 </div>
             </div>
             <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
@@ -105,8 +115,24 @@ $orders = $conn->query("
                         <li class="nav-item"><a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="suppliers.php"><span class="material-icons-outlined">inventory</span> Suppliers</a></li>
                         <li class="nav-item"><a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="purchases.php"><span class="material-icons-outlined">local_shipping</span> Supplier Orders</a></li>
                         <li class="nav-item"><a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4 active" href="returns.php"><span class="material-icons-outlined">assignment_return</span> Returns</a></li>
-                        <li class="nav-item"><a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="account.php"><span class="material-icons-outlined">account_circle</span> Account</a></li>
-                        <li class="nav-item"><a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="../handlers/Authentication/logout-handler.php"><span class="material-icons-outlined">logout</span> Logout</a></li>
+                        <?php if (isset($_SESSION['role']) && strtoupper($_SESSION['role']) === 'ADMIN'): ?>
+                            <hr>
+                            <li class="nav-item">
+                                <h6 class="text-muted mb-3 px-4 ">Admin Controls</h6>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="admin/audit-log.php">
+                                    <span class="material-icons-outlined">local_activity</span>
+                                    Audit Log
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="admin/employee-accounts.php">
+                                    <span class="material-icons-outlined">manage_accounts</span>
+                                    Manage Employee Accounts
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>

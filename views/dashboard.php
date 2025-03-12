@@ -156,6 +156,10 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
               </a>
             </li>
             <?php if (isset($_SESSION['role']) && strtoupper($_SESSION['role']) === 'ADMIN'): ?>
+              <hr>
+              <li class="nav-item">
+                <h6 class="text-muted mb-3 px-4 ">Admin Controls</h6>
+              </li>
               <li class="nav-item">
                 <a class="nav-link btn btn-outline-dark d-flex align-items-center gap-2 my-3 py-2 px-4" href="admin/audit-log.php">
                   <span class="material-icons-outlined">local_activity</span>

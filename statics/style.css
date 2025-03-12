@@ -161,6 +161,10 @@ nav.navbar {
   font-size: 4rem;
 }
 
+.offcanvas .text-muted {
+  color: var(--color-2) !important;
+}
+
 .navbar .nav-link:hover {
   background-color: var(--color-3) !important;
   color: var(--color-1) !important;
