@@ -210,13 +210,14 @@ $result = $stmt->get_result();
                                         <td class="align-middle"><?php echo $row['Username']; ?></td>
                                         <td class="align-middle"><?php echo $row['Role']; ?></td>
                                         <td class="align-middle">
-                                            <form action="../../handlers/Employee/update-account-status.php" method="POST">
-                                                <input type="hidden" name="employeeID" value="<?php echo $row['EmployeeID']; ?>">
-                                                <select name="status" class="form-select" onchange="this.form.submit()">
-                                                    <option value="Active" <?php echo ($row['Status'] == 'Active') ? 'selected' : ''; ?>>Active</option>
-                                                    <option value="Inactive" <?php echo ($row['Status'] == 'Inactive') ? 'selected' : ''; ?>>Inactive</option>
-                                                </select>
-                                            </form>
+                                            <!-- Edit Button to Trigger Modal -->
+                                            <button type="button" class="btn btn-primary btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editEmployeeModal"
+                                                data-employee-id="<?php echo $row['EmployeeID']; ?>"
+                                                onclick="loadEmployeeData(<?php echo $row['EmployeeID']; ?>)">
+                                                Edit
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
@@ -282,6 +283,73 @@ $result = $stmt->get_result();
             </div>
         </div>
     </div>
+
+    <!-- Edit Employee Modal -->
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editEmployeeForm" action="../../handlers/Employee/update-employee.php" method="POST">
+                        <input type="hidden" name="employeeID" id="modalEmployeeID">
+                        <div class="mb-3">
+                            <label for="modalFirstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="modalFirstName" name="firstName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalLastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="modalLastName" name="lastName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="modalUsername" name="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalRole" class="form-label">Role</label>
+                            <input type="text" class="form-control" id="modalRole" name="role">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalPassword" class="form-label">Password (Enter new to update)</label>
+                            <input type="password" class="form-control" id="modalPassword" name="password" placeholder="••••••••">
+                            <small class="form-text text-muted">Leave blank to keep current password.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalStatus" class="form-label">Status</label>
+                            <select name="status" id="modalStatus" class="form-select">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="editEmployeeForm">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to Load Employee Data -->
+    <script>
+        function loadEmployeeData(employeeID) {
+            fetch(`../../handlers/Employee/get-employee.php?employeeID=${employeeID}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('modalEmployeeID').value = data.EmployeeID;
+                    document.getElementById('modalFirstName').value = data.FirstName;
+                    document.getElementById('modalLastName').value = data.LastName;
+                    document.getElementById('modalUsername').value = data.Username;
+                    document.getElementById('modalRole').value = data.Role;
+                    document.getElementById('modalPassword').value = ''; // Empty by default
+                    document.getElementById('modalStatus').value = data.Status;
+                })
+                .catch(error => console.error('Error fetching employee data:', error));
+        }
+    </script>
 </body>
 
 </html>
