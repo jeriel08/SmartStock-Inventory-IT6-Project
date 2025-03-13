@@ -183,7 +183,7 @@ $result = $conn->query($sql);
                                     <th>Details</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="table-group-divider">
                                 <?php while ($row = $result->fetch_assoc()): ?>
                                     <tr>
                                         <td class="py-2"><?php echo $row['Timestamp']; ?></td>

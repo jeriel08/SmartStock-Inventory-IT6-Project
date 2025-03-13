@@ -14,7 +14,7 @@ $username = $_POST['username'] ?? '';
 $role = $_POST['role'] ?? '';
 $password = $_POST['password'] ?? '';
 $status = $_POST['status'] ?? '';
-$updatedBy = $_SESSION['employeeID']; // Assuming admin’s EmployeeID is in session
+$updatedBy = $_SESSION['user_id'];
 
 if ($employeeID > 0 && !empty($firstName) && !empty($lastName) && !empty($username) && !empty($role) && in_array($status, ['Active', 'Inactive'])) {
     // Prepare the base query
