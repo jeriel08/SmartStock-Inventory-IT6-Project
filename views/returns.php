@@ -511,8 +511,9 @@ $orders = $conn->query("
                 var selects = productDetailsTable.getElementsByTagName('select');
                 var hasQuantity = false;
 
+                // Check if at least one quantity is entered
                 for (var i = 0; i < inputs.length; i++) {
-                    if (inputs[i].type === 'number' && inputs[i].name.includes('[quantity]') && inputs[i].value > 0) {
+                    if (inputs[i].type === 'number' && inputs[i].name.includes('[quantity]') && parseInt(inputs[i].value) > 0) {
                         hasQuantity = true;
                         break;
                     }
@@ -524,8 +525,16 @@ $orders = $conn->query("
                     return;
                 }
 
-                for (var i = 0; i < inputs.length; i++) {
-                    if (inputs[i].type === 'number' && inputs[i].name.includes('[quantity]') && inputs[i].value > 0 && !selects[Math.floor(i / 2)].value) {
+                // Check each product row individually
+                let productCount = selects.length; // Number of products based on select elements
+                for (let i = 0; i < productCount; i++) {
+                    // Find the quantity input for this product
+                    let quantityInput = document.querySelector(`input[name="products[${i}][quantity]"]`);
+                    let quantity = parseInt(quantityInput.value) || 0;
+                    let reasonSelect = selects[i];
+
+                    // If quantity > 0, require a reason
+                    if (quantity > 0 && (!reasonSelect.value || reasonSelect.value === '')) {
                         e.preventDefault();
                         alert('Please select a reason for each product being returned.');
                         return;
