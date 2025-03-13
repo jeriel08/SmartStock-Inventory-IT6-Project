@@ -171,7 +171,10 @@ $result = $stmt->get_result();
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <h2 class="fw-semibold">Manage Employee Accounts</h2>
                     <!-- Add Account Button -->
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                    <button class="btn btn-primary d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                        <span class="material-icons-outlined">
+                            add_circle_outline
+                        </span>
                         Add Account
                     </button>
                 </div>
@@ -198,7 +201,7 @@ $result = $stmt->get_result();
                                 <th>Name</th>
                                 <th>Username</th>
                                 <th>Role</th>
-                                <th class="align-middle text-center">Status</th>
+                                <th class="align-middle text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody class="table-group-divider">
@@ -209,14 +212,16 @@ $result = $stmt->get_result();
                                         <td class="align-middle"><?php echo $row['FirstName'] . " " . $row['LastName']; ?></td>
                                         <td class="align-middle"><?php echo $row['Username']; ?></td>
                                         <td class="align-middle"><?php echo $row['Role']; ?></td>
-                                        <td class="align-middle">
+                                        <td class="align-middle d-flex align-items-center justify-content-center">
                                             <!-- Edit Button to Trigger Modal -->
-                                            <button type="button" class="btn btn-primary btn-sm"
+                                            <button type="button" class="btn btn-primary btn-sm "
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editEmployeeModal"
                                                 data-employee-id="<?php echo $row['EmployeeID']; ?>"
                                                 onclick="loadEmployeeData(<?php echo $row['EmployeeID']; ?>)">
-                                                Edit
+                                                <span class="material-icons-outlined">
+                                                    edit
+                                                </span>
                                             </button>
                                         </td>
                                     </tr>
@@ -276,7 +281,12 @@ $result = $stmt->get_result();
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Add Employee</button>
+                            <button type="submit" class="btn btn-primary d-flex justify-content-center align-items-center gap-2">
+                                <span class="material-icons-outlined">
+                                    add_circle_outline
+                                </span>
+                                Add Account
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -313,7 +323,14 @@ $result = $stmt->get_result();
                         </div>
                         <div class="mb-3">
                             <label for="modalPassword" class="form-label">Password (Enter new to update)</label>
-                            <input type="password" class="form-control" id="modalPassword" name="password" placeholder="••••••••">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="modalPassword" name="password" placeholder="••••••••">
+                                <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center" id="togglePassword">
+                                    <span class="material-icons-outlined">
+                                        visibility
+                                    </span>
+                                </button>
+                            </div>
                             <small class="form-text text-muted">Leave blank to keep current password.</small>
                         </div>
                         <div class="mb-3">
@@ -349,6 +366,21 @@ $result = $stmt->get_result();
                 })
                 .catch(error => console.error('Error fetching employee data:', error));
         }
+
+        // Toggle Password Visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('modalPassword');
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        });
     </script>
 </body>
 
