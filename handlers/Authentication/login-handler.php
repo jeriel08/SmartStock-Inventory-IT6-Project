@@ -18,6 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Generate a unique token for session security
             $_SESSION['access_token'] = bin2hex(random_bytes(32));
 
+            // Log the login action into audit_logs
+            $stmt = $conn->prepare("INSERT INTO audit_logs (TableName, RecordID, ActionType, NewValue, AdminID, Timestamp) 
+                                    VALUES ('Employees', ?, 'Login', ?, ?, NOW())");
+            $stmt->bind_param('isi', $user['EmployeeID'], $user['Username'], $user['EmployeeID']);
+            $stmt->execute();
+            $stmt->close();
+
             header("Location: ../../views/dashboard.php");
             exit;
         } else {
