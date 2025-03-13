@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 include '../database/database.php';
 
 $stmt = $conn->prepare("
-    SELECT r.ReturnID, c.Name AS CustomerName, c.Address, c.PhoneNumber, r.OrderID, r.ReturnDate
+    SELECT r.ReturnID, c.Name AS CustomerName, c.PhoneNumber, r.OrderID, r.ReturnDate
     FROM returns r
     LEFT JOIN customers c ON r.CustomerID = c.CustomerID
 ");
@@ -179,7 +179,6 @@ $orders = $conn->query("
                                             data-bs-toggle="modal" data-bs-target="#viewReturnModal"
                                             data-return-id="<?php echo $row['ReturnID']; ?>"
                                             data-customer-name="<?php echo htmlspecialchars($row['CustomerName'] ?? 'N/A'); ?>"
-                                            data-address="<?php echo htmlspecialchars($row['Address'] ?? 'N/A'); ?>"
                                             data-phone-number="<?php echo htmlspecialchars($row['PhoneNumber'] ?? 'N/A'); ?>"
                                             data-order-id="<?php echo htmlspecialchars($row['OrderID'] ?? 'N/A'); ?>"
                                             data-return-date="<?php echo htmlspecialchars(date('Y-m-d', strtotime($row['ReturnDate']))); ?>">
@@ -292,12 +291,6 @@ $orders = $conn->query("
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-md-3 col-form-label text-md-end">Address: </label>
-                        <div class="col-md-9">
-                            <p class="form-control-plaintext" id="viewAddress"></p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
                         <label class="col-md-3 col-form-label text-md-end">Phone Number: </label>
                         <div class="col-md-9">
                             <p class="form-control-plaintext" id="viewPhoneNumber"></p>
@@ -348,13 +341,11 @@ $orders = $conn->query("
                 var icon = event.relatedTarget;
                 var returnId = icon.getAttribute('data-return-id');
                 var customerName = icon.getAttribute('data-customer-name');
-                var address = icon.getAttribute('data-address');
                 var phoneNumber = icon.getAttribute('data-phone-number');
                 var orderId = icon.getAttribute('data-order-id');
                 var returnDate = icon.getAttribute('data-return-date');
 
                 viewModal.querySelector('#viewCustomerName').textContent = customerName;
-                viewModal.querySelector('#viewAddress').textContent = address;
                 viewModal.querySelector('#viewPhoneNumber').textContent = phoneNumber;
                 viewModal.querySelector('#viewOrderId').textContent = orderId;
                 viewModal.querySelector('#viewReturnDate').textContent = returnDate;
