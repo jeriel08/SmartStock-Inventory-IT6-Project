@@ -305,7 +305,7 @@ include '../database/database.php';
                       </div>
                     </div>
                     <div class="modal-footer">
-                      <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 py-2 rounded-4">
+                      <button type="submit" class="btn btn-primary add-product-button d-flex align-items-center gap-2 py-2 rounded-4">
                         <span class="material-icons-outlined">save</span>
                         <span>Save Changes</span>
                       </button>
