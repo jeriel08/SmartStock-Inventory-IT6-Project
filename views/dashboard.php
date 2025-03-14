@@ -40,6 +40,7 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
     rel="icon"
     type="image/x-icon"
     href="../statics/images/app-logo.ico" />
+  <link rel="stylesheet" href="../statics/products-style.css" />
   <link rel="stylesheet" href="../statics/style.css" />
   <link rel="stylesheet" href="../statics/css/bootstrap.min.css" />
   <link rel="stylesheet" href="../statics/dashboard-style.css">
@@ -182,8 +183,14 @@ $lowStockProducts = $dashboardData[3]['low_stock_products'] ?? 0;
 
   <div class="container pt-5 mt-3">
     <div class="row">
-      <div class="col-md-12 mt-5 d-inline-flex align-items-center">
+      <div class="col-md-12 mt-3 d-inline-flex align-items-center justify-content-between">
         <p class="fw-semibold fs-5 mb-0">Activity</p>
+        <a type="submit" href="dashboard/sales_report.php" class="btn btn-primary add-product-button d-flex align-items-center gap-2 rounded-4">
+          <span class="material-icons-outlined">
+            summarize
+          </span>
+          <span>Generate Sales Report</span>
+        </a>
       </div>
     </div>
 
