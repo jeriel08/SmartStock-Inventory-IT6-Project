@@ -1,8 +1,10 @@
+# login.py
 import customtkinter as ctk
 import mysql.connector
 import bcrypt
 import json
 import os
+import sys
 
 # Global login state
 logged_in_user = None
@@ -50,51 +52,53 @@ class LoginApp(ctk.CTk):
     def __init__(self, on_login_success):
         super().__init__()
 
-        self.geometry("300x800")  # Standard 300x800 window
+        self.geometry("296x600")  # Reduced from 300x800
         self.title("SmartStock POS - Login")
-        # Default window behavior: movable, with minimize (-) and close (x) buttons
 
         ctk.set_appearance_mode("system")
 
         self.on_login_success = on_login_success  # Callback to switch to POS UI
 
+        # Handle window close event
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+
         # Main frame
         self.main_frame = ctk.CTkFrame(self, corner_radius=0)
-        self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        self.main_frame.pack(fill="both", expand=True, padx=16, pady=16)
 
         # Logo placeholder at the top
-        self.logo_frame = ctk.CTkFrame(self.main_frame, height=150, corner_radius=0)
-        self.logo_frame.pack(fill="x", pady=(0, 20))
-        placeholder_label = ctk.CTkLabel(self.logo_frame, text="Logo Here", font=ctk.CTkFont(size=24))
+        self.logo_frame = ctk.CTkFrame(self.main_frame, height=146, corner_radius=0)
+        self.logo_frame.pack(fill="x", pady=(0, 16))
+        placeholder_label = ctk.CTkLabel(self.logo_frame, text="Logo Here", font=ctk.CTkFont(size=20))
         placeholder_label.place(relx=0.5, rely=0.5, anchor="center")
 
         # Login form
         self.create_login_frame()
 
     def create_login_frame(self):
-        login_label = ctk.CTkLabel(self.main_frame, text="Login", font=ctk.CTkFont(size=20, weight="bold"))
-        login_label.pack(pady=(0, 20))
+        login_label = ctk.CTkLabel(self.main_frame, text="Login", font=ctk.CTkFont(size=22, weight="bold"))
+        login_label.pack(pady=(0, 16))
 
-        username_label = ctk.CTkLabel(self.main_frame, text="Username", font=ctk.CTkFont(size=14))
-        username_label.pack(pady=(0, 5))
-        self.username_var = ctk.StringVar(value="sampleemp1")  # Default for testing
-        username_entry = ctk.CTkEntry(self.main_frame, textvariable=self.username_var, width=250, font=ctk.CTkFont(size=14))
-        username_entry.pack(pady=(0, 20))
+        username_label = ctk.CTkLabel(self.main_frame, text="Username", font=ctk.CTkFont(size=15))
+        username_label.pack(pady=(0, 1))
+        self.username_var = ctk.StringVar(value="junitsstore_admin")  # Default for testing
+        username_entry = ctk.CTkEntry(self.main_frame, textvariable=self.username_var, width=246, height=15, font=ctk.CTkFont(size=15))
+        username_entry.pack(pady=(0, 16))
 
-        password_label = ctk.CTkLabel(self.main_frame, text="Password", font=ctk.CTkFont(size=14))
-        password_label.pack(pady=(0, 5))
-        self.password_var = ctk.StringVar(value="password")  # Default for testing
-        password_entry = ctk.CTkEntry(self.main_frame, textvariable=self.password_var, show="*", width=250, font=ctk.CTkFont(size=14))
-        password_entry.pack(pady=(0, 20))
+        password_label = ctk.CTkLabel(self.main_frame, text="Password", font=ctk.CTkFont(size=15))
+        password_label.pack(pady=(0, 1))
+        self.password_var = ctk.StringVar(value="admin12345")  # Default for testing
+        password_entry = ctk.CTkEntry(self.main_frame, textvariable=self.password_var, show="*", width=246, height=15, font=ctk.CTkFont(size=15))
+        password_entry.pack(pady=(0, 16))
 
         login_btn = ctk.CTkButton(
             self.main_frame, text="Login", command=self.process_login,
-            width=250, height=40, corner_radius=5, font=ctk.CTkFont(size=14, weight="bold")
+            width=246, height=36, corner_radius=5, font=ctk.CTkFont(size=15, weight="bold")
         )
-        login_btn.pack(pady=20)
+        login_btn.pack(pady=16)
 
-        self.error_label = ctk.CTkLabel(self.main_frame, text="", font=ctk.CTkFont(size=12), text_color="red")
-        self.error_label.pack(pady=10)
+        self.error_label = ctk.CTkLabel(self.main_frame, text="", font=ctk.CTkFont(size=15), text_color="red")
+        self.error_label.pack(pady=6)
 
     def process_login(self):
         global logged_in_user
@@ -136,6 +140,12 @@ class LoginApp(ctk.CTk):
                 cursor.close()
             if db.is_connected():
                 db.close()
+
+    def on_closing(self):
+        # Handle the window close event (X button)
+        print("Login window closed by user")
+        self.destroy()
+        sys.exit(0)  # Exit the application cleanly
 
 def show_login(on_login_success):
     app = LoginApp(on_login_success)
