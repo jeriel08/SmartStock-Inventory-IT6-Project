@@ -176,11 +176,11 @@ $result = $conn->query($sql);
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>Timestamp</th>
-                                    <th>EmployeeID</th>
-                                    <th>Action</th>
-                                    <th>Table</th>
-                                    <th>Details</th>
+                                    <th style="white-space: nowrap;">Timestamp</th>
+                                    <th style="white-space: nowrap;">EmployeeID</th>
+                                    <th style="white-space: nowrap;">Action</th>
+                                    <th style="white-space: nowrap;">Table</th>
+                                    <th style="max-width: 300px;">Details</th>
                                 </tr>
                             </thead>
                             <tbody class="table-group-divider">
@@ -190,7 +190,11 @@ $result = $conn->query($sql);
                                         <td class="py-2"><?php echo $row['AdminID']; ?></td>
                                         <td class="py-2"><?php echo $row['ActionType']; ?></td>
                                         <td class="py-2"><?php echo $row['TableName']; ?></td>
-                                        <td class="py-2"><?php echo $row['NewValue']; ?></td> <!-- Shows only new values -->
+                                        <td class="py-2"
+                                            style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                                            title="<?php echo htmlspecialchars($row['NewValue']); ?>">
+                                            <?php echo htmlspecialchars($row['NewValue']); ?>
+                                        </td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>

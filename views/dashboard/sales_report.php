@@ -274,6 +274,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </form>
 
+        <hr>
+
         <!-- Sales Report Table -->
         <?php if (!empty($sales_data)): ?>
             <!-- Summary Table with Net Sales -->
