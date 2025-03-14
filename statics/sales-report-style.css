@@ -1,0 +1,28 @@
+:root {
+  --color-1: #f66435; /* Vibrant orange */
+  --color-2: #f4efca; /* Light beige */
+  --color-3: #f5deb3; /* Wheat */
+  --color-4: #ff7f50; /* Coral */
+  --color-5: #d49066; /* Muted orange */
+}
+
+h4,
+h2,
+label {
+  color: var(--color-1) !important;
+}
+
+.table-responsive-rounded {
+  border-radius: 15px !important; /* Adjust radius as needed */
+  overflow: hidden !important; /* Ensures table content respects the rounding */
+  background-color: var(
+    --color-2
+  ) !important; /* Light gray background (customize as needed) */
+}
+
+.card,
+.card-body,
+.card-body .alert {
+  background-color: var(--color-2) !important;
+  color: var(--color-1) !important;
+}

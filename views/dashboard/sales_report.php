@@ -113,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../../statics/style.css" />
     <link rel="stylesheet" href="../../statics/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../../statics/dashboard-style.css">
+    <link rel="stylesheet" href="../../statics/sales-report-style.css">
 
     <!-- Google Font Icon Links -->
     <link
@@ -251,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <div class="container pt-5 mt-3 mb-4">
-        <h2 class="mb-4">Sales Report</h2>
+        <h2 class="mb-4 fw-semibold">Sales Report</h2>
 
         <!-- Date Range Form -->
         <form method="POST" class="mb-4">
@@ -265,10 +266,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo htmlspecialchars($end_date); ?>" required>
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Generate Report</button>
+                    <button type="submit" class="btn btn-primary add-product-button w-100">Generate Report</button>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" class="btn btn-success w-100" onclick="window.print()">Print Report</button>
+                    <button type="button" class="btn add-product-button w-100" onclick="window.print()">Print Report</button>
                 </div>
             </div>
         </form>
@@ -276,10 +277,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Sales Report Table -->
         <?php if (!empty($sales_data)): ?>
             <!-- Summary Table with Net Sales -->
-            <div class="mb-4">
+            <div class="my-4">
                 <h4>Summary</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
+                <div class="table-responsive table-responsive-rounded px-3 pb-3">
+                    <table class="table table-hover rounded-5">
                         <thead class="table-light">
                             <tr>
                                 <th>Total Sales Made</th>
@@ -289,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <th>Net Sales</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="table-group-divider">
                             <tr>
                                 <td>$<?php echo number_format($total_sales, 2); ?></td>
                                 <td><?php echo number_format($total_products_sold); ?></td>
@@ -305,16 +306,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Products Returned Table -->
             <div class="mb-4">
                 <h4>Products Returned</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead class="table-light">
+                <div class="table-responsive table-responsive-rounded px-3 pb-3">
+                    <table class="table table-striped-odd table-hover">
+                        <thead>
                             <tr>
                                 <th>Total Returns (Wrong Item)</th>
                                 <th>Total Returns (Damaged/Expired)</th>
                                 <th>Total Quantity Returned</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="table-group-divider">
                             <tr>
                                 <td><?php echo number_format($wrong_item_returns); ?></td>
                                 <td><?php echo number_format($damaged_expired_returns); ?></td>
@@ -325,32 +326,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Product ID</th>
-                            <th>Product Name</th>
-                            <th>Category</th>
-                            <th>Quantity Sold</th>
-                            <th>Total Sales</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($sales_data as $row): ?>
+            <!-- Product Summary -->
+            <div class="mb-4">
+                <h4>Products Summary</h4>
+                <div class="table-responsive table-responsive-rounded px-3 pb-3">
+
+                    <table class="table table-striped-odd table-hover">
+                        <thead>
                             <tr>
-                                <td><?php echo htmlspecialchars($row['ProductID']); ?></td>
-                                <td><?php echo htmlspecialchars($row['ProductName']); ?></td>
-                                <td><?php echo htmlspecialchars($row['CategoryName']); ?></td>
-                                <td><?php echo htmlspecialchars($row['QuantitySold']); ?></td>
-                                <td>$<?php echo number_format($row['TotalSales'], 2); ?></td>
+                                <th>Product ID</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Quantity Sold</th>
+                                <th>Total Sales</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <?php foreach ($sales_data as $row): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['ProductID']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['ProductName']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['CategoryName']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['QuantitySold']); ?></td>
+                                    <td>$<?php echo number_format($row['TotalSales'], 2); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         <?php elseif ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-            <div class="alert alert-info">No sales data found for the selected date range.</div>
+            <div class="card">
+                <div class="card-body rounded-3">
+                    <div class="alert alert-info mb-0 border-0 align-items-center">
+                        <span class="fw-semibold">
+                            No sales data found for the selected date range.
+
+                        </span>
+                    </div>
+                </div>
+            </div>
         <?php endif; ?>
     </div>
 
