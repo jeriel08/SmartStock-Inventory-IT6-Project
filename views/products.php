@@ -177,7 +177,7 @@ try {
         </div>
     </nav>
 
-    <div class="container mt-4 pt-5">
+    <div class="container mt-4 pt-5 pb-5">
         <div class="row align-items-center justify-content-between mb-5">
             <div class="col-md-5 d-flex">
                 <form method="GET" action="products.php" class="mb-3">

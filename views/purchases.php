@@ -237,7 +237,7 @@ $stmt->close();
   </nav>
 
   <!-- Add padding-top to the container to avoid overlap with the fixed navbar -->
-  <div class="container mt-4 pt-5 pb-4">
+  <div class="container mt-4 pt-5 pb-5">
     <div class="row align-items-center justify-content-end">
 
       <div class="col-md-auto d-flex gap-2">

@@ -168,7 +168,7 @@ $result = $conn->query($sql);
         </div>
     </nav>
 
-    <div class="container pt-4 mb-0">
+    <div class="container pt-4 mb-0 pb-3">
         <div class="card shadow-sm rounded-4 p-3">
             <div class="card-body">
                 <?php if ($result->num_rows > 0): ?>
